@@ -49,8 +49,8 @@ export function PatientConditionsChart() {
         </p>
       </div>
 
-      {/* Donut Chart with Center Total */}
-      <div className="relative w-full h-[190px] sm:h-[210px] my-2">
+      {/* Donut Chart with Center Total Label */}
+      <div className="relative w-full h-[200px] sm:h-[220px] my-2">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Tooltip content={<CustomPieTooltip />} />
@@ -58,35 +58,40 @@ export function PatientConditionsChart() {
               data={PATIENT_CONDITIONS_DATA}
               cx="50%"
               cy="50%"
-              innerRadius={58}
-              outerRadius={82}
+              innerRadius={60}
+              outerRadius={86}
               paddingAngle={4}
               dataKey="value"
             >
               {PATIENT_CONDITIONS_DATA.map((entry, index) => (
-                <Cell key={`donut-cell-${index}`} fill={entry.color} stroke="#FFFFFF" strokeWidth={2} />
+                <Cell
+                  key={`donut-cell-${index}`}
+                  fill={entry.color}
+                  stroke="#FFFFFF"
+                  strokeWidth={2}
+                />
               ))}
             </Pie>
           </PieChart>
         </ResponsiveContainer>
 
-        {/* Center Label */}
+        {/* Clean Center Label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-lg sm:text-xl font-bold text-[#172B4D] tracking-tight leading-none">
+          <span className="text-xl sm:text-2xl font-bold text-[#172B4D] tracking-tight leading-none">
             2,846
           </span>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#7A8798] mt-0.5">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#7A8798] mt-1">
             Total Patients
           </span>
         </div>
       </div>
 
-      {/* Compact Categorical Legend */}
-      <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-[#F0F4F8]">
+      {/* Compact Categorical Legend Grid */}
+      <div className="grid grid-cols-2 gap-2.5 pt-3.5 border-t border-[#F0F4F8]">
         {PATIENT_CONDITIONS_DATA.map((item) => (
           <div
             key={item.name}
-            className="flex items-center justify-between p-2 rounded-xl bg-[#F7F9FC] border border-[#E8EDF3]/60"
+            className="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F9FC] border border-[#E8EDF3]/70"
           >
             <div className="flex items-center gap-2 min-w-0">
               <span
@@ -101,7 +106,7 @@ export function PatientConditionsChart() {
               <span className="text-xs font-bold text-[#172B4D]">
                 {item.percentage}%
               </span>
-              <span className="text-[10px] text-[#7A8798] block">
+              <span className="text-[10px] text-[#7A8798] block leading-none mt-0.5">
                 {item.value}
               </span>
             </div>

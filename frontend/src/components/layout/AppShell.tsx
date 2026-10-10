@@ -19,23 +19,23 @@ function AppShellContent({
   parentLabel,
 }: AppShellProps) {
   return (
-    <div className="min-h-screen bg-[#F7F9FC] flex">
-      {/* Desktop Left Sidebar */}
+    <div className="min-h-screen bg-[#F7F9FC] flex text-[#243247]">
+      {/* Persistent Left Sidebar (256px) */}
       <Sidebar />
 
-      {/* Mobile Drawer */}
+      {/* Mobile Slide-over Drawer */}
       <MobileSidebar />
 
       {/* Main Right Content Panel */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 bg-[#F7F9FC]">
         <TopNavbar
           breadcrumbTitle={breadcrumbTitle}
           parentPath={parentPath}
           parentLabel={parentLabel}
         />
 
-        {/* Content Container optimized for 1440px */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1500px] w-full mx-auto">
+        {/* Content Container precisely calibrated for 1440px healthcare dashboard */}
+        <main className="flex-1 p-5 sm:p-7 lg:p-8 max-w-[1440px] w-full mx-auto">
           {children}
         </main>
       </div>

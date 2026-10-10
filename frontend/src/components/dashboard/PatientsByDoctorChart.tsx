@@ -27,8 +27,8 @@ const CustomBarTooltip = ({ active, payload }: CustomBarTooltipProps) => {
         <p className="font-bold text-[#172B4D]">{data.name}</p>
         <p className="text-[11px] text-[#7A8798] mb-1.5">{data.specialty}</p>
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#0F9F9A]" />
-          <span className="text-[#243247] font-semibold">{data.patients} Assigned Patients</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-[#0F9F9A]" />
+          <span className="text-[#243247] font-semibold">{data.patients} Active Patients</span>
         </div>
       </div>
     );
@@ -40,7 +40,7 @@ export function PatientsByDoctorChart() {
   return (
     <div className="bg-white rounded-2xl border border-[#E8EDF3] p-5 sm:p-6 card-shadow flex flex-col justify-between h-full">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 mb-4">
+      <div className="flex items-center justify-between gap-3 mb-5">
         <div>
           <h3 className="text-base font-bold text-[#172B4D] tracking-tight">
             Patients by Doctor
@@ -60,12 +60,12 @@ export function PatientsByDoctorChart() {
       </div>
 
       {/* Horizontal Bar Chart */}
-      <div className="w-full h-[260px] sm:h-[290px]">
+      <div className="w-full h-[270px] sm:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={TOP_DOCTORS_DISTRIBUTION}
             layout="vertical"
-            margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+            margin={{ top: 5, right: 30, left: 8, bottom: 5 }}
           >
             <XAxis
               type="number"
@@ -78,10 +78,10 @@ export function PatientsByDoctorChart() {
               type="category"
               axisLine={false}
               tickLine={false}
-              width={110}
+              width={112}
               tick={{ fill: "#243247", fontSize: 11, fontWeight: 500 }}
             />
-            <Tooltip content={<CustomBarTooltip />} cursor={{ fill: "rgba(241, 244, 249, 0.6)" }} />
+            <Tooltip content={<CustomBarTooltip />} cursor={{ fill: "rgba(241, 244, 249, 0.5)" }} />
             <Bar
               dataKey="patients"
               radius={[0, 6, 6, 0]}
@@ -90,7 +90,7 @@ export function PatientsByDoctorChart() {
               {TOP_DOCTORS_DISTRIBUTION.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={index === 0 ? "#0F9F9A" : index === 1 ? "#13B6B0" : "#2EC4B6"}
+                  fill={index === 0 ? "#0F9F9A" : index === 1 ? "#13B6B0" : "#22C1BA"}
                 />
               ))}
             </Bar>
@@ -98,10 +98,10 @@ export function PatientsByDoctorChart() {
         </ResponsiveContainer>
       </div>
 
-      {/* Footer stats summary */}
-      <div className="pt-3 border-t border-[#F0F4F8] flex items-center justify-between text-xs text-[#7A8798]">
-        <span>Top 5 account for 43.8% of total volume</span>
-        <span className="font-semibold text-[#172B4D]">1,247 Pts</span>
+      {/* Footer Stats */}
+      <div className="pt-3.5 border-t border-[#F0F4F8] flex items-center justify-between text-xs text-[#7A8798]">
+        <span>Top 5 account for 43.8% of volume</span>
+        <span className="font-semibold text-[#172B4D]">1,247 Patients</span>
       </div>
     </div>
   );

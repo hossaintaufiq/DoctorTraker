@@ -12,7 +12,6 @@ import {
 } from "recharts";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 import { cn } from "@/lib/utils";
-import { TrendingUp, Users } from "lucide-react";
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -47,14 +46,14 @@ export function PatientGrowthChart() {
 
   return (
     <div className="bg-white rounded-2xl border border-[#E8EDF3] p-5 sm:p-6 card-shadow flex flex-col justify-between h-full">
-      {/* Header with Title, Subtitle, and Period Toggle */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      {/* Card Header with Title, Subtitle, and Monthly / Weekly Toggle */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold text-[#172B4D] tracking-tight">
               Patient Growth
             </h3>
-            <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-[#E6F7F6] text-[#0F9F9A]">
+            <span className="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#E6F7F6] text-[#0F9F9A]">
               +12.8% YTD
             </span>
           </div>
@@ -63,9 +62,10 @@ export function PatientGrowthChart() {
           </p>
         </div>
 
-        {/* Period Selector Toggle */}
-        <div className="flex items-center p-0.5 bg-[#F7F9FC] border border-[#E8EDF3] rounded-xl self-start sm:self-auto">
+        {/* Period Selector: Monthly / Weekly */}
+        <div className="flex items-center p-1 bg-[#F7F9FC] border border-[#E8EDF3] rounded-xl self-start sm:self-auto">
           <button
+            type="button"
             onClick={() => setGrowthPeriod("Monthly")}
             className={cn(
               "px-3 py-1 text-xs font-semibold rounded-lg transition-all",
@@ -77,6 +77,7 @@ export function PatientGrowthChart() {
             Monthly
           </button>
           <button
+            type="button"
             onClick={() => setGrowthPeriod("Weekly")}
             className={cn(
               "px-3 py-1 text-xs font-semibold rounded-lg transition-all",
@@ -90,16 +91,16 @@ export function PatientGrowthChart() {
         </div>
       </div>
 
-      {/* Chart Area */}
-      <div className="w-full h-[260px] sm:h-[290px]">
+      {/* Chart Canvas */}
+      <div className="w-full h-[270px] sm:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={growthData}
-            margin={{ top: 10, right: 10, left: -18, bottom: 0 }}
+            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
           >
             <defs>
               <linearGradient id="patientGrowthGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0F9F9A" stopOpacity={0.22} />
+                <stop offset="5%" stopColor="#0F9F9A" stopOpacity={0.2} />
                 <stop offset="95%" stopColor="#0F9F9A" stopOpacity={0.0} />
               </linearGradient>
             </defs>
@@ -140,13 +141,13 @@ export function PatientGrowthChart() {
         </ResponsiveContainer>
       </div>
 
-      {/* Subtle Legend / Contextual footer */}
-      <div className="pt-3 border-t border-[#F0F4F8] flex items-center justify-between text-xs text-[#7A8798]">
+      {/* Subtle Legend / Contextual Footer */}
+      <div className="pt-3.5 border-t border-[#F0F4F8] flex items-center justify-between text-xs text-[#7A8798]">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#0F9F9A]" />
           <span>Active Patient Enrollees</span>
         </div>
-        <span className="font-medium text-[#172B4D]">Avg +237 / mo</span>
+        <span className="font-semibold text-[#172B4D]">Average +237 / month</span>
       </div>
     </div>
   );

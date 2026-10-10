@@ -2,14 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
-import { ChevronRight, Star, Award, Shield } from "lucide-react";
+import { ChevronRight, Star } from "lucide-react";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 import { getInitials, cn } from "@/lib/utils";
 
 export function TopDoctorsOverview() {
   const { doctors } = useDoctorTracker();
 
-  // Sort by patientCount and take top 5
+  // Top 5 sorted by patient volume
   const topDoctors = [...doctors]
     .sort((a, b) => b.patientCount - a.patientCount)
     .slice(0, 5);
@@ -37,7 +37,7 @@ export function TopDoctorsOverview() {
       </div>
 
       {/* List */}
-      <div className="divide-y divide-[#F0F4F8] -my-1">
+      <div className="divide-y divide-[#F0F4F8] -my-1 flex-1">
         {topDoctors.map((doc, idx) => {
           const isActive = doc.status === "Active";
           const isInSurgery = doc.status === "In Surgery";
@@ -48,16 +48,15 @@ export function TopDoctorsOverview() {
               href={`/doctors/${doc.id}`}
               className="py-3 flex items-center justify-between gap-3 hover:bg-[#F7F9FC] -mx-2 px-2 rounded-xl transition-all group"
             >
-              {/* Doctor Details */}
+              {/* Doctor Info with Initials Avatar & Status Dot */}
               <div className="flex items-center gap-3 min-w-0">
-                {/* Avatar with Status Dot */}
                 <div className="relative shrink-0">
-                  <div className="w-9 h-9 rounded-full bg-[#0F9F9A]/15 text-[#0F9F9A] font-bold text-xs flex items-center justify-center border border-[#0F9F9A]/20">
+                  <div className="w-10 h-10 rounded-xl bg-[#E6F7F6] text-[#0F9F9A] font-bold text-xs flex items-center justify-center border border-[#0F9F9A]/20">
                     {getInitials(doc.name)}
                   </div>
                   <span
                     className={cn(
-                      "absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white",
+                      "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white",
                       isActive
                         ? "bg-[#16A36A]"
                         : isInSurgery
@@ -70,7 +69,7 @@ export function TopDoctorsOverview() {
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-[#172B4D] group-hover:text-[#0F9F9A] transition-colors truncate">
+                    <span className="text-xs font-bold text-[#172B4D] group-hover:text-[#0F9F9A] transition-colors truncate">
                       {doc.name}
                     </span>
                     {idx === 0 && (
@@ -79,16 +78,16 @@ export function TopDoctorsOverview() {
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-[#7A8798] truncate">
-                    {doc.specialty} &bull; {doc.experienceYears} yrs exp
+                  <p className="text-[11px] text-[#7A8798] truncate mt-0.5">
+                    {doc.specialty} &bull; {doc.experienceYears} yrs experience
                   </p>
                 </div>
               </div>
 
-              {/* Patient Count & Rating */}
+              {/* Patient Volume & Score */}
               <div className="text-right shrink-0">
                 <span className="text-xs font-bold text-[#172B4D] block">
-                  {doc.patientCount} pts
+                  {doc.patientCount} patients
                 </span>
                 <div className="flex items-center justify-end gap-1 text-[11px] text-[#7A8798] mt-0.5">
                   <Star className="w-3 h-3 text-[#E9A23B] fill-[#E9A23B]" />
@@ -101,12 +100,12 @@ export function TopDoctorsOverview() {
       </div>
 
       {/* Footer */}
-      <div className="pt-3 border-t border-[#F0F4F8] flex items-center justify-between text-xs text-[#7A8798]">
+      <div className="pt-3.5 border-t border-[#F0F4F8] flex items-center justify-between text-xs text-[#7A8798] mt-2">
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-[#16A36A]" />
           <span>Staff capacity 84% utilized</span>
         </div>
-        <span className="font-semibold text-[#172B4D]">8 Active Specialties</span>
+        <span className="font-semibold text-[#172B4D]">8 Specialties</span>
       </div>
     </div>
   );
