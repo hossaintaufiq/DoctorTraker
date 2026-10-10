@@ -7,14 +7,12 @@ import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 import {
   Search,
   Plus,
-  Star,
   Phone,
   Mail,
   Building2,
   Eye,
   Trash2,
   Edit2,
-  UserPlus,
   Calendar,
   ChevronLeft,
   ChevronRight,
@@ -429,24 +427,12 @@ export default function DoctorsPage() {
 
                     {/* Bottom Actions */}
                     <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
-                      <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
-                        <Star className="w-3.5 h-3.5 text-[#F59E0B] fill-[#F59E0B]" />
-                        <span className="font-bold text-[#101828]">{doc.rating.toFixed(1)}</span>
-                        <span>&bull; {doc.experienceYears} yrs</span>
+                      <div className="text-xs text-[#64748B]">
+                        <span className="font-semibold text-[#101828]">{doc.experienceYears} yrs</span>
+                        <span className="text-[#94A3B8] ml-1">experience</span>
                       </div>
 
                       <div className="flex items-center gap-1.5">
-                        {/* Add Patient under this Doctor Button */}
-                        <button
-                          type="button"
-                          onClick={() => handleAddPatientUnderDoctor(doc)}
-                          className="px-2.5 py-1.5 text-xs font-semibold text-[#2F65F6] bg-[#EBF3FE] hover:bg-[#DCE8FC] rounded-full transition-colors flex items-center gap-1"
-                          title="Add Patient to this Doctor"
-                        >
-                          <UserPlus className="w-3.5 h-3.5" />
-                          <span>Add Patient</span>
-                        </button>
-
                         {/* Edit Doctor */}
                         <button
                           type="button"
@@ -542,13 +528,6 @@ export default function DoctorsPage() {
                         </td>
                         <td className="py-3.5 px-6 text-right">
                           <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => handleAddPatientUnderDoctor(doc)}
-                              className="p-1.5 text-[#2F65F6] hover:bg-[#EBF3FE] rounded-lg"
-                              title="Add Patient"
-                            >
-                              <UserPlus className="w-3.5 h-3.5" />
-                            </button>
                             <button
                               onClick={() => handleEditDoctor(doc)}
                               className="p-1.5 text-[#64748B] hover:text-[#2F65F6] hover:bg-white rounded-lg"
