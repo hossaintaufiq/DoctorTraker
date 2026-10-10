@@ -1,8 +1,15 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import dns from "node:dns";
 import { User } from "../models/User.js";
 import { Doctor } from "../models/Doctor.js";
 import { Patient } from "../models/Patient.js";
+
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch {
+  // Ignore
+}
 
 dotenv.config();
 
