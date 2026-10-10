@@ -16,6 +16,7 @@ router.route("/")
 router.route("/:id")
   .get(getPatientById)
   .put(updatePatient)
+  .patch(updatePatient)
   .delete(deletePatient);
 
 export default router;

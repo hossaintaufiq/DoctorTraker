@@ -102,7 +102,7 @@ export function TopNavbar({
           type="button"
           onClick={() => setIsMessagesModalOpen(true)}
           className="relative w-9 h-9 rounded-full bg-white/60 backdrop-blur-md border border-white/80 flex items-center justify-center text-[#64748B] hover:bg-white/90 hover:text-[#2F65F6] shadow-2xs hover:shadow-xs transition-all"
-          title="Clinical Messages"
+          title="Clinical Messages (Upcoming Feature)"
           aria-label="Messages"
         >
           <Mail className="w-4 h-4 stroke-[1.8]" />

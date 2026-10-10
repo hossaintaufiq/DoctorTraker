@@ -90,8 +90,8 @@ export function MessagesModal() {
             <div>
               <h2 className="text-base font-bold text-[#101828] flex items-center gap-2">
                 Clinical Communications & Messages
-                <span className="px-2 py-0.5 text-[10px] font-semibold bg-[#ECFDF5] text-[#10B981] rounded-full border border-[#D1FAE5]">
-                  Live Synchronized
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-50 text-amber-700 rounded-full border border-amber-200">
+                  Upcoming Feature
                 </span>
               </h2>
               <p className="text-xs text-[#64748B]">
@@ -107,6 +107,19 @@ export function MessagesModal() {
           >
             <X className="w-4 h-4" />
           </button>
+        </div>
+
+        {/* Upcoming Feature Notice Banner */}
+        <div className="bg-gradient-to-r from-amber-50/90 via-amber-50/70 to-orange-50/80 border-b border-amber-200/60 px-6 py-2.5 flex items-center justify-between text-xs text-amber-900 shrink-0 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>
+              <strong>Notice:</strong> Real-time clinical messaging is an <strong>upcoming feature</strong> currently available in interactive preview mode.
+            </span>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-200/70 text-amber-800 border border-amber-300/70 shrink-0 hidden sm:inline">
+            Release v2.5 Soon
+          </span>
         </div>
 
         {/* Content Body: Left sidebar (conversations) + Right chat area */}

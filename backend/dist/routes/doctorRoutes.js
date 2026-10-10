@@ -9,6 +9,7 @@ router.route("/")
 router.route("/:id")
     .get(doctorController_js_1.getDoctorById)
     .put(doctorController_js_1.updateDoctor)
+    .patch(doctorController_js_1.updateDoctor)
     .delete(doctorController_js_1.deleteDoctor);
 router.route("/:id/patients")
     .post(doctorController_js_1.addPatientUnderDoctor);

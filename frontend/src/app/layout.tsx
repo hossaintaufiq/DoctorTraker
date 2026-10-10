@@ -4,7 +4,9 @@ import "./globals.css";
 import { DoctorTrackerProvider } from "@/context/DoctorTrackerContext";
 import { ToastContainer } from "@/components/common/ToastContainer";
 import { AddDoctorModal } from "@/components/modals/AddDoctorModal";
+import { EditDoctorModal } from "@/components/modals/EditDoctorModal";
 import { AddPatientModal } from "@/components/modals/AddPatientModal";
+import { EditPatientModal } from "@/components/modals/EditPatientModal";
 import { MessagesModal } from "@/components/modals/MessagesModal";
 import { ActivityLogsModal } from "@/components/modals/ActivityLogsModal";
 import { BookAppointmentModal } from "@/components/modals/BookAppointmentModal";
@@ -32,7 +34,9 @@ export default function RootLayout({
         <DoctorTrackerProvider>
           {children}
           <AddDoctorModal />
+          <EditDoctorModal />
           <AddPatientModal />
+          <EditPatientModal />
           <MessagesModal />
           <ActivityLogsModal />
           <BookAppointmentModal />

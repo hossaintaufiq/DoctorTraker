@@ -18,6 +18,7 @@ router.route("/")
 router.route("/:id")
   .get(getDoctorById)
   .put(updateDoctor)
+  .patch(updateDoctor)
   .delete(deleteDoctor);
 
 router.route("/:id/patients")

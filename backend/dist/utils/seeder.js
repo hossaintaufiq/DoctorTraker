@@ -6,10 +6,119 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedDatabase = seedDatabase;
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const node_dns_1 = __importDefault(require("node:dns"));
 const User_js_1 = require("../models/User.js");
 const Doctor_js_1 = require("../models/Doctor.js");
 const Patient_js_1 = require("../models/Patient.js");
+const Department_js_1 = require("../models/Department.js");
+const Appointment_js_1 = require("../models/Appointment.js");
+const Invoice_js_1 = require("../models/Invoice.js");
+const ActivityLog_js_1 = require("../models/ActivityLog.js");
+try {
+    node_dns_1.default.setServers(["8.8.8.8", "1.1.1.1"]);
+}
+catch {
+    // Ignore
+}
 dotenv_1.default.config();
+const departmentsSeed = [
+    {
+        name: "Cardiology",
+        code: "CARD-01",
+        headName: "Dr. Salman Hossain",
+        specialistsCount: 14,
+        activeCasesCount: 342,
+        totalBeds: 45,
+        occupiedBeds: 39,
+        occupancyPercentage: 88,
+        floor: "3rd Floor, West Wing",
+        emergencyReady: true,
+        topServices: ["Cardiac Catheterization", "Echocardiography", "Angioplasty", "Coronary Care Unit (CCU)"],
+        equipmentSummary: "Siemens Artis Zee Angiography, Philips EPIQ 7 Ultrasound, 16-Bed CCU Telemetry",
+        rating: 4.9,
+        colorTheme: "blue",
+    },
+    {
+        name: "Neurology & Neurosurgery",
+        code: "NEUR-02",
+        headName: "Dr. Michael Chen",
+        specialistsCount: 11,
+        activeCasesCount: 286,
+        totalBeds: 38,
+        occupiedBeds: 28,
+        occupancyPercentage: 74,
+        floor: "4th Floor, North Wing",
+        emergencyReady: true,
+        topServices: ["Stroke Thrombolysis", "Digital EEG Monitoring", "Stereotactic Neurosurgery", "Neuro-ICU"],
+        equipmentSummary: "Natus Nicolet EEG/EMG Suite, Carl Zeiss OPMI Pentero Microscope, 3T MRI Suite",
+        rating: 4.8,
+        colorTheme: "purple",
+    },
+    {
+        name: "Oncology & Hematology",
+        code: "ONC-03",
+        headName: "Dr. Mahmudul Haque",
+        specialistsCount: 10,
+        activeCasesCount: 310,
+        totalBeds: 40,
+        occupiedBeds: 33,
+        occupancyPercentage: 82,
+        floor: "5th Floor, Oncology Tower",
+        emergencyReady: false,
+        topServices: ["Immunotherapy Infusions", "Bone Marrow Biopsy", "Chemotherapy Day Care", "Tumor Board"],
+        equipmentSummary: "Varian TrueBeam Linear Accelerator, Class 100 Isolation Wards, Automated Compounder",
+        rating: 4.9,
+        colorTheme: "amber",
+    },
+    {
+        name: "Orthopedics & Joint Trauma",
+        code: "ORTH-04",
+        headName: "Dr. Rafiqul Islam",
+        specialistsCount: 12,
+        activeCasesCount: 198,
+        totalBeds: 35,
+        occupiedBeds: 24,
+        occupancyPercentage: 68,
+        floor: "2nd Floor, South Wing",
+        emergencyReady: true,
+        topServices: ["Total Knee/Hip Arthroplasty", "Arthroscopic Surgery", "Complex Fracture Reduction", "Rehab Physio"],
+        equipmentSummary: "Stryker Mako Robotic Arm, Mobile C-Arm Fluoroscopy, Hydrotherapy Rehabilitation Tank",
+        rating: 4.7,
+        colorTheme: "emerald",
+    },
+    {
+        name: "Pediatrics & Child Health",
+        code: "PED-05",
+        headName: "Dr. Nusrat Jahan",
+        specialistsCount: 9,
+        activeCasesCount: 245,
+        totalBeds: 30,
+        occupiedBeds: 28,
+        occupancyPercentage: 93,
+        floor: "1st Floor, East Wing",
+        emergencyReady: true,
+        topServices: ["Neonatal Intensive Care (NICU)", "Pediatric Pulmonology", "Developmental Screening", "Vaccinations"],
+        equipmentSummary: "Dräger Babylog VN500 Ventilators, GE Giraffe Omnibed Incubators, Phototherapy Arrays",
+        rating: 4.9,
+        colorTheme: "orange",
+    },
+    {
+        name: "Emergency & Trauma Medicine",
+        code: "EMER-06",
+        headName: "Dr. David Kim",
+        specialistsCount: 16,
+        activeCasesCount: 520,
+        totalBeds: 25,
+        occupiedBeds: 24,
+        occupancyPercentage: 96,
+        floor: "Ground Floor, Entrance A",
+        emergencyReady: true,
+        topServices: ["Level 1 Trauma Resuscitation", "Acute STEMI Protocol", "Stroke Fast Track", "Triage Telemetry"],
+        equipmentSummary: "Dedicated Trauma CT Scanner, Rapid Blood Infusers, Crash Cart telemetry with Defib",
+        rating: 5.0,
+        colorTheme: "rose",
+    },
+];
 const doctorsSeed = [
     {
         name: "Dr. Sarah Ahmed",
@@ -17,7 +126,7 @@ const doctorsSeed = [
         email: "sarah.ahmed@medcare.com",
         phone: "+880 1711-234567",
         roomNumber: "Room 304 - Wing B",
-        hospital: "Care Guide BD Medical Center",
+        hospital: "Doctor Tracker Medical Center",
         patientCount: 42,
         maxPatients: 300,
         experienceYears: 12,
@@ -30,7 +139,7 @@ const doctorsSeed = [
         email: "tanvir.hasan@medcare.com",
         phone: "+880 1819-345678",
         roomNumber: "Room 210 - Wing A",
-        hospital: "Care Guide BD Medical Center",
+        hospital: "Doctor Tracker Medical Center",
         patientCount: 38,
         maxPatients: 250,
         experienceYears: 9,
@@ -43,7 +152,7 @@ const doctorsSeed = [
         email: "nusrat.jahan@medcare.com",
         phone: "+880 1912-456789",
         roomNumber: "Room 105 - Pediatric Wing",
-        hospital: "Care Guide BD Medical Center",
+        hospital: "Doctor Tracker Medical Center",
         patientCount: 65,
         maxPatients: 400,
         experienceYears: 7,
@@ -56,7 +165,7 @@ const doctorsSeed = [
         email: "rafiqul.islam@medcare.com",
         phone: "+880 1613-567890",
         roomNumber: "Room 402 - Wing C",
-        hospital: "Care Guide BD Medical Center",
+        hospital: "Doctor Tracker Medical Center",
         patientCount: 29,
         maxPatients: 200,
         experienceYears: 15,
@@ -69,7 +178,7 @@ const doctorsSeed = [
         email: "farzana.karim@medcare.com",
         phone: "+880 1714-678901",
         roomNumber: "Room 118 - Clinic A",
-        hospital: "Care Guide BD Medical Center",
+        hospital: "Doctor Tracker Medical Center",
         patientCount: 34,
         maxPatients: 280,
         experienceYears: 6,
@@ -82,7 +191,7 @@ const doctorsSeed = [
         email: "mahmudul.haque@medcare.com",
         phone: "+880 1815-789012",
         roomNumber: "Room 501 - Oncology Tower",
-        hospital: "Care Guide BD Medical Center",
+        hospital: "Doctor Tracker Medical Center",
         patientCount: 22,
         maxPatients: 150,
         experienceYears: 14,
@@ -94,25 +203,32 @@ async function seedDatabase() {
     const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/doctor_tracker";
     try {
         await mongoose_1.default.connect(uri);
-        console.log("[Seeder] Connected to MongoDB for seeding...");
-        // Clear existing data
+        console.log("[Seeder] Connected to MongoDB Atlas for comprehensive seeding...");
+        // Clear existing collections
         await Promise.all([
             User_js_1.User.deleteMany({}),
             Doctor_js_1.Doctor.deleteMany({}),
             Patient_js_1.Patient.deleteMany({}),
+            Department_js_1.Department.deleteMany({}),
+            Appointment_js_1.Appointment.deleteMany({}),
+            Invoice_js_1.Invoice.deleteMany({}),
+            ActivityLog_js_1.ActivityLog.deleteMany({}),
         ]);
-        // Create Admin User
+        // 1. Create Admin User
         const adminUser = await User_js_1.User.create({
-            name: "Dr. Sullivan Robert",
+            name: "Sullivan (Master Admin)",
             email: "admin@medcare.com",
             password: "password123",
             role: "admin",
         });
         console.log(`[Seeder] Created Admin User: ${adminUser.email}`);
-        // Create Doctors
+        // 2. Create Departments
+        const createdDepts = await Department_js_1.Department.insertMany(departmentsSeed);
+        console.log(`[Seeder] Created ${createdDepts.length} Clinical Departments.`);
+        // 3. Create Doctors
         const createdDoctors = await Doctor_js_1.Doctor.insertMany(doctorsSeed);
-        console.log(`[Seeder] Created ${createdDoctors.length} Doctors.`);
-        // Create Sample Patients
+        console.log(`[Seeder] Created ${createdDoctors.length} Attending Doctors.`);
+        // 4. Create Patients
         const patientsSeed = [
             {
                 patientCode: "PT-1042",
@@ -187,7 +303,133 @@ async function seedDatabase() {
         ];
         const createdPatients = await Patient_js_1.Patient.insertMany(patientsSeed);
         console.log(`[Seeder] Created ${createdPatients.length} Patients.`);
-        console.log("[Seeder] Database Seeding Complete!");
+        // 5. Create Appointments
+        const appointmentsSeed = [
+            {
+                appointmentCode: "APT-8821",
+                patientId: createdPatients[0]._id.toString(),
+                patientName: createdPatients[0].name,
+                patientPhone: createdPatients[0].phone,
+                doctorId: createdDoctors[0]._id.toString(),
+                doctorName: createdDoctors[0].name,
+                doctorSpecialty: createdDoctors[0].specialty,
+                roomNumber: createdDoctors[0].roomNumber,
+                date: new Date().toISOString().slice(0, 10),
+                timeSlot: "10:00 AM",
+                type: "Consultation",
+                status: "In-Consultation",
+                notes: "Chest discomfort and ECG review.",
+            },
+            {
+                appointmentCode: "APT-8822",
+                patientId: createdPatients[1]._id.toString(),
+                patientName: createdPatients[1].name,
+                patientPhone: createdPatients[1].phone,
+                doctorId: createdDoctors[0]._id.toString(),
+                doctorName: createdDoctors[0].name,
+                doctorSpecialty: createdDoctors[0].specialty,
+                roomNumber: createdDoctors[0].roomNumber,
+                date: new Date().toISOString().slice(0, 10),
+                timeSlot: "11:30 AM",
+                type: "Follow-up",
+                status: "Confirmed",
+                notes: "Post-stent regular ultrasound follow-up.",
+            },
+            {
+                appointmentCode: "APT-8823",
+                patientId: createdPatients[2]._id.toString(),
+                patientName: createdPatients[2].name,
+                patientPhone: createdPatients[2].phone,
+                doctorId: createdDoctors[1]._id.toString(),
+                doctorName: createdDoctors[1].name,
+                doctorSpecialty: createdDoctors[1].specialty,
+                roomNumber: createdDoctors[1].roomNumber,
+                date: new Date().toISOString().slice(0, 10),
+                timeSlot: "02:15 PM",
+                type: "General Checkup",
+                status: "Confirmed",
+                notes: "Migraine medication evaluation.",
+            },
+        ];
+        const createdAppointments = await Appointment_js_1.Appointment.insertMany(appointmentsSeed);
+        console.log(`[Seeder] Created ${createdAppointments.length} Appointments.`);
+        // 6. Create Invoices
+        const invoicesSeed = [
+            {
+                invoiceCode: "INV-9921",
+                patientId: createdPatients[0]._id.toString(),
+                patientName: createdPatients[0].name,
+                patientCode: createdPatients[0].patientCode,
+                doctorId: createdDoctors[0]._id.toString(),
+                doctorName: createdDoctors[0].name,
+                issueDate: new Date().toISOString().slice(0, 10),
+                dueDate: new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10),
+                status: "Paid",
+                paymentMethod: "Insurance",
+                subtotal: 350.00,
+                tax: 17.50,
+                discount: 0,
+                total: 367.50,
+                items: [
+                    { description: "Cardiology Specialist Consultation", department: "Cardiology", quantity: 1, unitPrice: 150, totalPrice: 150 },
+                    { description: "Echocardiogram Diagnostic (Color Doppler)", department: "Cardiology", quantity: 1, unitPrice: 200, totalPrice: 200 },
+                ],
+            },
+            {
+                invoiceCode: "INV-9920",
+                patientId: createdPatients[1]._id.toString(),
+                patientName: createdPatients[1].name,
+                patientCode: createdPatients[1].patientCode,
+                doctorId: createdDoctors[0]._id.toString(),
+                doctorName: createdDoctors[0].name,
+                issueDate: new Date().toISOString().slice(0, 10),
+                dueDate: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
+                status: "Pending",
+                paymentMethod: "Credit Card",
+                subtotal: 120.00,
+                tax: 6.00,
+                discount: 0,
+                total: 126.00,
+                items: [
+                    { description: "Routine Post-Op Consultation", department: "Cardiology", quantity: 1, unitPrice: 120, totalPrice: 120 },
+                ],
+            },
+        ];
+        const createdInvoices = await Invoice_js_1.Invoice.insertMany(invoicesSeed);
+        console.log(`[Seeder] Created ${createdInvoices.length} Invoices.`);
+        // 7. Create Activity Logs
+        const activityLogsSeed = [
+            {
+                timestamp: "10:45 AM",
+                category: "Clinical",
+                user: "Dr. Sarah Ahmed",
+                action: "Consultation Session Started",
+                ipAddress: "192.168.1.42",
+                status: "Success",
+                details: "Patient Olivia Bennett admitted to Chamber 304.",
+            },
+            {
+                timestamp: "09:30 AM",
+                category: "Billing",
+                user: "Billing Desk 01",
+                action: "Insurance Claim Settled",
+                ipAddress: "192.168.1.10",
+                status: "Success",
+                details: "MetLife pre-authorization approved for INV-9921 ($367.50).",
+            },
+            {
+                timestamp: "08:15 AM",
+                category: "Security",
+                user: "System Daemon",
+                action: "Database Telemetry Synchronized",
+                ipAddress: "127.0.0.1",
+                status: "Info",
+                details: "MongoDB Atlas Cloud replica set synced with zero latency.",
+            },
+        ];
+        const createdLogs = await ActivityLog_js_1.ActivityLog.insertMany(activityLogsSeed);
+        console.log(`[Seeder] Created ${createdLogs.length} Activity Logs.`);
+        console.log("[Seeder] Full Database Seeding Complete into MongoDB Atlas Cloud!");
         await mongoose_1.default.connection.close();
         process.exit(0);
     }
@@ -196,7 +438,6 @@ async function seedDatabase() {
         process.exit(1);
     }
 }
-// Run direct script execution if executed standalone
 if (process.argv[1]?.includes("seeder")) {
     seedDatabase();
 }

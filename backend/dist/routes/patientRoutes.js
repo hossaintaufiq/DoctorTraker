@@ -9,5 +9,6 @@ router.route("/")
 router.route("/:id")
     .get(patientController_js_1.getPatientById)
     .put(patientController_js_1.updatePatient)
+    .patch(patientController_js_1.updatePatient)
     .delete(patientController_js_1.deletePatient);
 exports.default = router;
