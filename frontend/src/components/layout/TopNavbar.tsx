@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
   Search,
-  Sun,
   Mail,
   Bell,
   Settings,
@@ -82,18 +81,8 @@ export function TopNavbar({
         </div>
       </div>
 
-      {/* Right side: Theme toggle, Mail, Bell, Profile with frosted glass styles */}
+      {/* Right side: Mail, Bell, Profile with frosted glass styles (No theme toggle button) */}
       <div className="flex items-center gap-2.5 sm:gap-3.5">
-        {/* Theme Pill Toggle */}
-        <button
-          type="button"
-          onClick={() => showToast("Theme Changed", "Switched appearance preferences.", "info")}
-          className="flex items-center gap-1.5 px-3 py-2 bg-white/60 backdrop-blur-md border border-white/80 rounded-full text-xs text-[#64748B] hover:bg-white/90 hover:text-[#2F65F6] shadow-2xs hover:shadow-xs transition-all"
-        >
-          <Sun className="w-3.5 h-3.5 text-[#F59E0B]" />
-          <ChevronDown className="w-3 h-3 text-[#94A3B8]" />
-        </button>
-
         {/* Mail Button */}
         <button
           type="button"
@@ -126,7 +115,7 @@ export function TopNavbar({
 
           {/* Frosted Glass Notifications Popover */}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/85 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow p-4 z-50 animate-fade-in shadow-2xl">
+            <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/95 popover-shadow p-4 z-50 animate-fade-in shadow-2xl">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-[#101828]">Notifications</h4>
@@ -155,7 +144,7 @@ export function TopNavbar({
                       "py-2.5 px-2.5 rounded-2xl cursor-pointer transition-all flex items-start gap-3 my-1",
                       item.read
                         ? "opacity-75 hover:bg-white/60"
-                        : "bg-white/70 hover:bg-white border border-white/80 shadow-2xs"
+                        : "bg-white/80 hover:bg-white border border-white/90 shadow-2xs"
                     )}
                   >
                     <div
@@ -219,7 +208,7 @@ export function TopNavbar({
 
           {/* Profile Dropdown Glass Card */}
           {showProfileMenu && (
-            <div className="absolute right-0 mt-3 w-56 bg-white/85 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow p-2.5 z-50 animate-fade-in text-xs shadow-2xl">
+            <div className="absolute right-0 mt-3 w-56 bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/95 popover-shadow p-2.5 z-50 animate-fade-in text-xs shadow-2xl">
               <div className="px-3 py-2 border-b border-slate-100 mb-1">
                 <p className="font-bold text-[#101828]">Sullivan</p>
                 <p className="text-[11px] text-[#64748B] truncate">sullivan.admin@medcare.io</p>

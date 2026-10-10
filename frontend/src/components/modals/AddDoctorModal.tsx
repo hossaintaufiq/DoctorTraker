@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, UserPlus, Stethoscope, Mail, Phone, Building, Users } from "lucide-react";
+import { X, UserPlus, Stethoscope, Mail, Phone, Building2, Users } from "lucide-react";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 import { DoctorSpecialty, DoctorStatus } from "@/lib/types";
 
@@ -22,6 +22,7 @@ export function AddDoctorModal() {
 
   const [name, setName] = useState("");
   const [specialty, setSpecialty] = useState<DoctorSpecialty>("Cardiology");
+  const [hospital, setHospital] = useState("Medcare Central Hospital");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
@@ -36,6 +37,7 @@ export function AddDoctorModal() {
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!name.trim()) errs.name = "Doctor name is required";
+    if (!hospital.trim()) errs.hospital = "Hospital affiliation is required";
     if (!email.trim() || !email.includes("@")) errs.email = "Valid work email is required";
     if (!phone.trim()) errs.phone = "Phone number is required";
     if (!roomNumber.trim()) errs.roomNumber = "Consultation room is required";
@@ -50,19 +52,21 @@ export function AddDoctorModal() {
     addDoctor({
       name: name.startsWith("Dr.") ? name : `Dr. ${name}`,
       specialty,
-      email,
-      phone,
-      roomNumber,
+      hospital: hospital.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      roomNumber: roomNumber.trim(),
       maxPatients: parseInt(maxPatients) || 250,
       experienceYears: parseInt(experienceYears) || 5,
       status,
       biography:
         biography.trim() ||
-        `${specialty} specialist with ${experienceYears} years of medical experience in patient diagnostics and treatment.`,
+        `${specialty} specialist with ${experienceYears} years of medical experience at ${hospital.trim()}.`,
     });
 
     // Reset form
     setName("");
+    setHospital("Medcare Central Hospital");
     setEmail("");
     setPhone("");
     setRoomNumber("");
@@ -75,12 +79,12 @@ export function AddDoctorModal() {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#0B132B]/30 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-[#0B132B]/35 backdrop-blur-md transition-opacity"
         onClick={() => setIsAddDoctorModalOpen(false)}
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-xl bg-white/90 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow overflow-hidden z-50 animate-fade-in flex flex-col max-h-[90vh] shadow-2xl">
+      <div className="relative w-full max-w-xl bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow overflow-hidden z-50 animate-fade-in flex flex-col max-h-[90vh] shadow-2xl">
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white/60 backdrop-blur-md">
           <div className="flex items-center gap-3">
@@ -132,6 +136,21 @@ export function AddDoctorModal() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Hospital */}
+            <div className="space-y-1.5 sm:col-span-2">
+              <label className="text-xs font-semibold text-[#101828]">
+                Hospital Affiliation <span className="text-[#EF4444]">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Medcare Central Hospital"
+                value={hospital}
+                onChange={(e) => setHospital(e.target.value)}
+                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+              />
+              {errors.hospital && <p className="text-[11px] text-[#EF4444]">{errors.hospital}</p>}
             </div>
 
             {/* Email */}

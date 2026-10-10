@@ -36,13 +36,17 @@
   --radius-2xl: 28px;
 }
 
+/* Document Stability: Fixed window, internal container scrolling */
+html,
 body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
   background-color: #ECEEF4;
   color: var(--text-primary, #101828);
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
 }
 
 /* Glassmorphism Bokeh Multi-Orb Background */
@@ -74,7 +78,7 @@ body {
     inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95);
 }
 
-/* Universal Card Glassmorphism - Matched to Reference Image */
+/* Universal Card Glassmorphism */
 .card-shadow,
 .glass-card {
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.54) 100%) !important;
@@ -82,7 +86,6 @@ body {
   -webkit-backdrop-filter: blur(26px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.85) !important;
   border-radius: 1.75rem !important;
-  /* 28px */
   box-shadow:
     0 10px 30px -4px rgba(16, 24, 40, 0.04),
     0 2px 6px -1px rgba(16, 24, 40, 0.02),
@@ -171,18 +174,6 @@ body {
     inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 1) !important;
 }
 
-.dark .popover-shadow {
-  background-color: rgba(15, 23, 42, 0.96) !important;
-  backdrop-filter: blur(50px) saturate(220%) !important;
-  -webkit-backdrop-filter: blur(50px) saturate(220%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  color: #F8FAFC !important;
-  box-shadow: 
-    0 24px 60px -8px rgba(0, 0, 0, 0.65), 
-    0 10px 24px -4px rgba(0, 0, 0, 0.4),
-    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.15) !important;
-}
-
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -194,27 +185,24 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.45);
+  background: rgba(148, 163, 184, 0.4);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.75);
+  background: rgba(148, 163, 184, 0.7);
 }
 
-/* Clean animations */
+/* Smooth fade in without layout shifting */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(4px);
   }
-
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.2s ease-out forwards;
+  animation: fadeIn 0.15s ease-out forwards;
 }

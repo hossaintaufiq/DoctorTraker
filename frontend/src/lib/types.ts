@@ -16,6 +16,7 @@ export interface Doctor {
   name: string;
   avatar?: string;
   specialty: DoctorSpecialty;
+  hospital: string;
   email: string;
   phone: string;
   roomNumber: string;
