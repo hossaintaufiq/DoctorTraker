@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Calendar,
@@ -15,62 +15,17 @@ import { cn } from "@/lib/utils";
 
 const DAYS_OF_MONTH = Array.from({ length: 23 }, (_, i) => i + 1);
 
-const APPOINTMENTS_LIST = [
-  {
-    id: "apt-1",
-    patientName: "Jane Cooper",
-    patientAge: 28,
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-    doctorName: "Dr. Eleanor Pena",
-    doctorSpecialty: "Cardiology",
-    time: "11:30 AM",
-    date: "25/12/2026",
-    disease: "Fever",
-  },
-  {
-    id: "apt-2",
-    patientName: "Olivia Bennett",
-    patientAge: 34,
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
-    doctorName: "Dr. Salman Hossain",
-    doctorSpecialty: "Cardiology",
-    time: "09:15 AM",
-    date: "10/10/2026",
-    disease: "Hypertension",
-  },
-  {
-    id: "apt-3",
-    patientName: "Ethan Parker",
-    patientAge: 48,
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-    doctorName: "Dr. Esther Howard",
-    doctorSpecialty: "Cardiology",
-    time: "10:45 AM",
-    date: "10/10/2026",
-    disease: "Migraine",
-  },
-  {
-    id: "apt-4",
-    patientName: "Sophia Martinez",
-    patientAge: 9,
-    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
-    doctorName: "Dr. Theresa Webb",
-    doctorSpecialty: "Cardiology",
-    time: "02:00 PM",
-    date: "10/10/2026",
-    disease: "Checkup",
-  },
-];
-
 export function AppointmentsSection() {
-  const { showToast } = useDoctorTracker();
+  const { appointments, cancelAppointment, showToast } = useDoctorTracker();
   const [selectedDay, setSelectedDay] = useState(13);
-  const [appointments, setAppointments] = useState(APPOINTMENTS_LIST);
 
   const handleDelete = (id: string, name: string) => {
-    setAppointments((prev) => prev.filter((a) => a.id !== id));
-    showToast("Appointment Cancelled", `Booking for ${name} removed.`, "info");
+    cancelAppointment(id);
   };
+
+  const activeAppointments = useMemo(() => {
+    return appointments.filter((a) => a.status !== "Cancelled");
+  }, [appointments]);
 
   return (
     <div className="bg-white rounded-3xl border border-[#EBF0F7] p-6 card-shadow flex flex-col justify-between">
@@ -80,9 +35,11 @@ export function AppointmentsSection() {
           <div className="w-8 h-8 rounded-xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center shrink-0">
             <Calendar className="w-4 h-4" />
           </div>
-          <h3 className="text-base font-bold text-[#101828] tracking-tight">
-            Appointments
-          </h3>
+          <div>
+            <h3 className="text-base font-bold text-[#101828] tracking-tight">
+              Appointments ({activeAppointments.length})
+            </h3>
+          </div>
         </div>
 
         {/* Legend & Diagonal Arrow */}
@@ -101,7 +58,7 @@ export function AppointmentsSection() {
           </div>
 
           <Link
-            href="/patients"
+            href="/appointments"
             className="w-8 h-8 rounded-full bg-[#101828] text-white flex items-center justify-center hover:bg-[#2F65F6] transition-colors shrink-0"
             aria-label="View all appointments"
           >
@@ -156,94 +113,96 @@ export function AppointmentsSection() {
 
       {/* Appointments Table */}
       <div className="overflow-x-auto -mx-6 flex-1 mt-2">
-        <table className="w-full text-left border-collapse min-w-[620px]">
-          <thead>
-            <tr className="text-[11px] font-semibold text-[#94A3B8] uppercase">
-              <th className="py-3 px-6">Patients</th>
-              <th className="py-3 px-4">Assigned Doctor</th>
-              <th className="py-3 px-4">Date</th>
-              <th className="py-3 px-4 text-center">Diseases</th>
-              <th className="py-3 px-6 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#F1F5F9] text-xs">
-            {appointments.map((apt) => (
-              <tr key={apt.id} className="hover:bg-[#F8FAFC] transition-colors group">
-                {/* Patient */}
-                <td className="py-3 px-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F4F7FB] border border-[#EBF0F7] shrink-0">
-                      <img
-                        src={apt.avatar}
-                        alt={apt.patientName}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <span className="font-bold text-[#101828] block">
-                        {apt.patientName}
-                      </span>
-                      <span className="text-[11px] text-[#94A3B8]">
-                        Age - {apt.patientAge}
-                      </span>
-                    </div>
-                  </div>
-                </td>
-
-                {/* Assigned Doctor */}
-                <td className="py-3 px-4">
-                  <span className="font-semibold text-[#101828] block">
-                    {apt.doctorName}
-                  </span>
-                  <span className="text-[11px] text-[#94A3B8]">
-                    {apt.doctorSpecialty}
-                  </span>
-                </td>
-
-                {/* Date / Time */}
-                <td className="py-3 px-4">
-                  <span className="font-semibold text-[#101828] block">
-                    {apt.time}
-                  </span>
-                  <span className="text-[11px] text-[#94A3B8]">
-                    {apt.date}
-                  </span>
-                </td>
-
-                {/* Diseases / Condition Pill */}
-                <td className="py-3 px-4 text-center">
-                  <span className="px-4 py-1 rounded-full text-xs font-medium text-[#1E293B] border border-[#EBF0F7] bg-white inline-block">
-                    {apt.disease}
-                  </span>
-                </td>
-
-                {/* Actions */}
-                <td className="py-3 px-6 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        showToast("Medical Notes", `Opened chart for ${apt.patientName}.`, "info")
-                      }
-                      className="p-1.5 text-[#94A3B8] hover:text-[#2F65F6] hover:bg-[#EBF3FE] rounded-lg transition-colors"
-                      title="View Notes"
-                    >
-                      <FileText className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(apt.id, apt.patientName)}
-                      className="p-1.5 text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors"
-                      title="Cancel Appointment"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
+        {activeAppointments.length === 0 ? (
+          <div className="py-12 text-center text-xs text-[#64748B]">
+            No appointments scheduled yet. Book an appointment from the directory.
+          </div>
+        ) : (
+          <table className="w-full text-left border-collapse min-w-[620px]">
+            <thead>
+              <tr className="text-[11px] font-semibold text-[#94A3B8] uppercase">
+                <th className="py-3 px-6">Patients</th>
+                <th className="py-3 px-4">Assigned Doctor</th>
+                <th className="py-3 px-4">Date / Slot</th>
+                <th className="py-3 px-4 text-center">Condition</th>
+                <th className="py-3 px-6 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[#F1F5F9] text-xs">
+              {activeAppointments.slice(0, 5).map((apt) => (
+                <tr key={apt.id} className="hover:bg-[#F8FAFC] transition-colors group">
+                  {/* Patient */}
+                  <td className="py-3 px-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full overflow-hidden bg-[#EBF3FE] text-[#2F65F6] border border-[#EBF0F7] shrink-0 flex items-center justify-center font-bold text-xs">
+                        {apt.patientName.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <span className="font-bold text-[#101828] block">
+                          {apt.patientName}
+                        </span>
+                        <span className="text-[11px] text-[#94A3B8]">
+                          {apt.patientPhone || "+1 (555) 019-2834"}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Assigned Doctor */}
+                  <td className="py-3 px-4">
+                    <span className="font-semibold text-[#101828] block">
+                      {apt.doctorName}
+                    </span>
+                    <span className="text-[11px] text-[#94A3B8]">
+                      {apt.doctorSpecialty}
+                    </span>
+                  </td>
+
+                  {/* Date / Time */}
+                  <td className="py-3 px-4">
+                    <span className="font-semibold text-[#101828] block">
+                      {apt.timeSlot || "10:00 AM"}
+                    </span>
+                    <span className="text-[11px] text-[#94A3B8]">
+                      {apt.date}
+                    </span>
+                  </td>
+
+                  {/* Type / Reason Pill */}
+                  <td className="py-3 px-4 text-center">
+                    <span className="px-4 py-1 rounded-full text-xs font-medium text-[#1E293B] border border-[#EBF0F7] bg-white inline-block">
+                      {apt.type || "Consultation"}
+                    </span>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="py-3 px-6 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          showToast("Medical Notes", `Clinical notes for ${apt.patientName}: ${apt.notes || "Regular checkup"}`, "info")
+                        }
+                        className="p-1.5 text-[#94A3B8] hover:text-[#2F65F6] hover:bg-[#EBF3FE] rounded-lg transition-colors cursor-pointer"
+                        title="View Notes"
+                      >
+                        <FileText className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(apt.id, apt.patientName)}
+                        className="p-1.5 text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors cursor-pointer"
+                        title="Cancel Appointment"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

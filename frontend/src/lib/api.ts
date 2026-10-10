@@ -149,6 +149,120 @@ export const api = {
       }),
   },
 
+  // Departments
+  departments: {
+    getAll: (params?: {
+      search?: string;
+      floor?: string;
+      emergencyOnly?: boolean;
+      load?: string;
+    }) => {
+      const query = new URLSearchParams();
+      if (params?.search) query.set("search", params.search);
+      if (params?.floor && params.floor !== "All") query.set("floor", params.floor);
+      if (params?.emergencyOnly) query.set("emergencyOnly", "true");
+      if (params?.load && params.load !== "All") query.set("load", params.load);
+      return request(`/departments?${query.toString()}`);
+    },
+    getById: (id: string) => request(`/departments/${id}`),
+    create: (data: any) =>
+      request("/departments", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+  },
+
+  // Appointments
+  appointments: {
+    getAll: (params?: {
+      search?: string;
+      status?: string;
+      doctorId?: string;
+      date?: string;
+      page?: number;
+      limit?: number;
+    }) => {
+      const query = new URLSearchParams();
+      if (params?.search) query.set("search", params.search);
+      if (params?.status && params.status !== "All") query.set("status", params.status);
+      if (params?.doctorId && params.doctorId !== "All") query.set("doctorId", params.doctorId);
+      if (params?.date) query.set("date", params.date);
+      if (params?.page) query.set("page", params.page.toString());
+      if (params?.limit) query.set("limit", params.limit.toString());
+      return request(`/appointments?${query.toString()}`);
+    },
+    create: (data: any) =>
+      request("/appointments", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    updateStatus: (id: string, status: string) =>
+      request(`/appointments/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      }),
+    cancel: (id: string) =>
+      request(`/appointments/${id}`, {
+        method: "DELETE",
+      }),
+  },
+
+  // Invoices & Billing
+  invoices: {
+    getAll: (params?: {
+      search?: string;
+      status?: string;
+      department?: string;
+      page?: number;
+      limit?: number;
+    }) => {
+      const query = new URLSearchParams();
+      if (params?.search) query.set("search", params.search);
+      if (params?.status && params.status !== "All") query.set("status", params.status);
+      if (params?.department && params.department !== "All") query.set("department", params.department);
+      if (params?.page) query.set("page", params.page.toString());
+      if (params?.limit) query.set("limit", params.limit.toString());
+      return request(`/invoices?${query.toString()}`);
+    },
+    create: (data: any) =>
+      request("/invoices", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    markPaid: (id: string) =>
+      request(`/invoices/${id}/pay`, {
+        method: "PATCH",
+      }),
+  },
+
+  // Activity Logs
+  logs: {
+    getAll: (params?: {
+      category?: string;
+      status?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    }) => {
+      const query = new URLSearchParams();
+      if (params?.category && params.category !== "All") query.set("category", params.category);
+      if (params?.status && params.status !== "All") query.set("status", params.status);
+      if (params?.search) query.set("search", params.search);
+      if (params?.page) query.set("page", params.page.toString());
+      if (params?.limit) query.set("limit", params.limit.toString());
+      return request(`/logs?${query.toString()}`);
+    },
+    create: (data: any) =>
+      request("/logs", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    clear: () =>
+      request("/logs", {
+        method: "DELETE",
+      }),
+  },
+
   // Analytics & Aggregates
   analytics: {
     getDashboard: () => request("/analytics/dashboard"),

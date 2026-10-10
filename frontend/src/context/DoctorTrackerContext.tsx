@@ -213,9 +213,20 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
   // Initial backend sync
   const refreshData = async () => {
     try {
-      const [doctorsRes, patientsRes] = await Promise.all([
-        api.doctors.getAll(),
-        api.patients.getAll(),
+      const [
+        doctorsRes,
+        patientsRes,
+        deptRes,
+        aptRes,
+        invRes,
+        logsRes,
+      ] = await Promise.all([
+        api.doctors.getAll({ limit: 100 }),
+        api.patients.getAll({ limit: 100 }),
+        api.departments.getAll(),
+        api.appointments.getAll({ limit: 100 }),
+        api.invoices.getAll({ limit: 100 }),
+        api.logs.getAll({ limit: 50 }),
       ]);
 
       if (doctorsRes.success && Array.isArray(doctorsRes.data) && doctorsRes.data.length > 0) {
@@ -223,7 +234,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
           id: d._id || d.id,
           name: d.name,
           specialty: d.specialty,
-          hospital: d.hospital || "Medcare Central Hospital",
+          hospital: d.hospital || "Care Guide BD Medical Center",
           email: d.email,
           phone: d.phone,
           roomNumber: d.roomNumber,
@@ -258,6 +269,84 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         }));
         setPatients(mappedPatients);
       }
+
+      if (deptRes.success && Array.isArray(deptRes.data) && deptRes.data.length > 0) {
+        const mappedDepts: DepartmentItem[] = deptRes.data.map((dp: any) => ({
+          id: dp._id || dp.id,
+          name: dp.name,
+          code: dp.code,
+          floor: dp.floor || "Floor 3",
+          headName: dp.headName || "Dr. Sarah Ahmed",
+          headDoctorId: dp.headDoctorId,
+          specialistsCount: dp.specialistsCount || dp.doctorsCount || 6,
+          activeCasesCount: dp.activeCasesCount || dp.patientsCount || 45,
+          totalBeds: dp.totalBeds || 40,
+          occupiedBeds: dp.occupiedBeds || 30,
+          occupancyPercentage: dp.occupancyPercentage || 75,
+          emergencyReady: dp.emergencyReady ?? true,
+          topServices: dp.topServices || ["Consultation", "Diagnostics"],
+          equipmentSummary: dp.equipmentSummary || "Standard Clinical Equipment",
+          rating: dp.rating || 4.9,
+          colorTheme: dp.colorTheme || "#2F65F6",
+        }));
+        setDepartments(mappedDepts);
+      }
+
+      if (aptRes.success && Array.isArray(aptRes.data) && aptRes.data.length > 0) {
+        const mappedApts: AppointmentItem[] = aptRes.data.map((a: any) => ({
+          id: a._id || a.id,
+          appointmentCode: a.appointmentCode || `APT-${Math.floor(100 + Math.random() * 900)}`,
+          patientId: a.patientId || (a.patient?._id || "pat-1"),
+          patientName: a.patientName,
+          patientPhone: a.patientPhone || "+1 (555) 019-2834",
+          doctorId: a.doctorId || (a.doctor?._id || "doc-1"),
+          doctorName: a.doctorName,
+          doctorSpecialty: a.doctorSpecialty || "General Medicine",
+          date: a.date,
+          timeSlot: a.timeSlot,
+          roomNumber: a.roomNumber || "Chamber 201",
+          type: a.type || "Consultation",
+          status: a.status || "Confirmed",
+          notes: a.notes,
+        }));
+        setAppointments(mappedApts);
+      }
+
+      if (invRes.success && Array.isArray(invRes.data) && invRes.data.length > 0) {
+        const mappedInvs: InvoiceItem[] = invRes.data.map((inv: any) => ({
+          id: inv._id || inv.id,
+          invoiceCode: inv.invoiceCode || `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+          patientId: inv.patientId || "pat-1",
+          patientName: inv.patientName,
+          patientCode: inv.patientCode || `PT-1001`,
+          doctorId: inv.doctorId || "doc-1",
+          doctorName: inv.doctorName,
+          issueDate: inv.issueDate ? inv.issueDate.split("T")[0] : new Date().toISOString().split("T")[0],
+          dueDate: inv.dueDate ? inv.dueDate.split("T")[0] : new Date().toISOString().split("T")[0],
+          items: inv.items || [],
+          subtotal: inv.subtotal || 0,
+          discount: inv.discount || 0,
+          tax: inv.tax || 0,
+          total: inv.total || 0,
+          status: inv.status || "Pending",
+          paymentMethod: inv.paymentMethod || "Credit Card",
+        }));
+        setInvoices(mappedInvs);
+      }
+
+      if (logsRes.success && Array.isArray(logsRes.data) && logsRes.data.length > 0) {
+        const mappedLogs: ActivityLogItem[] = logsRes.data.map((l: any) => ({
+          id: l._id || l.id,
+          timestamp: l.createdAt ? l.createdAt.replace("T", " ").substring(0, 19) : l.timestamp,
+          category: l.category,
+          user: l.user || "Sullivan (Admin)",
+          action: l.action,
+          ipAddress: l.ipAddress || "192.168.1.10",
+          status: l.status || "Success",
+          details: l.details,
+        }));
+        setActivityLogs(mappedLogs);
+      }
     } catch {
       // Graceful fallback
     }
@@ -267,81 +356,147 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     refreshData();
   }, []);
 
+  // Dynamically synchronize metrics based on live database state
+  useEffect(() => {
+    setMetrics([
+      {
+        id: "total-doctors",
+        label: "Total Doctors",
+        value: doctors.length.toString(),
+        numericValue: doctors.length,
+        iconName: "Stethoscope",
+        trendPercentage: 12.5,
+        trendDirection: "up",
+        supportingText: "registered specialists",
+      },
+      {
+        id: "total-patients",
+        label: "Total Patients",
+        value: patients.length.toLocaleString(),
+        numericValue: patients.length,
+        iconName: "Users",
+        trendPercentage: 8.2,
+        trendDirection: "up",
+        supportingText: "active clinical records",
+      },
+      {
+        id: "active-doctors",
+        label: "Active Doctors",
+        value: doctors.filter((d) => d.status === "Active").length.toString(),
+        numericValue: doctors.filter((d) => d.status === "Active").length,
+        iconName: "UserCheck",
+        trendPercentage: 4.3,
+        trendDirection: "up",
+        supportingText: "currently on duty",
+      },
+      {
+        id: "new-patients",
+        label: "Appointments",
+        value: appointments.length.toString(),
+        numericValue: appointments.length,
+        iconName: "UserPlus",
+        trendPercentage: 12.8,
+        trendDirection: "up",
+        supportingText: "scheduled consultations",
+      },
+    ]);
+  }, [doctors, patients, appointments]);
+
   // DOCTOR OPERATIONS
   const addDoctor = async (data: Omit<Doctor, "id" | "patientCount" | "rating" | "joinedDate">) => {
+    const tempId = `doc-${Date.now()}`;
     const newDoc: Doctor = {
       ...data,
-      id: `doc-${Date.now()}`,
+      id: tempId,
       patientCount: 0,
       rating: 5.0,
       joinedDate: new Date().toISOString().split("T")[0],
     };
     setDoctors((prev) => [newDoc, ...prev]);
 
-    setMetrics((prev) =>
-      prev.map((m) => {
-        if (m.id === "total-doctors") {
-          const newVal = m.numericValue + 1;
-          return { ...m, numericValue: newVal, value: newVal.toString() };
-        }
-        if (m.id === "active-doctors" && data.status === "Active") {
-          const newVal = m.numericValue + 1;
-          return { ...m, numericValue: newVal, value: newVal.toString() };
-        }
-        return m;
-      })
-    );
-
     addActivityLog("Staff", `Registered new specialist ${newDoc.name} (${newDoc.specialty})`, `Hospital: ${newDoc.hospital}`);
-    api.doctors.create(data).catch(() => {});
+    try {
+      const res = await api.doctors.create(data);
+      if (res.success && res.data) {
+        const docData = res.data as any;
+        setDoctors((prev) =>
+          prev.map((d) => (d.id === tempId ? { ...d, id: docData._id || d.id } : d))
+        );
+      }
+    } catch {
+      // offline fallback
+    }
     showToast("Doctor Created", `${newDoc.name} has been added.`);
   };
 
   const updateDoctor = async (id: string, data: Partial<Doctor>) => {
+    // 1. Update doctor in state
     setDoctors((prev) =>
       prev.map((d) => (d.id === id ? { ...d, ...data } : d))
     );
 
+    // 2. Propagate doctor changes across all patients
     if (data.name) {
       setPatients((prev) =>
-        prev.map((p) => (p.assignedDoctorId === id ? { ...p, assignedDoctorName: data.name! } : p))
+        prev.map((p) =>
+          p.assignedDoctorId === id || p.assignedDoctorName === (doctors.find((d) => d.id === id)?.name)
+            ? { ...p, assignedDoctorName: data.name! }
+            : p
+        )
       );
     }
 
-    addActivityLog("Staff", `Updated profile for Doctor ID #${id}`, JSON.stringify(data));
-    api.doctors.update(id, data).catch(() => {});
-    showToast("Doctor Updated", "Doctor information updated successfully.", "success");
+    // 3. Propagate doctor changes across all appointments
+    setAppointments((prev) =>
+      prev.map((apt) => {
+        if (apt.doctorId === id || apt.doctorName === (doctors.find((d) => d.id === id)?.name)) {
+          return {
+            ...apt,
+            ...(data.name ? { doctorName: data.name } : {}),
+            ...(data.specialty ? { doctorSpecialty: data.specialty } : {}),
+            ...(data.roomNumber ? { roomNumber: data.roomNumber } : {}),
+          };
+        }
+        return apt;
+      })
+    );
+
+    // 4. Propagate to backend MongoDB
+    try {
+      await api.doctors.update(id, data);
+    } catch {
+      // offline fallback
+    }
+
+    addActivityLog("Staff", `Updated physician record ${data.name || id}`, `Specialty: ${data.specialty || "Unchanged"}, Status: ${data.status || "Unchanged"}`);
+    showToast("Doctor Updated", "Doctor information updated across all systems.", "success");
   };
 
   const deleteDoctor = async (id: string) => {
     const docToDelete = doctors.find((d) => d.id === id);
     setDoctors((prev) => prev.filter((d) => d.id !== id));
 
-    setMetrics((prev) =>
-      prev.map((m) => {
-        if (m.id === "total-doctors") {
-          const newVal = Math.max(0, m.numericValue - 1);
-          return { ...m, numericValue: newVal, value: newVal.toString() };
-        }
-        return m;
-      })
-    );
-
     if (docToDelete) {
       addActivityLog("Staff", `Removed physician ${docToDelete.name} from directory`, undefined, "Warning");
       showToast("Doctor Removed", `${docToDelete.name} was removed from the roster.`, "info");
     }
-    api.doctors.delete(id).catch(() => {});
+
+    try {
+      await api.doctors.delete(id);
+    } catch {
+      // offline fallback
+    }
   };
 
   // PATIENT OPERATIONS
   const addPatient = async (
     data: Omit<Patient, "id" | "patientCode" | "registrationDate" | "lastVisit">
   ) => {
-    const codeNumber = 1043 + patients.length;
+    const codeNumber = 1000 + patients.length + 1;
+    const tempId = `pat-${Date.now()}`;
     const newPatient: Patient = {
       ...data,
-      id: `pat-${Date.now()}`,
+      id: tempId,
       patientCode: `PT-${codeNumber}`,
       registrationDate: new Date().toISOString().split("T")[0],
       lastVisit: new Date().toISOString().split("T")[0],
@@ -351,28 +506,29 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     setDoctors((prev) =>
       prev.map((d) => {
         if (d.id === data.assignedDoctorId || d.name === data.assignedDoctorName) {
-          return { ...d, patientCount: d.patientCount + 1 };
+          return { ...d, patientCount: (d.patientCount || 0) + 1 };
         }
         return d;
       })
     );
 
-    setMetrics((prev) =>
-      prev.map((m) => {
-        if (m.id === "total-patients") {
-          const newVal = m.numericValue + 1;
-          return { ...m, numericValue: newVal, value: newVal.toLocaleString() };
-        }
-        if (m.id === "new-patients") {
-          const newVal = m.numericValue + 1;
-          return { ...m, numericValue: newVal, value: newVal.toLocaleString() };
-        }
-        return m;
-      })
-    );
-
     addActivityLog("Patient", `Registered patient ${newPatient.name} (${newPatient.patientCode})`, `Assigned to ${newPatient.assignedDoctorName}`);
-    api.patients.create(data).catch(() => {});
+
+    try {
+      const res = await api.patients.create({
+        ...data,
+        assignedDoctor: data.assignedDoctorId,
+      });
+      if (res.success && res.data) {
+        const patData = res.data as any;
+        setPatients((prev) =>
+          prev.map((p) => (p.id === tempId ? { ...p, id: patData._id || p.id, patientCode: patData.patientCode || p.patientCode } : p))
+        );
+      }
+    } catch {
+      // offline fallback
+    }
+
     showToast("Patient Registered", `${newPatient.name} has been registered.`);
   };
 
@@ -399,7 +555,16 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     );
 
     addActivityLog("Patient", `Updated clinical chart for ${existing.name} (${existing.patientCode})`, undefined);
-    api.patients.update(id, data).catch(() => {});
+
+    try {
+      await api.patients.update(id, {
+        ...data,
+        ...(data.assignedDoctorId ? { assignedDoctor: data.assignedDoctorId } : {}),
+      });
+    } catch {
+      // offline fallback
+    }
+
     showToast("Patient Updated", "Patient record updated successfully.", "success");
   };
 
@@ -415,70 +580,115 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         })
       );
 
-      setMetrics((prev) =>
-        prev.map((m) => {
-          if (m.id === "total-patients") {
-            const newVal = Math.max(0, m.numericValue - 1);
-            return { ...m, numericValue: newVal, value: newVal.toLocaleString() };
-          }
-          return m;
-        })
-      );
       addActivityLog("Patient", `Deleted patient record ${patientToDelete.name} (${patientToDelete.patientCode})`, undefined, "Warning");
       showToast("Patient Removed", `${patientToDelete.name} was removed.`, "info");
     }
 
     setPatients((prev) => prev.filter((p) => p.id !== id));
-    api.patients.delete(id).catch(() => {});
+
+    try {
+      await api.patients.delete(id);
+    } catch {
+      // offline fallback
+    }
   };
 
   // APPOINTMENT OPERATIONS
-  const addAppointment = (data: Omit<AppointmentItem, "id" | "appointmentCode">) => {
+  const addAppointment = async (data: Omit<AppointmentItem, "id" | "appointmentCode">) => {
+    const tempId = `apt-${Date.now()}`;
     const newApt: AppointmentItem = {
       ...data,
-      id: `apt-${Date.now()}`,
+      id: tempId,
       appointmentCode: `APT-2026-${Math.floor(100 + Math.random() * 900)}`,
     };
     setAppointments((prev) => [newApt, ...prev]);
     addActivityLog("Clinical", `Scheduled appointment for ${data.patientName} with ${data.doctorName}`, `${data.date} at ${data.timeSlot}`);
+
+    try {
+      const res = await api.appointments.create(data);
+      if (res.success && res.data) {
+        const aptData = res.data as any;
+        setAppointments((prev) =>
+          prev.map((a) => (a.id === tempId ? { ...a, id: aptData._id || a.id, appointmentCode: aptData.appointmentCode || a.appointmentCode } : a))
+        );
+      }
+    } catch {
+      // offline fallback
+    }
+
     showToast("Appointment Booked", `Confirmed for ${data.patientName} on ${data.date}.`);
   };
 
-  const updateAppointmentStatus = (id: string, status: AppointmentItem["status"]) => {
+  const updateAppointmentStatus = async (id: string, status: AppointmentItem["status"]) => {
     setAppointments((prev) =>
       prev.map((apt) => (apt.id === id ? { ...apt, status } : apt))
     );
     addActivityLog("Clinical", `Appointment ${id} status updated to ${status}`);
+
+    try {
+      await api.appointments.updateStatus(id, status);
+    } catch {
+      // offline fallback
+    }
+
     showToast("Status Updated", `Appointment marked as ${status}.`, "info");
   };
 
-  const cancelAppointment = (id: string) => {
+  const cancelAppointment = async (id: string) => {
     setAppointments((prev) =>
       prev.map((apt) => (apt.id === id ? { ...apt, status: "Cancelled" } : apt))
     );
     addActivityLog("Clinical", `Cancelled appointment ID #${id}`, undefined, "Warning");
+
+    try {
+      await api.appointments.cancel(id);
+    } catch {
+      // offline fallback
+    }
+
     showToast("Appointment Cancelled", "Consultation slot was cancelled.", "warning");
   };
 
   // INVOICE OPERATIONS
-  const addInvoice = (data: Omit<InvoiceItem, "id" | "invoiceCode" | "issueDate">) => {
+  const addInvoice = async (data: Omit<InvoiceItem, "id" | "invoiceCode" | "issueDate">) => {
     const today = new Date().toISOString().split("T")[0];
+    const tempId = `inv-${Date.now()}`;
     const newInv: InvoiceItem = {
       ...data,
-      id: `inv-${Date.now()}`,
+      id: tempId,
       invoiceCode: `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
       issueDate: today,
     };
     setInvoices((prev) => [newInv, ...prev]);
     addActivityLog("Billing", `Generated invoice ${newInv.invoiceCode} for ${newInv.patientName}`, `Amount: $${newInv.total.toFixed(2)}`);
+
+    try {
+      const res = await api.invoices.create(data);
+      if (res.success && res.data) {
+        const invData = res.data as any;
+        setInvoices((prev) =>
+          prev.map((i) => (i.id === tempId ? { ...i, id: invData._id || i.id, invoiceCode: invData.invoiceCode || i.invoiceCode } : i))
+        );
+      }
+    } catch {
+      // offline fallback
+    }
+
     showToast("Invoice Generated", `Invoice ${newInv.invoiceCode} created.`);
   };
 
-  const markInvoicePaid = (id: string) => {
+  const markInvoicePaid = async (id: string) => {
     setInvoices((prev) =>
       prev.map((inv) => (inv.id === id ? { ...inv, status: "Paid" } : inv))
     );
     addActivityLog("Billing", `Marked invoice ${id} as settled / Paid in full`);
+
+    try {
+      await api.invoices.markPaid(id);
+    } catch {
+      // offline fallback
+    }
+
     showToast("Payment Received", `Invoice marked as Paid.`, "success");
   };
 
