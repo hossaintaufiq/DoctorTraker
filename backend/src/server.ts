@@ -12,6 +12,21 @@ const app: Express = express();
 const PORT = process.env.PORT || 5000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 
+// Disable ETag caching to prevent 304 Not Modified responses on dynamic database data
+app.set("etag", false);
+app.disable("etag");
+
+// Strip conditional headers and enforce no-cache so all responses are fresh 200 OK
+app.use((req, res, next) => {
+  delete req.headers["if-none-match"];
+  delete req.headers["if-modified-since"];
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("Surrogate-Control", "no-store");
+  next();
+});
+
 // Connect to MongoDB
 connectDB();
 
@@ -21,7 +36,7 @@ app.use(
     origin: [CORS_ORIGIN, "http://localhost:3000", "http://127.0.0.1:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "Pragma", "Expires"],
   })
 );
 
@@ -32,14 +47,37 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-// API Routes
+// Root Index Route
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    service: "Doctor Tracker Medical REST API Server",
+    version: "2.4.0",
+    status: "online",
+    database: "MongoDB Atlas Cloud",
+    frontendUrl: CORS_ORIGIN,
+    documentation: {
+      health: "/api/health",
+      doctors: "/api/doctors",
+      patients: "/api/patients",
+      departments: "/api/departments",
+      appointments: "/api/appointments",
+      invoices: "/api/invoices",
+      logs: "/api/logs",
+      analytics: "/api/analytics/dashboard",
+    },
+    message: "Doctor Tracker REST API is running. Access frontend portal at " + CORS_ORIGIN,
+  });
+});
+
+// Mount Main API Routes
 app.use("/api", routes);
 
 // 404 Handler
 app.use("*", (req, res) => {
   res.status(404).json({
     success: false,
-    message: `The requested endpoint ${req.originalUrl} does not exist on Doctor Tracker API.`,
+    message: `The requested endpoint ${req.originalUrl} does not exist on Doctor Tracker API. Use /api routes.`,
   });
 });
 

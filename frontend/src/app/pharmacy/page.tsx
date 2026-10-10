@@ -343,7 +343,7 @@ export default function PharmacyPage() {
         {/* Add Medication Modal */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 w-full max-w-lg space-y-4">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl p-4 sm:p-6 w-full max-w-lg space-y-4 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Pill className="w-5 h-5 text-[#2F65F6]" />

@@ -17,6 +17,7 @@ import {
   Sparkles,
   Clock,
   User,
+  ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ export function MessagesModal() {
   const [inputMessage, setInputMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRole, setFilterRole] = useState<"All" | "Doctor" | "Patient">("All");
+  const [mobileView, setMobileView] = useState<"list" | "chat">("list");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeConversation = conversations.find(
@@ -125,7 +127,10 @@ export function MessagesModal() {
         {/* Content Body: Left sidebar (conversations) + Right chat area */}
         <div className="flex-1 flex overflow-hidden">
           {/* Conversation List Sidebar */}
-          <div className="w-80 sm:w-88 border-r border-slate-100 flex flex-col bg-slate-50/50">
+          <div className={cn(
+            "w-full sm:w-80 md:w-88 border-r border-slate-100 flex flex-col bg-slate-50/50",
+            mobileView === "chat" ? "hidden sm:flex" : "flex"
+          )}>
             {/* Search and Filters */}
             <div className="p-3.5 border-b border-slate-100 space-y-2.5">
               <div className="relative">
@@ -165,7 +170,10 @@ export function MessagesModal() {
                 return (
                   <div
                     key={conv.id}
-                    onClick={() => setActiveConversationId(conv.id)}
+                    onClick={() => {
+                      setActiveConversationId(conv.id);
+                      setMobileView("chat");
+                    }}
                     className={cn(
                       "p-3 rounded-2xl cursor-pointer transition-all flex items-start gap-3",
                       isSelected
@@ -222,12 +230,23 @@ export function MessagesModal() {
 
           {/* Active Chat Conversation Area */}
           {activeConversation ? (
-            <div className="flex-1 flex flex-col bg-white">
+            <div className={cn(
+              "flex-1 flex flex-col bg-white",
+              mobileView === "list" ? "hidden sm:flex" : "flex"
+            )}>
               {/* Active Header */}
-              <div className="h-16 px-6 border-b border-slate-100 flex items-center justify-between bg-white/90">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/10 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-slate-100">
+              <div className="h-16 px-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white/90">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => setMobileView("list")}
+                    className="sm:hidden p-1.5 -ml-1 text-slate-600 hover:text-slate-900 rounded-full hover:bg-slate-100"
+                    aria-label="Back to contacts"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <div className="relative shrink-0">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/10 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-slate-100">
                       {activeConversation.participantName
                         .split(" ")
                         .map((n) => n[0])
@@ -235,17 +254,17 @@ export function MessagesModal() {
                         .join("")}
                     </div>
                     {activeConversation.online && (
-                      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10B981] rounded-full ring-2 ring-white" />
+                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-[#10B981] rounded-full ring-2 ring-white" />
                     )}
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-[#101828] flex items-center gap-2">
-                      {activeConversation.participantName}
-                      <span className="text-[10px] font-normal px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                  <div className="min-w-0">
+                    <h3 className="text-xs sm:text-sm font-bold text-[#101828] flex items-center gap-1.5 truncate">
+                      <span className="truncate">{activeConversation.participantName}</span>
+                      <span className="text-[9px] sm:text-[10px] font-normal px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">
                         {activeConversation.participantRole}
                       </span>
                     </h3>
-                    <p className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <p className="text-[10px] sm:text-[11px] text-slate-400 flex items-center gap-1">
                       {activeConversation.online ? (
                         <>
                           <Circle className="w-2 h-2 fill-[#10B981] text-[#10B981]" />

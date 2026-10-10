@@ -180,7 +180,7 @@ export async function createDoctor(
       email,
       phone,
       roomNumber,
-      hospital: hospital || "Care Guide BD Medical Center",
+      hospital: hospital || "Doctor Tracker Medical Center",
       maxPatients: maxPatients || 300,
       experienceYears: experienceYears || 5,
       status: status || "Active",

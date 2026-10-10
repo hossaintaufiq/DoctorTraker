@@ -126,28 +126,28 @@ export function ActivityLogsModal() {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
       <div className="bg-white/95 backdrop-blur-3xl w-full max-w-5xl h-[88vh] max-h-[760px] rounded-3xl border border-white/90 shadow-2xl flex flex-col overflow-hidden">
         {/* Modal Header */}
-        <div className="h-16 px-6 border-b border-slate-100 flex items-center justify-between bg-white/80">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center">
+        <div className="p-4 sm:px-6 sm:py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/80">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-bold text-[#101828] flex items-center gap-2">
-                System Security & Activity Audit Log
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-bold text-[#101828] flex items-center gap-2 flex-wrap">
+                <span>System Security & Audit Log</span>
                 <span className="px-2 py-0.5 text-[10px] font-semibold bg-[#EFF6FF] text-[#2F65F6] rounded-full border border-[#DBEAFE]">
                   {filteredLogs.length} Records
                 </span>
               </h2>
-              <p className="text-xs text-[#64748B]">
-                Immutable compliance tracking for clinical records, patient access, billing actions, and admin logins.
+              <p className="text-[11px] sm:text-xs text-[#64748B] truncate">
+                Immutable compliance tracking for clinical records, patient access, billing, and logins.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
             <button
               onClick={exportLogsCSV}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-[#2F65F6] bg-[#2F65F6]/10 hover:bg-[#2F65F6]/20 rounded-full transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#2F65F6] bg-[#2F65F6]/10 hover:bg-[#2F65F6]/20 rounded-full transition-all"
               title="Export CSV"
             >
               <Download className="w-3.5 h-3.5" />
@@ -160,7 +160,7 @@ export function ActivityLogsModal() {
               title="Clear Logs"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Clear</span>
+              <span>Clear</span>
             </button>
 
             <button
@@ -174,11 +174,11 @@ export function ActivityLogsModal() {
         </div>
 
         {/* Filter Toolbar */}
-        <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:w-80">
+        <div className="p-3 sm:p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+          <div className="relative w-full sm:w-72">
             <input
               type="text"
-              placeholder="Search action, user, or IP address..."
+              placeholder="Search action, user, or IP..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white border border-slate-200 rounded-full pl-8 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#2F65F6]"
@@ -186,16 +186,16 @@ export function ActivityLogsModal() {
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
             {/* Category Filter */}
-            <div className="flex items-center gap-1 bg-white p-1 rounded-full border border-slate-200">
+            <div className="flex items-center gap-1 bg-white p-1 rounded-full border border-slate-200 shrink-0">
               {["All", "Clinical", "Billing", "Staff", "Security"].map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
                   className={cn(
-                    "px-3 py-1 text-[11px] font-semibold rounded-full transition-all",
+                    "px-2.5 sm:px-3 py-1 text-[10px] sm:text-[11px] font-semibold rounded-full transition-all shrink-0",
                     selectedCategory === cat
                       ? "bg-[#2F65F6] text-white shadow-xs"
                       : "text-slate-600 hover:bg-slate-100"
@@ -210,7 +210,7 @@ export function ActivityLogsModal() {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="bg-white border border-slate-200 text-slate-700 text-xs rounded-full px-3 py-1.5 focus:outline-none focus:border-[#2F65F6]"
+              className="bg-white border border-slate-200 text-slate-700 text-xs rounded-full px-3 py-1.5 focus:outline-none focus:border-[#2F65F6] shrink-0"
             >
               <option value="All">All Statuses</option>
               <option value="Success">Success</option>
@@ -222,38 +222,38 @@ export function ActivityLogsModal() {
         </div>
 
         {/* Logs Table */}
-        <div className="flex-1 overflow-auto p-4 sm:p-6">
-          <div className="rounded-2xl border border-slate-100 overflow-hidden bg-white shadow-xs">
-            <table className="w-full text-left border-collapse">
+        <div className="flex-1 overflow-auto p-3 sm:p-6">
+          <div className="rounded-2xl border border-slate-100 overflow-x-auto bg-white shadow-xs">
+            <table className="w-full text-left border-collapse min-w-[620px]">
               <thead>
-                <tr className="bg-slate-50/80 text-[11px] font-bold text-slate-400 uppercase border-b border-slate-100 tracking-wider">
+                <tr className="bg-slate-50/80 text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase border-b border-slate-100 tracking-wider">
                   <th className="py-3 px-4">Event & Action</th>
-                  <th className="py-3 px-4">Category</th>
-                  <th className="py-3 px-4">User</th>
-                  <th className="py-3 px-4">IP Address</th>
-                  <th className="py-3 px-4">Timestamp</th>
+                  <th className="py-3 px-3">Category</th>
+                  <th className="py-3 px-3">User</th>
+                  <th className="py-3 px-3">IP Address</th>
+                  <th className="py-3 px-3">Timestamp</th>
                   <th className="py-3 px-4 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
                 {filteredLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3 px-4">
-                      <div className="font-semibold text-[#101828]">{log.action}</div>
+                    <td className="py-3 px-4 max-w-[240px]">
+                      <div className="font-semibold text-[#101828] break-words">{log.action}</div>
                       {log.details && (
-                        <div className="text-[11px] text-slate-500 mt-0.5">{log.details}</div>
+                        <div className="text-[11px] text-slate-500 mt-0.5 break-words">{log.details}</div>
                       )}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-3 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1.5 font-medium text-slate-700">
                         {getCategoryIcon(log.category)}
                         {log.category}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-slate-700">{log.user}</td>
-                    <td className="py-3 px-4 font-mono text-[11px] text-slate-500">{log.ipAddress}</td>
-                    <td className="py-3 px-4 text-slate-500 whitespace-nowrap">{log.timestamp}</td>
-                    <td className="py-3 px-4 text-right">{getStatusBadge(log.status)}</td>
+                    <td className="py-3 px-3 font-semibold text-slate-700 whitespace-nowrap">{log.user}</td>
+                    <td className="py-3 px-3 font-mono text-[11px] text-slate-500 whitespace-nowrap">{log.ipAddress}</td>
+                    <td className="py-3 px-3 text-slate-500 whitespace-nowrap text-[11px]">{log.timestamp}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{getStatusBadge(log.status)}</td>
                   </tr>
                 ))}
 

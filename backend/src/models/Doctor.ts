@@ -50,7 +50,7 @@ const DoctorSchema = new Schema<IDoctor>(
     },
     hospital: {
       type: String,
-      default: "Care Guide BD Medical Center",
+      default: "Doctor Tracker Medical Center",
       trim: true,
     },
     patientCount: {

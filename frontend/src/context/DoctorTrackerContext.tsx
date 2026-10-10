@@ -120,18 +120,18 @@ interface DoctorTrackerContextType {
 const DoctorTrackerContext = createContext<DoctorTrackerContextType | undefined>(undefined);
 
 export function DoctorTrackerProvider({ children }: { children: React.ReactNode }) {
-  const [doctors, setDoctors] = useState<Doctor[]>(INITIAL_DOCTORS);
-  const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
-  const [departments, setDepartments] = useState<DepartmentItem[]>(INITIAL_DEPARTMENTS);
-  const [appointments, setAppointments] = useState<AppointmentItem[]>(INITIAL_APPOINTMENTS);
-  const [invoices, setInvoices] = useState<InvoiceItem[]>(INITIAL_INVOICES);
-  const [activityLogs, setActivityLogs] = useState<ActivityLogItem[]>(INITIAL_ACTIVITY_LOGS);
-  const [conversations, setConversations] = useState<ConversationItem[]>(INITIAL_CONVERSATIONS);
-  const [chatMessages, setChatMessages] = useState<Record<string, ChatMessageItem[]>>(INITIAL_CHAT_MESSAGES);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [departments, setDepartments] = useState<DepartmentItem[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentItem[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceItem[]>([]);
+  const [activityLogs, setActivityLogs] = useState<ActivityLogItem[]>([]);
+  const [conversations, setConversations] = useState<ConversationItem[]>([]);
+  const [chatMessages, setChatMessages] = useState<Record<string, ChatMessageItem[]>>({});
   const [activeConversationId, setActiveConversationId] = useState<string>("conv-1");
 
-  const [metrics, setMetrics] = useState<MetricSummary[]>(INITIAL_METRICS);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
+  const [metrics, setMetrics] = useState<MetricSummary[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [dateRange, setDateRange] = useState<string>("Last 30 Days");
   const [growthPeriod, setGrowthPeriod] = useState<"Monthly" | "Weekly">("Monthly");
@@ -229,12 +229,12 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         api.logs.getAll({ limit: 50 }),
       ]);
 
-      if (doctorsRes.success && Array.isArray(doctorsRes.data) && doctorsRes.data.length > 0) {
+      if (doctorsRes.success && Array.isArray(doctorsRes.data)) {
         const mappedDoctors: Doctor[] = doctorsRes.data.map((d: any) => ({
           id: d._id || d.id,
           name: d.name,
           specialty: d.specialty,
-          hospital: d.hospital || "Care Guide BD Medical Center",
+          hospital: d.hospital || "Doctor Tracker Medical Center",
           email: d.email,
           phone: d.phone,
           roomNumber: d.roomNumber,
@@ -249,7 +249,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         setDoctors(mappedDoctors);
       }
 
-      if (patientsRes.success && Array.isArray(patientsRes.data) && patientsRes.data.length > 0) {
+      if (patientsRes.success && Array.isArray(patientsRes.data)) {
         const mappedPatients: Patient[] = patientsRes.data.map((p: any) => ({
           id: p._id || p.id,
           patientCode: p.patientCode || `PT-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -270,7 +270,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         setPatients(mappedPatients);
       }
 
-      if (deptRes.success && Array.isArray(deptRes.data) && deptRes.data.length > 0) {
+      if (deptRes.success && Array.isArray(deptRes.data)) {
         const mappedDepts: DepartmentItem[] = deptRes.data.map((dp: any) => ({
           id: dp._id || dp.id,
           name: dp.name,
@@ -292,7 +292,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         setDepartments(mappedDepts);
       }
 
-      if (aptRes.success && Array.isArray(aptRes.data) && aptRes.data.length > 0) {
+      if (aptRes.success && Array.isArray(aptRes.data)) {
         const mappedApts: AppointmentItem[] = aptRes.data.map((a: any) => ({
           id: a._id || a.id,
           appointmentCode: a.appointmentCode || `APT-${Math.floor(100 + Math.random() * 900)}`,
@@ -312,7 +312,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         setAppointments(mappedApts);
       }
 
-      if (invRes.success && Array.isArray(invRes.data) && invRes.data.length > 0) {
+      if (invRes.success && Array.isArray(invRes.data)) {
         const mappedInvs: InvoiceItem[] = invRes.data.map((inv: any) => ({
           id: inv._id || inv.id,
           invoiceCode: inv.invoiceCode || `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -334,7 +334,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         setInvoices(mappedInvs);
       }
 
-      if (logsRes.success && Array.isArray(logsRes.data) && logsRes.data.length > 0) {
+      if (logsRes.success && Array.isArray(logsRes.data)) {
         const mappedLogs: ActivityLogItem[] = logsRes.data.map((l: any) => ({
           id: l._id || l.id,
           timestamp: l.createdAt ? l.createdAt.replace("T", " ").substring(0, 19) : l.timestamp,

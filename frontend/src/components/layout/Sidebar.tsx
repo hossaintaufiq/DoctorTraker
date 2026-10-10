@@ -61,7 +61,6 @@ export function Sidebar() {
     { label: "Pharmacy Management", href: "/pharmacy", icon: ShoppingBag },
     { label: "Emergency & Admission", href: "/emergency", icon: AlertCircle },
     { label: "Setting", href: "/settings", icon: Settings },
-    { label: "Admin Panel", href: "/admin", icon: Shield },
   ];
 
   const isNavActive = (href: string, isExact?: boolean) => {

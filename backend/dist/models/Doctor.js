@@ -67,7 +67,7 @@ const DoctorSchema = new mongoose_1.Schema({
     },
     hospital: {
         type: String,
-        default: "Care Guide BD Medical Center",
+        default: "Doctor Tracker Medical Center",
         trim: true,
     },
     patientCount: {
