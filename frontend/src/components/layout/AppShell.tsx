@@ -19,24 +19,35 @@ function AppShellContent({
   parentLabel,
 }: AppShellProps) {
   return (
-    <div className="min-h-screen bg-[#F7F9FC] flex text-[#243247]">
-      {/* Persistent Left Sidebar (256px) */}
+    <div className="min-h-screen relative flex text-[#1E293B]">
+      {/* Ambient Glassmorphism Mesh Background */}
+      <div className="glass-mesh-background" />
+
+      {/* Persistent Frosted Glass Left Sidebar (256px) */}
       <Sidebar />
 
       {/* Mobile Slide-over Drawer */}
       <MobileSidebar />
 
-      {/* Main Right Content Panel */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F7F9FC]">
+      {/* Main Right Content Panel with relative positioning */}
+      <div className="flex-1 flex flex-col min-w-0 relative z-10">
         <TopNavbar
           breadcrumbTitle={breadcrumbTitle}
           parentPath={parentPath}
           parentLabel={parentLabel}
         />
 
-        {/* Content Container precisely calibrated for 1440px healthcare dashboard */}
+        {/* Content Container */}
         <main className="flex-1 p-5 sm:p-7 lg:p-8 max-w-[1440px] w-full mx-auto">
-          {children}
+          <Suspense
+            fallback={
+              <div className="h-64 glass-card rounded-3xl flex items-center justify-center text-xs text-[#94A3B8]">
+                Loading workspace...
+              </div>
+            }
+          >
+            {children}
+          </Suspense>
         </main>
       </div>
     </div>
@@ -44,9 +55,5 @@ function AppShellContent({
 }
 
 export function AppShell(props: AppShellProps) {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F7F9FC]" />}>
-      <AppShellContent {...props} />
-    </Suspense>
-  );
+  return <AppShellContent {...props} />;
 }

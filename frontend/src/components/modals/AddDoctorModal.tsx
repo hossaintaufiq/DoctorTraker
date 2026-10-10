@@ -75,16 +75,16 @@ export function AddDoctorModal() {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#0B132B]/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-[#0B132B]/30 backdrop-blur-md transition-opacity"
         onClick={() => setIsAddDoctorModalOpen(false)}
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-xl bg-white rounded-3xl border border-[#EBF0F7] popover-shadow overflow-hidden z-50 animate-fade-in flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-xl bg-white/90 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow overflow-hidden z-50 animate-fade-in flex flex-col max-h-[90vh] shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-[#EBF0F7] flex items-center justify-between bg-white">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white/60 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center border border-[#DCE8FC]">
+            <div className="w-10 h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center border border-[#2F65F6]/20 shadow-2xs">
               <Stethoscope className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>

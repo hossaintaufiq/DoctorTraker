@@ -12,7 +12,7 @@ import {
   Menu,
   User,
   LogOut,
-  Check,
+  Sparkles,
 } from "lucide-react";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 import { cn } from "@/lib/utils";
@@ -58,37 +58,37 @@ export function TopNavbar({
   }, []);
 
   return (
-    <header className="h-[72px] bg-white border-b border-[#EBF0F7] px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20">
+    <header className="h-[72px] bg-white/65 backdrop-blur-2xl border-b border-white/60 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
       {/* Left side: Search bar & mobile toggle */}
       <div className="flex items-center gap-3 flex-1 max-w-md">
         <button
           onClick={() => setIsMobileSidebarOpen(true)}
-          className="lg:hidden p-2 text-[#64748B] hover:text-[#1E293B] hover:bg-[#F8FAFC] rounded-xl border border-[#EBF0F7]"
+          className="lg:hidden p-2 text-[#64748B] hover:text-[#1E293B] bg-white/60 backdrop-blur-md hover:bg-white/90 rounded-2xl border border-white/80 shadow-2xs transition-all"
           aria-label="Open mobile menu"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        {/* Wide Pill Search Input */}
+        {/* Wide Glass Pill Search Input */}
         <div className="relative w-full max-w-sm hidden sm:block">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search patients, doctors, appointments..."
             value={searchVal}
             onChange={(e) => setSearchVal(e.target.value)}
-            className="w-full bg-[#F4F7FB] border border-[#EBF0F7] rounded-full pl-4 pr-10 py-2.5 text-xs text-[#1E293B] placeholder-[#94A3B8] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+            className="w-full bg-white/50 backdrop-blur-md border border-white/80 rounded-full pl-4 pr-10 py-2.5 text-xs text-[#1E293B] placeholder-[#94A3B8] focus:bg-white/95 focus:outline-none focus:border-[#2F65F6]/50 focus:ring-2 focus:ring-[#2F65F6]/10 shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] transition-all"
           />
           <Search className="w-4 h-4 text-[#94A3B8] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
 
-      {/* Right side: Theme toggle, Mail, Bell, Profile */}
+      {/* Right side: Theme toggle, Mail, Bell, Profile with frosted glass styles */}
       <div className="flex items-center gap-2.5 sm:gap-3.5">
         {/* Theme Pill Toggle */}
         <button
           type="button"
           onClick={() => showToast("Theme Changed", "Switched appearance preferences.", "info")}
-          className="flex items-center gap-1.5 px-3 py-2 bg-[#F4F7FB] border border-[#EBF0F7] rounded-full text-xs text-[#64748B] hover:bg-[#EBF3FE] hover:text-[#2F65F6] transition-all"
+          className="flex items-center gap-1.5 px-3 py-2 bg-white/60 backdrop-blur-md border border-white/80 rounded-full text-xs text-[#64748B] hover:bg-white/90 hover:text-[#2F65F6] shadow-2xs hover:shadow-xs transition-all"
         >
           <Sun className="w-3.5 h-3.5 text-[#F59E0B]" />
           <ChevronDown className="w-3 h-3 text-[#94A3B8]" />
@@ -98,7 +98,7 @@ export function TopNavbar({
         <button
           type="button"
           onClick={() => showToast("Messages", "No unread direct patient messages.", "info")}
-          className="w-9 h-9 rounded-full bg-[#F4F7FB] border border-[#EBF0F7] flex items-center justify-center text-[#64748B] hover:bg-[#EBF3FE] hover:text-[#2F65F6] transition-all"
+          className="w-9 h-9 rounded-full bg-white/60 backdrop-blur-md border border-white/80 flex items-center justify-center text-[#64748B] hover:bg-white/90 hover:text-[#2F65F6] shadow-2xs hover:shadow-xs transition-all"
           aria-label="Messages"
         >
           <Mail className="w-4 h-4 stroke-[1.8]" />
@@ -113,25 +113,25 @@ export function TopNavbar({
               setShowProfileMenu(false);
             }}
             className={cn(
-              "relative w-9 h-9 rounded-full bg-[#F4F7FB] border border-[#EBF0F7] flex items-center justify-center text-[#64748B] hover:bg-[#EBF3FE] hover:text-[#2F65F6] transition-all",
-              showNotifications && "bg-[#EBF3FE] text-[#2F65F6] border-[#2F65F6]/30"
+              "relative w-9 h-9 rounded-full bg-white/60 backdrop-blur-md border border-white/80 flex items-center justify-center text-[#64748B] hover:bg-white/90 hover:text-[#2F65F6] shadow-2xs hover:shadow-xs transition-all",
+              showNotifications && "bg-white text-[#2F65F6] border-[#2F65F6]/40 shadow-xs"
             )}
             aria-label="Notifications"
           >
             <Bell className="w-4 h-4 stroke-[1.8]" />
             {unreadNotificationCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#EF4444] rounded-full ring-2 ring-white" />
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-gradient-to-tr from-[#EF4444] to-[#F87171] rounded-full ring-2 ring-white shadow-xs animate-pulse" />
             )}
           </button>
 
-          {/* Notifications Popover */}
+          {/* Frosted Glass Notifications Popover */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl border border-[#EBF0F7] popover-shadow p-4 z-50 animate-fade-in">
-              <div className="flex items-center justify-between pb-3 border-b border-[#EBF0F7]">
+            <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/85 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow p-4 z-50 animate-fade-in shadow-2xl">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-semibold text-[#101828]">Notifications</h4>
+                  <h4 className="text-sm font-bold text-[#101828]">Notifications</h4>
                   {unreadNotificationCount > 0 && (
-                    <span className="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#EBF3FE] text-[#2F65F6]">
+                    <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[#2F65F6]/10 text-[#2F65F6] border border-[#2F65F6]/20">
                       {unreadNotificationCount} new
                     </span>
                   )}
@@ -139,27 +139,29 @@ export function TopNavbar({
                 {unreadNotificationCount > 0 && (
                   <button
                     onClick={markAllNotificationsAsRead}
-                    className="text-xs font-medium text-[#2F65F6] hover:underline"
+                    className="text-xs font-semibold text-[#2F65F6] hover:underline"
                   >
                     Mark all read
                   </button>
                 )}
               </div>
 
-              <div className="max-h-72 overflow-y-auto divide-y divide-[#F1F5F9] mt-2 -mx-1 px-1">
+              <div className="max-h-72 overflow-y-auto divide-y divide-slate-100/80 mt-2 -mx-1 px-1">
                 {notifications.map((item) => (
                   <div
                     key={item.id}
                     onClick={() => markNotificationAsRead(item.id)}
                     className={cn(
-                      "py-2.5 px-2 rounded-xl cursor-pointer transition-colors flex items-start gap-3",
-                      item.read ? "opacity-75 hover:bg-[#F8FAFC]" : "bg-[#F4F7FB]/80 hover:bg-[#EBF3FE]/50"
+                      "py-2.5 px-2.5 rounded-2xl cursor-pointer transition-all flex items-start gap-3 my-1",
+                      item.read
+                        ? "opacity-75 hover:bg-white/60"
+                        : "bg-white/70 hover:bg-white border border-white/80 shadow-2xs"
                     )}
                   >
                     <div
                       className={cn(
                         "w-2 h-2 rounded-full mt-1.5 shrink-0",
-                        item.read ? "bg-transparent" : "bg-[#2F65F6]"
+                        item.read ? "bg-transparent" : "bg-[#2F65F6] ring-2 ring-[#2F65F6]/20"
                       )}
                     />
                     <div className="flex-1 min-w-0">
@@ -169,7 +171,7 @@ export function TopNavbar({
                       <p className="text-[11px] text-[#64748B] mt-0.5 line-clamp-2">
                         {item.message}
                       </p>
-                      <span className="text-[10px] text-[#94A3B8] mt-1 block">
+                      <span className="text-[10px] font-medium text-[#94A3B8] mt-1 block">
                         {item.timestamp}
                       </span>
                     </div>
@@ -188,18 +190,18 @@ export function TopNavbar({
               setShowProfileMenu(!showProfileMenu);
               setShowNotifications(false);
             }}
-            className="flex items-center gap-2.5 pl-2 pr-1.5 py-1 rounded-full border border-transparent hover:border-[#EBF0F7] hover:bg-[#F4F7FB] transition-all"
+            className="flex items-center gap-2.5 pl-2 pr-1.5 py-1 rounded-full bg-white/50 backdrop-blur-md border border-white/80 hover:border-white hover:bg-white/80 transition-all shadow-2xs hover:shadow-xs"
           >
             <div className="flex flex-col text-right hidden sm:flex">
               <span className="text-xs font-bold text-[#101828] leading-tight">
                 Sullivan
               </span>
-              <span className="text-[10px] text-[#94A3B8] leading-tight">
+              <span className="text-[10px] font-medium text-[#94A3B8] leading-tight">
                 Owner
               </span>
             </div>
             {/* Avatar */}
-            <div className="w-9 h-9 rounded-full bg-[#2F65F6]/15 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-[#2F65F6]/25 shrink-0 overflow-hidden">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-white/80 shrink-0 overflow-hidden shadow-2xs">
               <img
                 src="/images/doctor_hero.jpg"
                 alt="Sullivan"
@@ -210,22 +212,22 @@ export function TopNavbar({
               />
             </div>
             {/* Settings Gear Icon */}
-            <div className="w-7 h-7 rounded-full bg-[#F4F7FB] flex items-center justify-center text-[#64748B]">
+            <div className="w-7 h-7 rounded-full bg-white/80 border border-white/60 flex items-center justify-center text-[#64748B] shadow-2xs">
               <Settings className="w-3.5 h-3.5 stroke-[1.8]" />
             </div>
           </button>
 
-          {/* Profile Dropdown */}
+          {/* Profile Dropdown Glass Card */}
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl border border-[#EBF0F7] popover-shadow p-2 z-50 animate-fade-in text-xs">
-              <div className="px-3 py-2 border-b border-[#EBF0F7] mb-1">
-                <p className="font-semibold text-[#101828]">Sullivan</p>
+            <div className="absolute right-0 mt-3 w-56 bg-white/85 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow p-2.5 z-50 animate-fade-in text-xs shadow-2xl">
+              <div className="px-3 py-2 border-b border-slate-100 mb-1">
+                <p className="font-bold text-[#101828]">Sullivan</p>
                 <p className="text-[11px] text-[#64748B] truncate">sullivan.admin@medcare.io</p>
               </div>
               <Link
                 href="/settings"
                 onClick={() => setShowProfileMenu(false)}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#1E293B] hover:bg-[#F4F7FB] transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#1E293B] hover:bg-white/80 transition-colors font-medium"
               >
                 <User className="w-3.5 h-3.5 text-[#64748B]" />
                 <span>Profile Settings</span>
@@ -233,19 +235,19 @@ export function TopNavbar({
               <Link
                 href="/settings"
                 onClick={() => setShowProfileMenu(false)}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#1E293B] hover:bg-[#F4F7FB] transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#1E293B] hover:bg-white/80 transition-colors font-medium"
               >
                 <Settings className="w-3.5 h-3.5 text-[#64748B]" />
                 <span>System Preferences</span>
               </Link>
-              <div className="my-1 border-t border-[#EBF0F7]" />
+              <div className="my-1 border-t border-slate-100" />
               <Link
                 href="/login"
                 onClick={() => {
                   setShowProfileMenu(false);
                   showToast("Signed Out", "You have signed out.", "info");
                 }}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#EF4444] hover:bg-[#FEF2F2] transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EF4444] hover:bg-[#FEF2F2]/80 transition-colors font-medium"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
