@@ -17,6 +17,7 @@ import {
   PATIENT_GROWTH_MONTHLY,
   PATIENT_GROWTH_WEEKLY,
 } from "@/lib/mock-data";
+import { api } from "@/lib/api";
 
 interface DoctorTrackerContextType {
   doctors: Doctor[];
@@ -48,6 +49,7 @@ interface DoctorTrackerContextType {
   markAllNotificationsAsRead: () => void;
   showToast: (title: string, description?: string, type?: "success" | "info" | "warning" | "error") => void;
   removeToast: (id: string) => void;
+  refreshData: () => Promise<void>;
 }
 
 const DoctorTrackerContext = createContext<DoctorTrackerContextType | undefined>(undefined);
@@ -66,8 +68,64 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
   const [searchQuery, setSearchQuery] = useState("");
 
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
-
   const growthData = growthPeriod === "Monthly" ? PATIENT_GROWTH_MONTHLY : PATIENT_GROWTH_WEEKLY;
+
+  // Initial load from backend API if available
+  const refreshData = async () => {
+    try {
+      const [doctorsRes, patientsRes] = await Promise.all([
+        api.doctors.getAll(),
+        api.patients.getAll(),
+      ]);
+
+      if (doctorsRes.success && Array.isArray(doctorsRes.data) && doctorsRes.data.length > 0) {
+        const mappedDoctors: Doctor[] = doctorsRes.data.map((d: any) => ({
+          id: d._id || d.id,
+          name: d.name,
+          specialty: d.specialty,
+          email: d.email,
+          phone: d.phone,
+          roomNumber: d.roomNumber,
+          hospital: d.hospital || "Care Guide BD Medical Center",
+          patientCount: d.patientCount || 0,
+          maxPatients: d.maxPatients || 300,
+          experienceYears: d.experienceYears || 5,
+          rating: 5.0,
+          status: d.status || "Active",
+          biography: d.biography || "",
+          joinedDate: d.createdAt ? d.createdAt.split("T")[0] : "2026-01-10",
+        }));
+        setDoctors(mappedDoctors);
+      }
+
+      if (patientsRes.success && Array.isArray(patientsRes.data) && patientsRes.data.length > 0) {
+        const mappedPatients: Patient[] = patientsRes.data.map((p: any) => ({
+          id: p._id || p.id,
+          patientCode: p.patientCode || `PT-${Math.floor(1000 + Math.random() * 9000)}`,
+          name: p.name,
+          age: p.age,
+          gender: p.gender,
+          assignedDoctorId: p.assignedDoctor?._id || p.assignedDoctor || "doc-1",
+          assignedDoctorName: p.assignedDoctorName || p.assignedDoctor?.name || "Dr. Sarah Ahmed",
+          condition: p.condition || "General",
+          status: p.status || "Outpatient",
+          bloodGroup: p.bloodGroup || "O+",
+          phone: p.phone,
+          email: p.email,
+          notes: p.notes,
+          lastVisit: p.lastVisit ? p.lastVisit.split("T")[0] : "2026-02-14",
+          registrationDate: p.registrationDate ? p.registrationDate.split("T")[0] : "2026-01-15",
+        }));
+        setPatients(mappedPatients);
+      }
+    } catch {
+      // Graceful fallback to initial state
+    }
+  };
+
+  useEffect(() => {
+    refreshData();
+  }, []);
 
   const showToast = (
     title: string,
@@ -87,7 +145,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  const addDoctor = (data: Omit<Doctor, "id" | "patientCount" | "rating" | "joinedDate">) => {
+  const addDoctor = async (data: Omit<Doctor, "id" | "patientCount" | "rating" | "joinedDate">) => {
     const newDoc: Doctor = {
       ...data,
       id: `doc-${Date.now()}`,
@@ -112,6 +170,9 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
       })
     );
 
+    // Sync with backend API
+    api.doctors.create(data).catch(() => {});
+
     // Add notification
     const newNotif: NotificationItem = {
       id: `notif-${Date.now()}`,
@@ -125,7 +186,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     showToast("Doctor Added", `${newDoc.name} has been successfully added.`);
   };
 
-  const deleteDoctor = (id: string) => {
+  const deleteDoctor = async (id: string) => {
     const docToDelete = doctors.find((d) => d.id === id);
     setDoctors((prev) => prev.filter((d) => d.id !== id));
 
@@ -139,12 +200,15 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
       })
     );
 
+    // Sync with backend API
+    api.doctors.delete(id).catch(() => {});
+
     if (docToDelete) {
       showToast("Doctor Removed", `${docToDelete.name} was removed from the roster.`, "info");
     }
   };
 
-  const addPatient = (
+  const addPatient = async (
     data: Omit<Patient, "id" | "patientCode" | "registrationDate" | "lastVisit">
   ) => {
     const codeNumber = 1043 + patients.length;
@@ -182,6 +246,9 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
       })
     );
 
+    // Sync with backend API
+    api.patients.create(data).catch(() => {});
+
     const newNotif: NotificationItem = {
       id: `notif-${Date.now()}`,
       title: "New Patient Registered",
@@ -194,9 +261,13 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     showToast("Patient Registered", `${newPatient.name} assigned to ${newPatient.assignedDoctorName}.`);
   };
 
-  const deletePatient = (id: string) => {
+  const deletePatient = async (id: string) => {
     const patientToDelete = patients.find((p) => p.id === id);
     setPatients((prev) => prev.filter((p) => p.id !== id));
+
+    // Sync with backend API
+    api.patients.delete(id).catch(() => {});
+
     if (patientToDelete) {
       showToast("Patient Removed", `${patientToDelete.name} was removed.`, "info");
     }
@@ -243,6 +314,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         markAllNotificationsAsRead,
         showToast,
         removeToast,
+        refreshData,
       }}
     >
       {children}

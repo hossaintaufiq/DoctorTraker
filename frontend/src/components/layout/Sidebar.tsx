@@ -1,21 +1,27 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
+  LayoutGrid,
   Stethoscope,
   Users,
-  Activity,
-  HelpCircle,
-  MoreVertical,
-  LogOut,
-  User,
-  Settings as SettingsIcon,
-  ShieldCheck,
+  Calendar,
+  Building2,
+  TrendingUp,
+  CreditCard,
+  UserCheck,
+  ShoppingBag,
+  AlertCircle,
+  Wallet,
+  Settings,
+  Shield,
+  Search,
   ChevronRight,
-  ExternalLink,
+  LogOut,
+  ChevronDown,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
@@ -23,218 +29,150 @@ import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 export function Sidebar() {
   const pathname = usePathname();
   const { showToast } = useDoctorTracker();
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const profileMenuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowProfileMenu(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const navItems = [
-    {
-      label: "Dashboard",
-      href: "/dashboard",
-      icon: LayoutDashboard,
-      matchExact: true,
-    },
-    {
-      label: "Doctors",
-      href: "/doctors",
-      icon: Stethoscope,
-    },
-    {
-      label: "Patients",
-      href: "/patients",
-      icon: Users,
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-      icon: SettingsIcon,
-    },
+  const mainMenuItems = [
+    { label: "Dashboard", href: "/dashboard", icon: LayoutGrid, isExact: true },
+    { label: "Doctors", href: "/doctors", icon: Stethoscope },
+    { label: "Patient", href: "/patients", icon: Users },
+    { label: "Appointment", href: "/appointments", icon: Calendar },
+    { label: "Departments", href: "/departments", icon: Building2 },
+    { label: "Analytics & Reports", href: "/analytics", icon: TrendingUp },
+    { label: "Billing & Insurance", href: "/billing", icon: CreditCard },
   ];
 
-  const isNavActive = (href: string, matchExact?: boolean) => {
+  const otherMenuItems = [
+    { label: "Staff", href: "/staff", icon: UserCheck },
+    { label: "Pharmacy Management", href: "/pharmacy", icon: ShoppingBag },
+    { label: "Emergency & Admission", href: "/emergency", icon: AlertCircle },
+    { label: "Payment", href: "/payment", icon: Wallet },
+    { label: "Setting", href: "/settings", icon: Settings },
+    { label: "Admin Panel", href: "/admin", icon: Shield },
+  ];
+
+  const isNavActive = (href: string, isExact?: boolean) => {
     if (href === "/dashboard") {
       return pathname === "/" || pathname === "/dashboard";
     }
-    if (matchExact) {
-      return pathname === href;
-    }
-    return pathname.startsWith(href);
+    if (isExact) return pathname === href;
+    return pathname.startsWith(href) && href !== "/dashboard";
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-[256px] shrink-0 bg-white border-r border-[#E8EDF3] h-screen sticky top-0 z-30 select-none">
-      {/* Brand Identity Header */}
-      <div className="h-[72px] px-5 flex items-center gap-3 border-b border-[#E8EDF3]">
-        <div className="w-10 h-10 rounded-xl bg-[#0F9F9A] flex items-center justify-center text-white shadow-xs shrink-0">
-          <Activity className="w-5 h-5 text-white stroke-[2.2]" />
+    <aside className="hidden lg:flex flex-col w-[250px] shrink-0 bg-white border-r border-[#EBF0F7] h-screen sticky top-0 z-30 select-none overflow-hidden">
+      {/* Brand Header */}
+      <Link href="/dashboard" className="h-[72px] px-6 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-[#2F65F6] flex items-center justify-center text-white shadow-xs shrink-0">
+          <Activity className="w-5 h-5 stroke-[2.5]" />
         </div>
-        <div className="flex flex-col min-w-0">
-          <span className="text-[15px] font-bold text-[#172B4D] tracking-tight leading-snug truncate">
-            Doctor Tracker
-          </span>
-          <span className="text-[11px] font-medium text-[#7A8798] tracking-normal leading-none truncate">
-            Healthcare Management
-          </span>
+        <span className="text-xl font-bold text-[#101828] tracking-tight">
+          Medcare
+        </span>
+      </Link>
+
+      {/* Search Input with ⌘ K */}
+      <div className="px-5 pb-3">
+        <div className="relative flex items-center bg-[#F4F7FB] border border-[#EBF0F7] rounded-full px-3 py-2 text-xs text-[#64748B]">
+          <Search className="w-3.5 h-3.5 text-[#94A3B8] mr-2 shrink-0" />
+          <input
+            type="text"
+            placeholder="Search"
+            className="w-full bg-transparent text-xs text-[#1E293B] placeholder-[#94A3B8] focus:outline-none"
+          />
+          <kbd className="text-[10px] font-semibold text-[#94A3B8] bg-white px-1.5 py-0.5 rounded-md border border-[#E2E8F0] shadow-2xs shrink-0">
+            ⌘ K
+          </kbd>
         </div>
       </div>
 
-      {/* Main Navigation Section */}
-      <div className="flex-1 py-5 px-3 space-y-6 overflow-y-auto">
+      {/* Nav Menu Lists */}
+      <div className="flex-1 px-4 py-2 space-y-5 overflow-y-auto">
+        {/* Menu Section 1 */}
         <div>
-          <div className="px-3 pb-2.5 text-[11px] font-semibold text-[#7A8798] uppercase tracking-wider">
-            Workspace
-          </div>
-
+          <span className="px-3 text-[11px] font-semibold text-[#94A3B8] block mb-2">
+            Menu
+          </span>
           <nav className="space-y-1">
-            {navItems.map((item) => {
-              const active = isNavActive(item.href, item.matchExact);
+            {mainMenuItems.map((item) => {
+              const active = isNavActive(item.href, item.isExact);
               const Icon = item.icon;
 
               return (
                 <Link
-                  key={item.href}
+                  key={item.label}
                   href={item.href}
                   className={cn(
-                    "group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150",
+                    "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all",
                     active
-                      ? "bg-[#E6F7F6] text-[#0F9F9A] font-semibold"
-                      : "text-[#7A8798] hover:text-[#243247] hover:bg-[#F7F9FC]"
+                      ? "bg-[#EBF3FE] text-[#2F65F6] font-semibold border border-[#DCE8FC]"
+                      : "text-[#64748B] hover:text-[#1E293B] hover:bg-[#F8FAFC]"
                   )}
                 >
-                  {/* Narrow Teal Indicator on Left */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon
+                      className={cn(
+                        "w-4 h-4 shrink-0",
+                        active ? "text-[#2F65F6] stroke-[2.2]" : "text-[#64748B] stroke-[1.8]"
+                      )}
+                    />
+                    <span className="truncate">{item.label}</span>
+                  </div>
+
                   {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-[#0F9F9A] rounded-r-full" />
+                    <ChevronRight className="w-4 h-4 text-[#2F65F6] shrink-0" />
                   )}
-
-                  <Icon
-                    className={cn(
-                      "w-4 h-4 shrink-0 transition-colors",
-                      active
-                        ? "text-[#0F9F9A] stroke-[2.2]"
-                        : "text-[#7A8798] group-hover:text-[#243247] stroke-[1.8]"
-                    )}
-                  />
-
-                  <span className="truncate flex-1">{item.label}</span>
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        {/* Clinical Node Status Indicator */}
-        <div className="px-3.5 py-3 rounded-xl bg-[#F7F9FC] border border-[#E8EDF3]">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-[#16A36A] animate-pulse shrink-0" />
-            <span className="text-xs font-semibold text-[#172B4D] truncate">Care Guide BD</span>
-          </div>
-          <p className="text-[11px] text-[#7A8798] leading-tight">
-            Main Hospital Node &bull; Operational
-          </p>
+        {/* Menu Section 2 */}
+        <div>
+          <span className="px-3 text-[11px] font-semibold text-[#94A3B8] block mb-2">
+            Other Menu
+          </span>
+          <nav className="space-y-1">
+            {otherMenuItems.map((item) => {
+              const active = isNavActive(item.href);
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all",
+                    active
+                      ? "bg-[#EBF3FE] text-[#2F65F6] font-semibold border border-[#DCE8FC]"
+                      : "text-[#64748B] hover:text-[#1E293B] hover:bg-[#F8FAFC]"
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      "w-4 h-4 shrink-0",
+                      active ? "text-[#2F65F6] stroke-[2.2]" : "text-[#64748B] stroke-[1.8]"
+                    )}
+                  />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
       </div>
 
-      {/* Bottom Footer Section */}
-      <div className="p-3.5 border-t border-[#E8EDF3] space-y-3 bg-white" ref={profileMenuRef}>
-        {/* Help & Support Card */}
-        <div className="p-3 rounded-xl bg-[#F7F9FC] border border-[#E8EDF3] flex items-center justify-between gap-2.5">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-white border border-[#E8EDF3] flex items-center justify-center shrink-0">
-              <HelpCircle className="w-4 h-4 text-[#0F9F9A]" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#172B4D] truncate">Need assistance?</p>
-              <button
-                type="button"
-                onClick={() =>
-                  showToast("Support Center", "Support ticket #8841 opened. An agent will connect shortly.", "info")
-                }
-                className="text-[11px] font-medium text-[#0F9F9A] hover:underline block truncate"
-              >
-                Contact support
-              </button>
-            </div>
+      {/* Bottom Log In Control */}
+      <div className="p-4 border-t border-[#EBF0F7] bg-white">
+        <Link
+          href="/login"
+          className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#F8FAFC] text-xs font-medium text-[#64748B] hover:text-[#1E293B] transition-colors"
+        >
+          <div className="flex items-center gap-2.5">
+            <LogOut className="w-4 h-4 text-[#64748B]" />
+            <span>Log In</span>
           </div>
-        </div>
-
-        {/* Divider */}
-        <div className="border-t border-[#E8EDF3]" />
-
-        {/* User Avatar & Profile Controls */}
-        <div className="relative">
-          <div className="flex items-center justify-between p-1 rounded-xl hover:bg-[#F7F9FC] transition-colors">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="relative shrink-0">
-                <div className="w-9 h-9 rounded-full bg-[#E6F7F6] text-[#0F9F9A] font-bold text-xs flex items-center justify-center border border-[#0F9F9A]/20">
-                  AU
-                </div>
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#16A36A] border-2 border-white" />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-xs font-semibold text-[#172B4D] truncate leading-tight">
-                  Admin User
-                </span>
-                <span className="text-[11px] text-[#7A8798] truncate leading-tight">
-                  Administrator
-                </span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="p-1.5 text-[#7A8798] hover:text-[#243247] hover:bg-white rounded-lg border border-transparent hover:border-[#E8EDF3] transition-all"
-              aria-label="Profile menu"
-            >
-              <MoreVertical className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Profile Dropdown Popover */}
-          {showProfileMenu && (
-            <div className="absolute bottom-12 left-0 w-full bg-white rounded-xl border border-[#E8EDF3] popover-shadow p-1.5 z-50 animate-fade-in text-xs space-y-0.5">
-              <Link
-                href="/settings"
-                onClick={() => setShowProfileMenu(false)}
-                className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-[#243247] hover:bg-[#F7F9FC] transition-colors"
-              >
-                <User className="w-3.5 h-3.5 text-[#7A8798]" />
-                <span>Account Profile</span>
-              </Link>
-              <Link
-                href="/settings"
-                onClick={() => setShowProfileMenu(false)}
-                className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-[#243247] hover:bg-[#F7F9FC] transition-colors"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#7A8798]" />
-                <span>Security & Roles</span>
-              </Link>
-              <div className="my-1 border-t border-[#E8EDF3]" />
-              <Link
-                href="/login"
-                onClick={() => {
-                  setShowProfileMenu(false);
-                  showToast("Signed Out", "You have signed out of the workspace.", "info");
-                }}
-                className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-[#E05252] hover:bg-[#FDEDED] transition-colors"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Sign Out</span>
-              </Link>
-            </div>
-          )}
-        </div>
+          <ChevronDown className="w-4 h-4 text-[#94A3B8]" />
+        </Link>
       </div>
     </aside>
   );
