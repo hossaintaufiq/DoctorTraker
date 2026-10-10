@@ -21,6 +21,23 @@ async function connectDB() {
             serverSelectionTimeoutMS: 5000,
         });
         console.log(`[Database] MongoDB Connected successfully to ${mongoose_1.default.connection.host}`);
+        // Auto-ensure default Administrator exists for instant out-of-the-box login
+        try {
+            const { User } = await import("../models/User.js");
+            const adminExists = await User.findOne({ email: "admin@medcare.com" });
+            if (!adminExists) {
+                await User.create({
+                    name: "Sullivan (Master Admin)",
+                    email: "admin@medcare.com",
+                    password: "password123",
+                    role: "admin",
+                });
+                console.log("[Database] Initialized default Admin credentials: admin@medcare.com / password123");
+            }
+        }
+        catch (e) {
+            // Ignore if user collection check fails
+        }
     }
     catch (error) {
         console.warn(`[Database Warning] Could not establish MongoDB connection: ${error.message}`);

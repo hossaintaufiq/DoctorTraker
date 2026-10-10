@@ -36,6 +36,8 @@ export function TopNavbar({
     setIsMobileSidebarOpen,
     setIsMessagesModalOpen,
     setIsLogsModalOpen,
+    user,
+    logout,
     showToast,
   } = useDoctorTracker();
 
@@ -201,17 +203,17 @@ export function TopNavbar({
           >
             <div className="flex flex-col text-right hidden sm:flex">
               <span className="text-xs font-bold text-[#101828] leading-tight">
-                Sullivan
+                {user?.name?.split(" ")[0] || "Sullivan"}
               </span>
-              <span className="text-[10px] font-medium text-[#94A3B8] leading-tight">
-                Owner
+              <span className="text-[10px] font-medium text-[#94A3B8] leading-tight capitalize">
+                {user?.role || "Admin"}
               </span>
             </div>
             {/* Avatar */}
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-white/80 shrink-0 overflow-hidden shadow-2xs">
               <img
                 src="/images/doctor_hero.jpg"
-                alt="Sullivan"
+                alt="Administrator"
                 className="w-full h-full object-cover object-top"
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = "none";
@@ -228,8 +230,8 @@ export function TopNavbar({
           {showProfileMenu && (
             <div className="absolute right-0 mt-3 w-56 bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/95 popover-shadow p-2.5 z-50 animate-fade-in text-xs shadow-2xl">
               <div className="px-3 py-2 border-b border-slate-100 mb-1">
-                <p className="font-bold text-[#101828]">Sullivan</p>
-                <p className="text-[11px] text-[#64748B] truncate">sullivan.admin@medcare.io</p>
+                <p className="font-bold text-[#101828]">{user?.name || "Sullivan (Master Admin)"}</p>
+                <p className="text-[11px] text-[#64748B] truncate">{user?.email || "admin@medcare.com"}</p>
               </div>
               <Link
                 href="/settings"
@@ -253,23 +255,23 @@ export function TopNavbar({
                   setShowProfileMenu(false);
                   setIsLogsModalOpen(true);
                 }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#1E293B] hover:bg-white/80 transition-colors font-medium text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#1E293B] hover:bg-white/80 transition-colors font-medium text-left cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#2F65F6]" />
                 <span>System Audit Logs</span>
               </button>
               <div className="my-1 border-t border-slate-100" />
-              <Link
-                href="/login"
+              <button
+                type="button"
                 onClick={() => {
                   setShowProfileMenu(false);
-                  showToast("Signed Out", "You have signed out.", "info");
+                  logout();
                 }}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EF4444] hover:bg-[#FEF2F2]/80 transition-colors font-medium"
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#EF4444] hover:bg-[#FEF2F2]/80 transition-colors font-medium text-left cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
-              </Link>
+              </button>
             </div>
           )}
         </div>

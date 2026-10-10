@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import routes from "./routes/index.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import { helmetSecurity, sanitizeNoSql, apiLimiter } from "./middleware/security.js";
 
 dotenv.config();
 
@@ -12,11 +13,14 @@ const app: Express = express();
 const PORT = process.env.PORT || 5000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 
-// Disable ETag caching to prevent 304 Not Modified responses on dynamic database data
+// 1. Global Security Headers & Protection (Helmet)
+app.use(helmetSecurity);
+
+// 2. Disable ETag caching to prevent 304 Not Modified responses on dynamic database data
 app.set("etag", false);
 app.disable("etag");
 
-// Strip conditional headers and enforce no-cache so all responses are fresh 200 OK
+// 3. Strip conditional headers and enforce no-cache so all responses are fresh 200 OK
 app.use((req, res, next) => {
   delete req.headers["if-none-match"];
   delete req.headers["if-modified-since"];
@@ -27,10 +31,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Connect to MongoDB
+// 4. Connect to MongoDB
 connectDB();
 
-// Middlewares
+// 5. Strict CORS Configuration
 app.use(
   cors({
     origin: [CORS_ORIGIN, "http://localhost:3000", "http://127.0.0.1:3000"],
@@ -40,8 +44,15 @@ app.use(
   })
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// 6. Request Body Parsing with Strict Size Limits (DoS mitigation)
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+
+// 7. NoSQL Injection & Query Sanitization
+app.use(sanitizeNoSql);
+
+// 8. Global API Rate Limiting
+app.use("/api", apiLimiter);
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));

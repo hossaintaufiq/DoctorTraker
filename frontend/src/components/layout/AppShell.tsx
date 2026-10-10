@@ -1,9 +1,12 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 import { Sidebar } from "./Sidebar";
 import { TopNavbar } from "./TopNavbar";
 import { MobileSidebar } from "./MobileSidebar";
+import { Activity } from "lucide-react";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -18,6 +21,36 @@ function AppShellContent({
   parentPath,
   parentLabel,
 }: AppShellProps) {
+  const router = useRouter();
+  const { isAuthenticated, authLoading } = useDoctorTracker();
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [authLoading, isAuthenticated, router]);
+
+  if (authLoading) {
+    return (
+      <div className="h-screen w-screen overflow-hidden flex items-center justify-center bg-[#ECEEF4] relative">
+        <div className="glass-mesh-background" />
+        <div className="relative z-10 glass-card p-8 rounded-3xl flex flex-col items-center gap-4 text-center max-w-sm">
+          <div className="w-12 h-12 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center animate-pulse">
+            <Activity className="w-6 h-6 stroke-[2.5]" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[#101828]">Doctor Tracker</h3>
+            <p className="text-xs text-[#64748B] mt-1">Verifying encrypted administrator session...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="h-screen w-screen overflow-hidden flex text-[#1E293B] relative">
       {/* Ambient Glassmorphism Mesh Background */}

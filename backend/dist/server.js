@@ -10,14 +10,17 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const db_js_1 = require("./config/db.js");
 const index_js_1 = __importDefault(require("./routes/index.js"));
 const errorHandler_js_1 = require("./middleware/errorHandler.js");
+const security_js_1 = require("./middleware/security.js");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
-// Disable ETag caching to prevent 304 Not Modified responses on dynamic database data
+// 1. Global Security Headers & Protection (Helmet)
+app.use(security_js_1.helmetSecurity);
+// 2. Disable ETag caching to prevent 304 Not Modified responses on dynamic database data
 app.set("etag", false);
 app.disable("etag");
-// Strip conditional headers and enforce no-cache so all responses are fresh 200 OK
+// 3. Strip conditional headers and enforce no-cache so all responses are fresh 200 OK
 app.use((req, res, next) => {
     delete req.headers["if-none-match"];
     delete req.headers["if-modified-since"];
@@ -27,17 +30,22 @@ app.use((req, res, next) => {
     res.setHeader("Surrogate-Control", "no-store");
     next();
 });
-// Connect to MongoDB
+// 4. Connect to MongoDB
 (0, db_js_1.connectDB)();
-// Middlewares
+// 5. Strict CORS Configuration
 app.use((0, cors_1.default)({
     origin: [CORS_ORIGIN, "http://localhost:3000", "http://127.0.0.1:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "Pragma", "Expires"],
 }));
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true }));
+// 6. Request Body Parsing with Strict Size Limits (DoS mitigation)
+app.use(express_1.default.json({ limit: "1mb" }));
+app.use(express_1.default.urlencoded({ extended: true, limit: "1mb" }));
+// 7. NoSQL Injection & Query Sanitization
+app.use(security_js_1.sanitizeNoSql);
+// 8. Global API Rate Limiting
+app.use("/api", security_js_1.apiLimiter);
 if (process.env.NODE_ENV !== "production") {
     app.use((0, morgan_1.default)("dev"));
 }

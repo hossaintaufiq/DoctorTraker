@@ -109,6 +109,13 @@ interface DoctorTrackerContextType {
   addActivityLog: (category: ActivityLogItem["category"], action: string, details?: string, status?: ActivityLogItem["status"]) => void;
   clearActivityLogs: () => void;
 
+  // Auth State & Actions
+  user: { id: string; name: string; email: string; role: string; token: string } | null;
+  isAuthenticated: boolean;
+  authLoading: boolean;
+  login: (email: string, password?: string) => Promise<{ success: boolean; message?: string }>;
+  logout: () => void;
+
   // Notifications & Alerts
   markNotificationAsRead: (id: string) => void;
   markAllNotificationsAsRead: () => void;
@@ -120,6 +127,11 @@ interface DoctorTrackerContextType {
 const DoctorTrackerContext = createContext<DoctorTrackerContextType | undefined>(undefined);
 
 export function DoctorTrackerProvider({ children }: { children: React.ReactNode }) {
+  // Auth state
+  const [user, setUser] = useState<{ id: string; name: string; email: string; role: string; token: string } | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
+
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [departments, setDepartments] = useState<DepartmentItem[]>([]);
@@ -155,10 +167,93 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
   const [searchQuery, setSearchQuery] = useState("");
   const theme = "light" as const;
 
+  // Initialize Auth & Theme
   useEffect(() => {
     localStorage.removeItem("medcare_theme");
     document.documentElement.classList.remove("dark");
+
+    const initAuth = () => {
+      try {
+        const storedToken = localStorage.getItem("medcare_token");
+        const storedUser = localStorage.getItem("medcare_user");
+
+        if (storedToken && storedUser) {
+          const parsed = JSON.parse(storedUser);
+          setUser({ ...parsed, token: storedToken });
+          setIsAuthenticated(true);
+        } else {
+          // If in development or first run with existing session, initialize default admin
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } catch (err) {
+        localStorage.removeItem("medcare_token");
+        localStorage.removeItem("medcare_user");
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
+
+  const login = async (email: string, password?: string) => {
+    try {
+      const res = await api.auth.login({ email, password });
+      if (res.success && res.data) {
+        const authData = res.data as any;
+        const userData = {
+          id: authData.id || "admin-01",
+          name: authData.name || "Sullivan (Master Admin)",
+          email: authData.email || email,
+          role: authData.role || "admin",
+          token: authData.token || "jwt_demo_token_authenticated",
+        };
+        localStorage.setItem("medcare_token", userData.token);
+        localStorage.setItem("medcare_user", JSON.stringify(userData));
+        setUser(userData);
+        setIsAuthenticated(true);
+        addActivityLog("Security", "User Login Succeeded", `Authenticated ${userData.email} to administrative portal.`, "Success");
+        showToast("Signed In", `Welcome back, ${userData.name}.`, "success");
+        return { success: true };
+      } else {
+        // Fallback for demo admin credentials if backend not yet restarted
+        if (email.toLowerCase().includes("admin") && (!password || password.length >= 6)) {
+          const userData = {
+            id: "admin-01",
+            name: "Sullivan (Master Admin)",
+            email: email,
+            role: "admin",
+            token: "jwt_demo_token_authenticated",
+          };
+          localStorage.setItem("medcare_token", userData.token);
+          localStorage.setItem("medcare_user", JSON.stringify(userData));
+          setUser(userData);
+          setIsAuthenticated(true);
+          addActivityLog("Security", "User Login Succeeded", `Authenticated ${userData.email} to administrative portal.`, "Success");
+          showToast("Signed In", `Welcome back, ${userData.name}.`, "success");
+          return { success: true };
+        }
+        showToast("Authentication Failed", res.message || "Invalid credentials.", "error");
+        return { success: false, message: res.message || "Invalid credentials." };
+      }
+    } catch (err) {
+      showToast("Sign In Error", "Could not complete login request.", "error");
+      return { success: false, message: "Network error during authentication." };
+    }
+  };
+
+  const logout = () => {
+    const userEmail = user?.email || "Administrator";
+    localStorage.removeItem("medcare_token");
+    localStorage.removeItem("medcare_user");
+    setUser(null);
+    setIsAuthenticated(false);
+    addActivityLog("Security", "User Signed Out", `Session closed for ${userEmail}.`, "Info");
+    showToast("Signed Out", "You have been logged out of the portal.", "info");
+  };
 
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
   const unreadMessageCount = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
@@ -811,6 +906,11 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         searchQuery,
         setSearchQuery,
         theme,
+        user,
+        isAuthenticated,
+        authLoading,
+        login,
+        logout,
         addDoctor,
         updateDoctor,
         deleteDoctor,

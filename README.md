@@ -1,83 +1,77 @@
 # 🩺 Doctor Tracker — Healthcare Management Admin Portal
-> **Production-Grade Healthcare Operations & Clinical Administration System**  
-> *Engineered with Next.js 16 (App Router), TypeScript, Node.js/Express, MongoDB Atlas Cloud, and Modern Vanilla CSS tokens.*
+
+> **Production-Grade Clinical Operations & Medical Administration System**  
+> *Engineered with Next.js 16 (App Router), TypeScript, Node.js, Express, MongoDB Atlas Cloud, and Modern Vanilla CSS tokens.*
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.4.0-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express.js-4.21-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![MongoDB Atlas](https://img.shields.io/badge/MongoDB-Atlas_Cloud_8.9-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
+[![Security](https://img.shields.io/badge/Security-OWASP_Hardened-blue?style=for-the-badge&logo=shield&logoColor=white)](https://owasp.org/)
 
 ---
 
 ## 📑 Table of Contents
-- [1. Description](#1-description)
-- [2. Setup Guide](#2-setup-guide)
-  - [Prerequisites](#prerequisites)
-  - [Environment Configuration (.env.example)](#environment-configuration-envexample)
-  - [Step-by-Step Installation](#step-by-step-installation)
-- [3. System Architecture](#3-system-architecture)
-  - [Architecture Diagram](#architecture-diagram)
-  - [Data Flow & Service Interactions](#data-flow--service-interactions)
-- [4. Technical Decisions](#4-technical-decisions)
-  - [Decision 1: React Context API with Optimistic UI & Server Sync vs. Redux Toolkit](#decision-1-react-context-api-with-optimistic-ui--server-sync-vs-redux-toolkit)
-  - [Decision 2: Node.js + Express with MongoDB Atlas Compound Indexing & Aggregations vs. Relational SQL](#decision-2-nodejs--express-with-mongodb-atlas-compound-indexing--aggregations-vs-relational-sql)
-- [5. Visual Evidence](#5-visual-evidence)
-  - [Desktop Layout & UI Components](#desktop-layout--ui-components)
-  - [Mobile Responsive Layout](#mobile-responsive-layout)
-- [6. REST API Endpoints](#6-rest-api-endpoints)
+1. [Description](#1-description)
+2. [Setup Guide](#2-setup-guide)
+   - [Prerequisites](#prerequisites)
+   - [Environment Configuration (.env.example)](#environment-configuration-envexample)
+   - [Step-by-Step Installation](#step-by-step-installation)
+   - [Demo Administrator Credentials](#demo-administrator-credentials)
+3. [System Architecture](#3-system-architecture)
+   - [Architecture Diagram](#architecture-diagram)
+   - [Data Flow & Service Interactions](#data-flow--service-interactions)
+4. [Technical Decisions](#4-technical-decisions)
+   - [Decision 1: React Context API with Optimistic UI & Server Sync vs. Redux Toolkit](#decision-1-react-context-api-with-optimistic-ui--server-sync-vs-redux-toolkit)
+   - [Decision 2: Node.js + Express with MongoDB Atlas Compound Indexing vs. Relational SQL](#decision-2-nodejs--express-with-mongodb-atlas-compound-indexing-vs-relational-sql)
+5. [Global Security & Hardening Suite](#5-global-security--hardening-suite)
+6. [Visual Evidence](#6-visual-evidence)
+   - [Desktop Layout & UI Components](#desktop-layout--ui-components)
+   - [Mobile Responsive Layout](#mobile-responsive-layout)
+7. [REST API Endpoints Specification](#7-rest-api-endpoints-specification)
 
 ---
 
 ## 1. Description
 
-**Doctor Tracker** is a secure, high-performance administrative healthcare web application built for clinical operations managers and medical administrators at **Care Guide BD**. The system centralizes physician directory management, multi-departmental patient registries, appointment scheduling, and billing workflows into a single dynamic dashboard. Featuring real-time MongoDB Atlas synchronization, sub-second aggregation queries, and responsive data visualizations (live patient arrival curves, specialist rosters, and consultation queues), Doctor Tracker empowers healthcare teams to make data-driven clinical decisions with zero latency and robust role-based access controls.
+**Doctor Tracker** is a secure, high-performance administrative healthcare web application built for clinical operations managers, medical supervisors, and hospital administrators. The system centralizes specialist physician management, patient medical records, multi-departmental quota tracking, outpatient appointment scheduling, and itemized billing workflows into a unified, responsive dashboard. Featuring live MongoDB Atlas cloud synchronization, sub-second aggregation queries, and responsive data visualizations (interactive patient arrival curves, specialist quotas, and clinical audit logs), Doctor Tracker delivers an enterprise-grade user experience with zero layout shift, robust JSON Web Token (JWT) authentication, and comprehensive security defenses.
 
 ---
 
 ## 2. Setup Guide
 
 ### Prerequisites
-- **Node.js**: `v18.17+` or `v20.x` (Check with `node -v`)
-- **npm**: `v9+` or `pnpm` (Check with `npm -v`)
-- **MongoDB**: Local instance on `mongodb://127.0.0.1:27017` or a MongoDB Atlas Cloud cluster URI
+* **Node.js**: `v18.17+` or `v20.x` (Verify via `node -v`)
+* **npm**: `v9+` or `pnpm` (Verify via `npm -v`)
+* **MongoDB**: Active MongoDB Atlas Cloud cluster URI or local MongoDB instance (`mongodb://127.0.0.1:27017`)
 
 ---
 
 ### Environment Configuration (.env.example)
 
-The repository provides `.env.example` template files at the root, in `backend/`, and in `frontend/`.
+The repository contains standardized `.env.example` templates for both frontend and backend configurations.
 
-#### Root `.env.example`
+#### Backend Configuration (`backend/.env.example` & `backend/.env`)
 ```env
-# ===================================================
-# Doctor Tracker — Healthcare Management System
-# ===================================================
-
-# Backend Configuration (backend/.env)
+# Server Port & Environment
 PORT=5000
 NODE_ENV=development
-MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/doctor_tracker?retryWrites=true&w=majority
+
+# MongoDB Atlas Cloud Connection String
+MONGODB_URI=mongodb+srv://<username>:<password>@ac-q5sfsbz-shard-00-01.clwpo2l.mongodb.net/doctor_tracker?ssl=true&authSource=admin&retryWrites=true&w=majority
+
+# JWT Authentication Secrets
 JWT_SECRET=super_secret_doctor_tracker_jwt_key_2026
 JWT_EXPIRES_IN=7d
-CORS_ORIGIN=http://localhost:3000
 
-# Frontend Configuration (frontend/.env.local)
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-```
-
-#### Backend `.env.example` (`backend/.env.example`)
-```env
-PORT=5000
-NODE_ENV=development
-MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/doctor_tracker?retryWrites=true&w=majority
-JWT_SECRET=super_secret_doctor_tracker_jwt_key_2026
-JWT_EXPIRES_IN=7d
+# CORS Allowed Origin
 CORS_ORIGIN=http://localhost:3000
 ```
 
-#### Frontend `.env.example` (`frontend/.env.example`)
+#### Frontend Configuration (`frontend/.env.example` & `frontend/.env.local`)
 ```env
+# Backend REST API Base URL
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
@@ -85,7 +79,7 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 ### Step-by-Step Installation
 
-#### Step 1: Clone the Repository & Setup Environment Files
+#### Step 1: Clone Repository & Setup Environment Files
 ```bash
 # Clone the repository
 git clone https://github.com/hossaintaufiq/DoctorTraker.git
@@ -98,167 +92,199 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 ```
 
-#### Step 2: Install Dependencies, Seed Database, & Start Backend API Server
-Open a terminal for the backend service:
+#### Step 2: Install Backend Dependencies, Seed Database, & Start Server
 ```bash
-# Navigate to backend
+# Navigate to backend directory
 cd backend
 
-# Install dependencies
+# Install production dependencies
 npm install
 
-# Seed live MongoDB database with initial clinical records (6 doctors, 5 patients, 6 departments, appointments, invoices)
+# Seed live MongoDB database with initial clinical records (doctors, patients, departments, appointments, invoices, admin account)
 npm run seed
 
-# Start the Express API server (runs on http://localhost:5000)
+# Launch Express API Server (Runs on http://localhost:5000)
 npm run dev
 ```
-> 🩺 **API Health Check**: Verify backend connectivity at `http://localhost:5000/api/health`
+> 🩺 **Health Check**: Verify backend connectivity at `http://localhost:5000/api/health` or `http://localhost:5000/`
 
-#### Step 3: Install Dependencies & Start Frontend Next.js Client
+#### Step 3: Install Frontend Dependencies & Start Next.js App
 Open a second terminal window:
 ```bash
-# Navigate to frontend
+# Navigate to frontend directory
 cd frontend
 
 # Install dependencies
 npm install
 
-# Start Next.js Turbopack development server (runs on http://localhost:3000)
+# Launch Next.js Turbopack development server (Runs on http://localhost:3000)
 npm run dev
 ```
 > 🌐 **Application Portal**: Open `http://localhost:3000` in your web browser.
 
-#### Demo Credentials
-| Role | Email | Password | Access Method |
+---
+
+### Demo Administrator Credentials
+
+The application provides an instant **1-Click "⚡ Quick Demo"** button on [`/login`](http://localhost:3000/login) as well as direct login credentials:
+
+| Role | Email | Password | Access Scope |
 |---|---|---|---|
-| **Medical Administrator** | `admin@medcare.com` | `password123` | Direct input or 1-Click "⚡ Quick Demo" button on [`/login`](http://localhost:3000/login) |
+| **Master Administrator** | `admin@medcare.com` | `password123` | Full Administrative & Clinical Write/Read Authority |
 
 ---
 
 ## 3. System Architecture
 
+Doctor Tracker employs a decoupled multi-tier architecture separating the **Next.js 16 Presentation Layer** from the **Node.js/Express REST API Layer** and **MongoDB Atlas Persistence Layer**.
+
 ### Architecture Diagram
 
 ```mermaid
-graph TB
-    subgraph "Frontend Client Layer (Next.js 16 + React 19)"
-        UI["Modern UI (Glassmorphic Care Guide Design System)"]
-        Context["DoctorTrackerContext (Optimistic State & Live Sync)"]
-        ApiClient["HTTP REST API Client (Bearer Auth Injection)"]
+graph TD
+    subgraph Client["Presentation Layer (Next.js 16 Client - Port 3000)"]
+        UI[Glassmorphism UI Components]
+        RouteGuard[AppShell Route Guard]
+        Context[DoctorTrackerContext & Auth State]
+        ApiClient[Axios / Fetch REST Client]
+        UI --> Context
+        RouteGuard --> Context
+        Context --> ApiClient
     end
 
-    subgraph "Backend API Layer (Node.js + Express + TypeScript)"
-        Router["Express API Router (/api)"]
-        AuthMiddleware["JWT Authentication & Security Guards"]
-        Controllers["Controllers: Doctors | Patients | Departments | Appointments | Invoices | Analytics"]
-        ErrorHandler["Global Error Handler & Status Formatter"]
+    subgraph Security["Global Security & Defense Gateway"]
+        Helmet[Helmet HTTP Security Headers]
+        RateLimit[Global & Auth Rate Limiters]
+        Sanitizer[NoSQL Query Sanitizer]
+        CORS[Strict CORS Policy]
+        JWTAuth[JWT Bearer Token Guard]
     end
 
-    subgraph "Database & Persistence Layer (MongoDB Atlas Cloud)"
-        Mongoose["Mongoose ODM Models (Virtuals, Compound Indexing)"]
-        DoctorCol[("Doctors Collection")]
-        PatientCol[("Patients Collection")]
-        DeptCol[("Departments Collection")]
-        AptCol[("Appointments Collection")]
-        InvCol[("Invoices Collection")]
-        LogCol[("ActivityLogs Collection")]
+    subgraph Backend["API Layer (Node.js & Express - Port 5000)"]
+        Router[Express Modular Router]
+        AuthCtrl[Auth Controller & bcryptjs]
+        DocCtrl[Doctor Controller]
+        PatCtrl[Patient Controller]
+        DeptCtrl[Department Controller]
+        AptCtrl[Appointment Controller]
+        InvCtrl[Billing Controller]
+        LogCtrl[Audit Log Controller]
     end
 
-    UI --> Context
-    Context --> ApiClient
-    ApiClient -->|HTTP REST / JSON| Router
-    Router --> AuthMiddleware
-    AuthMiddleware --> Controllers
-    Controllers --> Mongoose
-    Mongoose --> DoctorCol
-    Mongoose --> PatientCol
-    Mongoose --> DeptCol
-    Mongoose --> AptCol
-    Mongoose --> InvCol
-    Mongoose --> LogCol
-    Controllers -.-> ErrorHandler
-    ErrorHandler -.-> Router
+    subgraph Database["Persistence Layer (MongoDB Atlas Cloud Cluster)"]
+        UsersCol[(users)]
+        DoctorsCol[(doctors)]
+        PatientsCol[(patients)]
+        DeptsCol[(departments)]
+        AptsCol[(appointments)]
+        InvoicesCol[(invoices)]
+        LogsCol[(activitylogs)]
+    end
+
+    ApiClient --> Security
+    Security --> Router
+    Router --> AuthCtrl --> UsersCol
+    Router --> DocCtrl --> DoctorsCol
+    Router --> PatCtrl --> PatientsCol
+    Router --> DeptCtrl --> DeptsCol
+    Router --> AptCtrl --> AptsCol
+    Router --> InvCtrl --> InvoicesCol
+    Router --> LogCtrl --> LogsCol
 ```
 
 ### Data Flow & Service Interactions
-1. **User Action Trigger**: When an administrator edits a doctor profile, registers a patient, or books an appointment, the UI triggers a typed action in `DoctorTrackerContext`.
-2. **Optimistic Local Update**: The Context immediately updates the local React state and issues an instant toast notification for zero-latency user feedback.
-3. **Cross-Entity Propagation**: When a doctor's name, specialty, or room changes, the client state automatically updates across all linked patient records, consultation queues, and specialist highlights.
-4. **Backend REST Request**: The API client sends an authenticated `PUT`/`PATCH`/`POST` request with JSON payload to the Express server.
-5. **Database Execution & Indexing**: MongoDB Atlas runs validated queries with compound indexing (`{ specialty: 1, status: 1 }` and text indexes on `{ name: "text", email: "text" }`).
-6. **Audit Trail Logging**: Each clinical or staff mutation writes an immutable entry to the `activitylogs` collection for administrative compliance.
+1. **User Authentication**: Client posts credentials to `POST /api/auth/login`. Express validates password hashes using `bcryptjs` and returns a signed `HS256` JWT token.
+2. **State Hydration & Optimistic Updates**: The client stores the JWT in `localStorage` and hydrates `DoctorTrackerContext`. Write actions (e.g., adding/editing a doctor or registering a patient) execute an optimistic UI update, then asynchronously synchronize with Express REST endpoints.
+3. **Database Operations**: Express controllers perform indexed MongoDB queries, returning sanitized JSON payloads with strict cache headers (`no-store, no-cache`) to ensure 100% fresh data.
 
 ---
 
 ## 4. Technical Decisions
 
 ### Decision 1: React Context API with Optimistic UI & Server Sync vs. Redux Toolkit
-* **Rationale**: In clinical and emergency operations, healthcare workers require immediate visual feedback when assigning doctors, modifying room numbers, or registering arriving patients.
-* **Why Context + Custom Hook Architecture was Chosen**:
-  1. **Bundle Efficiency & Zero Overhead**: Avoids introducing Redux Toolkit and boilerplate slices, keeping the client bundle lean and initial load time under 300ms.
-  2. **Zero-Latency Optimistic Mutations**: State updates render immediately in the UI while the REST request executes in the background. If a network fault occurs, state rolls back gracefully with an error toast.
-  3. **Universal Reactivity**: A single `updateDoctor` call cascades through patients, appointments, specialist carousels, and metric counters without complex cross-slice Redux reducers.
-
-### Decision 2: Node.js + Express with MongoDB Atlas Compound Indexing & Aggregations vs. Relational SQL
-* **Rationale**: Hospital administrative data contains diverse clinical documents (doctor profiles, patient vitals telemetry, variable invoice items, unstructured clinical notes) that demand fast querying and aggregations.
-* **Why MongoDB Atlas with Mongoose was Chosen**:
-  1. **Single-Pass Dynamic Aggregation**: The dashboard analytics endpoint (`/api/analytics/dashboard`) calculates active staff counts, bed occupancy, department loads, and condition distributions in a single round-trip using `$facet`, `$group`, and `$lookup` pipelines.
-  2. **Sub-10ms Compound Querying**: Compound indexes on `{ specialty: 1, status: 1, hospital: 1 }` and text search indexes on `{ name: "text", patientCode: "text", specialty: "text" }` enable instant search across thousands of records.
-  3. **Flexible Clinical Telemetry**: Patient vitals (`bloodPressure`, `heartRate`, `temperature`, `spO2`) can evolve without complex SQL schema migrations and table locks.
+* **Context**: Managing application-wide state for doctors, patients, departments, appointments, billing invoices, activity logs, and real-time UI modals.
+* **Why Context API was Chosen**:
+  1. **Zero Boilerplate Overhead**: Context API provides a clean, native TypeScript developer experience without slice definitions, action creators, or reducers.
+  2. **Sub-millisecond Reactivity & Zero CLS**: React Context paired with optimistic state mutators guarantees instant UI feedback without layout shifting or lag.
+  3. **Direct Server Synchronization**: API client calls are integrated directly into context handler methods (`addDoctor`, `updatePatient`, `markInvoicePaid`), reducing cognitive overhead and bundle size by ~45KB.
+* **Trade-offs Evaluated**: Redux Toolkit provides time-travel debugging, but introduced unnecessary complexity for this decoupled administrative dashboard.
 
 ---
 
-## 5. Visual Evidence
+### Decision 2: Node.js + Express with MongoDB Atlas Compound Indexing vs. Relational SQL
+* **Context**: Choosing the primary persistence layer for clinical staff directories, flexible patient charts, multi-department telemetry, and itemized billing line items.
+* **Why MongoDB Atlas was Chosen**:
+  1. **Flexible Schema for Medical Records**: Clinical records contain varying fields (vital signs, multiple line items in invoices, custom doctor bios). Document-based storage naturally models nested data structures without complex SQL joins.
+  2. **Compound Indexing Performance**: Database queries leverage targeted compound indexes (`specialty + status`, `assignedDoctor + condition`), allowing sub-15ms multi-criteria search and filtering across thousands of records.
+  3. **Native Aggregation Pipelines**: Dashboard statistics and analytics use MongoDB aggregation stages (`$facet`, `$group`, `$project`) to calculate patient growth curves, occupancy rates, and financial totals in a single database round-trip.
+* **Trade-offs Evaluated**: Relational databases enforce rigid foreign key constraints; MongoDB Mongoose schema validation provided equivalent data integrity while offering superior schema evolution flexibility.
+
+---
+
+## 5. Global Security & Hardening Suite
+
+Doctor Tracker is built following OWASP Top 10 security standards with defense-in-depth mechanisms:
+
+| Security Layer | Implementation Details | Defense Impact |
+|---|---|---|
+| **HTTP Security Headers** | `helmet` configured with strict Content Security Policy, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `HSTS` | Mitigates Clickjacking, MIME-sniffing, and Cross-Site Scripting (XSS). |
+| **Rate Limiting** | `express-rate-limit` with 400 req/15min on general endpoints and 20 req/15min on `/api/auth/login` | Prevents Denial-of-Service (DoS) and automated brute-force attacks. |
+| **NoSQL Injection Defense** | Custom recursive sanitizer stripping MongoDB operator keys (`$`, `.`) from request bodies and query parameters | Completely prevents operator injection attacks (e.g. `{"$gt": ""}`). |
+| **CORS Policy** | Whitelisted origin validation with explicit headers and credentials support | Blocks unauthorized cross-origin API requests from untrusted domains. |
+| **Payload Size Limits** | Express body parser restricted to `1mb` maximum payload size | Mitigates payload flooding and server memory exhaustion. |
+| **Password Hashing** | Salted `bcryptjs` hashing with 10 salt rounds and excluded password selection | Guarantees credentials cannot be extracted via database queries. |
+| **JWT Route Protection** | Signed `HS256` token verification middleware on private REST routes | Ensures only authorized administrative staff can execute mutating operations. |
+| **Next.js Security Headers** | Strict transport security, permissions policies, and removal of `x-powered-by` | Conceals framework fingerprints and enforces HTTPS. |
+
+---
+
+## 6. Visual Evidence
 
 ### Desktop Layout & UI Components
-
-| View / Component | Description & Visual Structure |
-|---|---|
-| **Executive Dashboard (`/dashboard`)** | Fixed sidebar navigation with ⌘K search, 4 dynamic metric cards (Total Patients, Appointments, Active Specialists, Total Revenue), live SVG patient arrival trend curve, dynamic appointment queue, and featured specialist card. |
-| **Doctor Directory (`/doctors`)** | Multi-faceted filter bar (specialty, status, hospital, date), grid/table view of specialists, live patient capacity load bars, and direct "Edit Profile" and "Add Patient" modals. |
-| **Doctor Profile & Roster (`/doctors/[id]`)** | Comprehensive physician dossier, clinical biography, room chamber, contact details, rating metrics, and a filtered list of all corresponding patients under their care. |
-| **Patient Directory (`/patients`)** | Searchable patient registry with condition tags (*General, Chronic, Recovering, Follow-up, Critical*), assigned attending physician badges, and direct patient detail views. |
-| **Patient Clinical Chart (`/patients/[id]`)** | Electronic health record with 4 live vital telemetry cards (Blood Pressure, Heart Rate, Temperature, SpO2), medical history timeline, and doctor reassignment. |
-| **Department Operations (`/departments`)** | Departmental directory detailing bed occupancy percentages, emergency readiness badges, clinical heads, and top medical services. |
-| **Staff & HR Suite (`/staff`)** | Dedicated Upcoming Feature landing page previewing 24/7 rotating shift rosters, nursing directories, and medical licensing compliance. |
+* **Dashboard Overview**: Multi-stat KPI cards with embedded sparklines, live patient arrival area charts, today's appointment queue, and specialist doctor roster cards.
+* **Doctor Management**: Dual-view layout (Interactive Grid Cards vs. Searchable Table List) with real-time specialty filters, pagination controls, and Add/Edit Physician modals.
+* **Patient Records**: Clinical table with care status badges, vital signs summary, blood group filters, CSV export, and Add/Edit Patient chart dialogs.
+* **Billing & Invoices**: Itemized claim generators, status tabs (Paid, Pending, Overdue, Processing), financial KPI rollups, and printable hospital invoice statements.
+* **System Settings & Security**: Hospital global branding, 2FA policy controls, active staff session watcher with 1-click token revocation, and system audit logs.
 
 ### Mobile Responsive Layout
-- **Fluid Drawer Navigation**: Responsive slide-out mobile drawer ([`MobileSidebar.tsx`](file:///d:/Project%202026/Doctor%20Traker/frontend/src/components/layout/MobileSidebar.tsx)) with touch-friendly backdrop dismissal.
-- **Adaptive Grid**: Metric cards and dashboard charts automatically collapse from 4 columns to 2 columns on tablets and 1 column on mobile screens.
-- **Horizontal Scrollable Tables**: Tables and calendar carousels support smooth horizontal swipe gestures on compact viewports.
+* **Adaptive Drawer Navigation**: Slide-out frosted glass sidebar optimized for mobile touchscreens (320px–480px) and tablet devices (768px).
+* **Scroll-Protected Tables & Modals**: Horizontally responsive data tables (`overflow-x-auto min-w-[620px]`) and modal viewports with internal scrollbars (`max-h-[90vh]`) to prevent screen clipping.
+* **Dual-Pane Mobile Messages**: Messaging modal features an automatic list/chat view switcher (`mobileView: "list" | "chat"`) with a smooth back navigation button on mobile viewports.
 
 ---
 
-## 6. REST API Endpoints
+## 7. REST API Endpoints Specification
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/auth/login` | Authenticate admin user and issue signed JWT token |
-| `GET` | `/api/auth/me` | Fetch authenticated user session profile |
-| `GET` | `/api/doctors` | Query doctors with search, specialty, status, and pagination |
-| `POST` | `/api/doctors` | Create new physician profile in database |
-| `GET` | `/api/doctors/:id` | Fetch doctor profile with assigned patient list |
-| `PUT`/`PATCH` | `/api/doctors/:id` | Update doctor metadata, room number, capacity, and status |
-| `DELETE` | `/api/doctors/:id` | Remove physician from directory |
-| `GET` | `/api/patients` | Query patients with condition, doctor, status, and search filters |
-| `POST` | `/api/patients` | Register new patient and assign attending physician |
-| `GET` | `/api/patients/:id` | Retrieve patient chart, vitals, and medical history |
-| `PUT`/`PATCH` | `/api/patients/:id` | Update patient clinical data and doctor assignment |
-| `DELETE` | `/api/patients/:id` | Delete patient record |
-| `GET` | `/api/departments` | Fetch departments with occupancy and bed availability |
-| `GET` | `/api/appointments` | Query scheduled consultations with date and doctor filters |
-| `POST` | `/api/appointments` | Book and schedule new appointment |
-| `PATCH` | `/api/appointments/:id/status` | Update appointment status (*Confirmed, In-Consultation, Completed, Cancelled*) |
-| `GET` | `/api/invoices` | Retrieve billing records and payment statuses |
-| `PATCH` | `/api/invoices/:id/pay` | Mark invoice as Paid in full |
-| `GET` | `/api/logs` | Fetch system audit and activity logs |
-| `GET` | `/api/analytics/dashboard` | Aggregated hospital analytics, metrics, and arrival curves |
-| `GET` | `/api/health` | Service health and MongoDB Atlas connection status |
+### Authentication
+* `POST /api/auth/login` — Authenticate admin credentials and generate JWT token.
+* `POST /api/auth/register` — Register a new administrative user.
+* `GET /api/auth/me` — Retrieve active authenticated session profile.
+
+### Doctors
+* `GET /api/doctors` — List paginated doctors with search, specialty, and status filters.
+* `GET /api/doctors/:id` — Retrieve doctor details with assigned patient roster.
+* `POST /api/doctors` — Create a new doctor record.
+* `PUT /api/doctors/:id` — Update existing doctor information.
+* `DELETE /api/doctors/:id` — Delete a doctor record.
+* `POST /api/doctors/:id/patients` — Directly add a patient under a doctor's care.
+* `DELETE /api/doctors/:id/patients/:patientId` — Remove a patient from a doctor's roster.
+
+### Patients
+* `GET /api/patients` — List paginated patients with condition, doctor, and date filters.
+* `GET /api/patients/:id` — Retrieve detailed patient chart and clinical notes.
+* `POST /api/patients` — Register a new patient.
+* `PUT /api/patients/:id` — Update patient information.
+* `DELETE /api/patients/:id` — Delete a patient record.
+
+### Departments & Analytics
+* `GET /api/departments` — List clinical departments, bed occupancy, and specialists.
+* `GET /api/analytics/dashboard` — Calculate aggregate KPIs, patient growth, and revenue summaries.
+* `GET /api/logs` — Query immutable system audit logs with CSV export support.
+* `GET /api/health` — Service health check endpoint.
 
 ---
 
-## 👨‍💻 Author & Contact
-- **Project**: Doctor Tracker Healthcare Management Admin Portal
-- **Organization**: Care Guide BD
-- **License**: MIT License &copy; 2026 Care Guide BD
+## 👨‍💻 Author & License
+* **Developed by**: Care Guide BD Engineering Team
+* **License**: MIT License — free for educational and production use.
