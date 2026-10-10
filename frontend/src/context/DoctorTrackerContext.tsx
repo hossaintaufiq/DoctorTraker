@@ -171,7 +171,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     );
 
     // Sync with backend API
-    api.doctors.create(data).catch(() => {});
+    api.doctors.create(data).catch(() => { });
 
     // Add notification
     const newNotif: NotificationItem = {
@@ -201,7 +201,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     );
 
     // Sync with backend API
-    api.doctors.delete(id).catch(() => {});
+    api.doctors.delete(id).catch(() => { });
 
     if (docToDelete) {
       showToast("Doctor Removed", `${docToDelete.name} was removed from the roster.`, "info");
@@ -247,7 +247,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     );
 
     // Sync with backend API
-    api.patients.create(data).catch(() => {});
+    api.patients.create(data).catch(() => { });
 
     const newNotif: NotificationItem = {
       id: `notif-${Date.now()}`,
@@ -266,7 +266,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
     setPatients((prev) => prev.filter((p) => p.id !== id));
 
     // Sync with backend API
-    api.patients.delete(id).catch(() => {});
+    api.patients.delete(id).catch(() => { });
 
     if (patientToDelete) {
       showToast("Patient Removed", `${patientToDelete.name} was removed.`, "info");
