@@ -7,7 +7,13 @@ export type DoctorSpecialty =
   | "Oncology"
   | "General Medicine"
   | "Gynecology"
-  | "Psychiatry";
+  | "Psychiatry"
+  | "Emergency & Trauma"
+  | "Radiology & Imaging"
+  | "Gastroenterology"
+  | "Nephrology"
+  | "Ophthalmology"
+  | "Anesthesiology";
 
 export type DoctorStatus = "Active" | "In Surgery" | "On Leave" | "Off Duty";
 
@@ -16,6 +22,7 @@ export interface Doctor {
   name: string;
   avatar?: string;
   specialty: DoctorSpecialty;
+  specialization?: string;
   hospital: string;
   email: string;
   phone: string;
@@ -100,4 +107,100 @@ export interface ToastMessage {
   title: string;
   description?: string;
   type: "success" | "info" | "warning" | "error";
+}
+
+export interface ActivityLogItem {
+  id: string;
+  timestamp: string;
+  category: "Clinical" | "Billing" | "Staff" | "Security" | "Patient";
+  user: string;
+  action: string;
+  ipAddress: string;
+  status: "Success" | "Warning" | "Error" | "Info";
+  details?: string;
+}
+
+export interface ChatMessageItem {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderRole: "Admin" | "Doctor" | "Patient" | "Staff";
+  avatar?: string;
+  text: string;
+  timestamp: string;
+  isSelf: boolean;
+  attachments?: string[];
+}
+
+export interface ConversationItem {
+  id: string;
+  participantId: string;
+  participantName: string;
+  participantRole: string;
+  avatar?: string;
+  lastMessage: string;
+  lastMessageTime: string;
+  unreadCount: number;
+  online: boolean;
+}
+
+export interface AppointmentItem {
+  id: string;
+  appointmentCode: string;
+  patientId: string;
+  patientName: string;
+  patientPhone: string;
+  doctorId: string;
+  doctorName: string;
+  doctorSpecialty: string;
+  roomNumber: string;
+  date: string;
+  timeSlot: string;
+  type: "General Checkup" | "Follow-up" | "Consultation" | "Emergency" | "Surgery Review";
+  status: "Confirmed" | "In-Consultation" | "Completed" | "Cancelled" | "Pending";
+  notes?: string;
+}
+
+export interface InvoiceItem {
+  id: string;
+  invoiceCode: string;
+  patientId: string;
+  patientName: string;
+  patientCode: string;
+  doctorId: string;
+  doctorName: string;
+  issueDate: string;
+  dueDate: string;
+  status: "Paid" | "Pending" | "Overdue" | "Processing";
+  paymentMethod: "Insurance" | "Credit Card" | "Cash" | "Bank Transfer" | "Mobile Pay";
+  subtotal: number;
+  tax: number;
+  discount: number;
+  total: number;
+  items: {
+    description: string;
+    department: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+  }[];
+}
+
+export interface DepartmentItem {
+  id: string;
+  name: string;
+  code: string;
+  headName: string;
+  headDoctorId?: string;
+  specialistsCount: number;
+  activeCasesCount: number;
+  totalBeds: number;
+  occupiedBeds: number;
+  occupancyPercentage: number;
+  floor: string;
+  emergencyReady: boolean;
+  topServices: string[];
+  equipmentSummary: string;
+  rating: number;
+  colorTheme: string;
 }

@@ -60,7 +60,6 @@ export function Sidebar() {
     { label: "Staff", href: "/staff", icon: UserCheck },
     { label: "Pharmacy Management", href: "/pharmacy", icon: ShoppingBag },
     { label: "Emergency & Admission", href: "/emergency", icon: AlertCircle },
-    { label: "Payment", href: "/payment", icon: Wallet },
     { label: "Setting", href: "/settings", icon: Settings },
     { label: "Admin Panel", href: "/admin", icon: Shield },
   ];

@@ -5,6 +5,10 @@ import { DoctorTrackerProvider } from "@/context/DoctorTrackerContext";
 import { ToastContainer } from "@/components/common/ToastContainer";
 import { AddDoctorModal } from "@/components/modals/AddDoctorModal";
 import { AddPatientModal } from "@/components/modals/AddPatientModal";
+import { MessagesModal } from "@/components/modals/MessagesModal";
+import { ActivityLogsModal } from "@/components/modals/ActivityLogsModal";
+import { BookAppointmentModal } from "@/components/modals/BookAppointmentModal";
+import { GenerateInvoiceModal } from "@/components/modals/GenerateInvoiceModal";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -29,6 +33,10 @@ export default function RootLayout({
           {children}
           <AddDoctorModal />
           <AddPatientModal />
+          <MessagesModal />
+          <ActivityLogsModal />
+          <BookAppointmentModal />
+          <GenerateInvoiceModal />
           <ToastContainer />
         </DoctorTrackerProvider>
       </body>

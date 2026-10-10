@@ -29,10 +29,13 @@ export function TopNavbar({
 }: TopNavbarProps = {}) {
   const {
     unreadNotificationCount,
+    unreadMessageCount,
     notifications,
     markNotificationAsRead,
     markAllNotificationsAsRead,
     setIsMobileSidebarOpen,
+    setIsMessagesModalOpen,
+    setIsLogsModalOpen,
     showToast,
   } = useDoctorTracker();
 
@@ -83,14 +86,29 @@ export function TopNavbar({
 
       {/* Right side: Mail, Bell, Profile with frosted glass styles (No theme toggle button) */}
       <div className="flex items-center gap-2.5 sm:gap-3.5">
-        {/* Mail Button */}
+        {/* System Activity & Security Logs Button */}
         <button
           type="button"
-          onClick={() => showToast("Messages", "No unread direct patient messages.", "info")}
+          onClick={() => setIsLogsModalOpen(true)}
           className="w-9 h-9 rounded-full bg-white/60 backdrop-blur-md border border-white/80 flex items-center justify-center text-[#64748B] hover:bg-white/90 hover:text-[#2F65F6] shadow-2xs hover:shadow-xs transition-all"
+          title="Security & System Activity Logs"
+          aria-label="Activity Logs"
+        >
+          <Sparkles className="w-4 h-4 stroke-[1.8]" />
+        </button>
+
+        {/* Mail / Messaging Button */}
+        <button
+          type="button"
+          onClick={() => setIsMessagesModalOpen(true)}
+          className="relative w-9 h-9 rounded-full bg-white/60 backdrop-blur-md border border-white/80 flex items-center justify-center text-[#64748B] hover:bg-white/90 hover:text-[#2F65F6] shadow-2xs hover:shadow-xs transition-all"
+          title="Clinical Messages"
           aria-label="Messages"
         >
           <Mail className="w-4 h-4 stroke-[1.8]" />
+          {unreadMessageCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#2F65F6] rounded-full ring-2 ring-white shadow-xs animate-pulse" />
+          )}
         </button>
 
         {/* Notification Bell */}
@@ -229,6 +247,17 @@ export function TopNavbar({
                 <Settings className="w-3.5 h-3.5 text-[#64748B]" />
                 <span>System Preferences</span>
               </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  setIsLogsModalOpen(true);
+                }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#1E293B] hover:bg-white/80 transition-colors font-medium text-left"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#2F65F6]" />
+                <span>System Audit Logs</span>
+              </button>
               <div className="my-1 border-t border-slate-100" />
               <Link
                 href="/login"
