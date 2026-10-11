@@ -14,7 +14,7 @@ const security_js_1 = require("./middleware/security.js");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
-const rawCorsOrigin = process.env.CORS_ORIGIN || "https://frontend-two-beta-95.vercel.app,http://localhost:3000";
+const rawCorsOrigin = process.env.CORS_ORIGIN || "https://doctortraker.vercel.app,https://frontend-two-beta-95.vercel.app,http://localhost:3000";
 const CORS_ORIGIN = rawCorsOrigin;
 const allowedOrigins = rawCorsOrigin
     .split(",")

@@ -18,11 +18,13 @@
 
 | Resource | Direct Link / Credentials | Details |
 | :--- | :--- | :--- |
+| **Live Production Portal** | [doctortraker.vercel.app](https://doctortraker.vercel.app) | Production deployment hosted on Vercel Edge |
+| **Live REST API Endpoint** | [doctortraker.onrender.com/api](https://doctortraker.onrender.com/api) | High-availability backend deployed on Render |
 | **Demo Administrator Account** | `admin@medcare.com` | Pre-configured evaluation account with full admin rights |
 | **Demo Password** | `password123` | Salted `bcryptjs` credential verified on MongoDB Atlas |
 | **Instant 1-Click Login** | Available on `/login` | Dedicated *"⚡ 1-Click Instant Demo Login"* shortcut button |
-| **REST API Base URL** | `http://localhost:5000/api` | Separate standalone Express server with JWT auth |
-| **Frontend Web Portal** | `http://localhost:3000` | Next.js 16 App Router with responsive layouts |
+| **REST API Base URL (Local)** | `http://localhost:5000/api` | Separate standalone Express server with JWT auth |
+| **Frontend Web Portal (Local)** | `http://localhost:3000` | Next.js 16 App Router with responsive layouts |
 | **Factory Reset Feature** | `/settings` &rarr; *Backups & Telemetry* | Wipes & safely re-seeds the live MongoDB Atlas database |
 
 ---
