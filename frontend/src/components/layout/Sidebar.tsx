@@ -24,6 +24,9 @@ import {
   Activity,
   X,
   Sparkles,
+  FlaskConical,
+  Video,
+  Bed,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
@@ -63,6 +66,12 @@ export function Sidebar() {
     { label: "Setting", href: "/settings", icon: Settings },
   ];
 
+  const upcomingMenuItems = [
+    { label: "Laboratory & LIS", href: "/laboratory", icon: FlaskConical },
+    { label: "Telemedicine", href: "/telemedicine", icon: Video },
+    { label: "Wards & Bed Matrix", href: "/wards", icon: Bed },
+  ];
+
   const isNavActive = (href: string, isExact?: boolean) => {
     if (href === "/dashboard") {
       return pathname === "/" || pathname === "/dashboard";
@@ -79,10 +88,15 @@ export function Sidebar() {
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filteredUpcomingMenu = upcomingMenuItems.filter((item) =>
+    item.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const hasNoResults =
     searchQuery.trim().length > 0 &&
     filteredMainMenu.length === 0 &&
-    filteredOtherMenu.length === 0;
+    filteredOtherMenu.length === 0 &&
+    filteredUpcomingMenu.length === 0;
 
   return (
     <aside className="hidden lg:flex flex-col w-64 min-w-[256px] max-w-[256px] shrink-0 bg-white/65 backdrop-blur-2xl border-r border-white/60 h-screen sticky top-0 z-30 select-none overflow-hidden shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
@@ -230,6 +244,55 @@ export function Sidebar() {
                         {active && (
                           <ChevronRight className="w-4 h-4 text-[#2F65F6] shrink-0 stroke-[2.5]" />
                         )}
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+            )}
+
+            {/* Menu Section 3: Upcoming Modules */}
+            {filteredUpcomingMenu.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between px-3 mb-2">
+                  <span className="text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider">
+                    Upcoming Modules
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[#EBF3FE] text-[#2F65F6] border border-[#BFDBFE]">
+                    Preview
+                  </span>
+                </div>
+                <nav className="space-y-1">
+                  {filteredUpcomingMenu.map((item) => {
+                    const active = isNavActive(item.href);
+                    const Icon = item.icon;
+
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className={cn(
+                          "flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium border transition-all duration-200 group",
+                          active
+                            ? "glass-active-item font-semibold shadow-xs"
+                            : "text-[#64748B] border-transparent hover:text-[#1E293B] hover:bg-white/60 hover:border-white/70 hover:shadow-2xs"
+                        )}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <Icon
+                            className={cn(
+                              "w-4 h-4 shrink-0 transition-transform duration-200",
+                              active
+                                ? "text-[#2F65F6] stroke-[2.3] scale-105"
+                                : "text-[#64748B] stroke-[1.8] group-hover:text-[#2F65F6]"
+                            )}
+                          />
+                          <span className="truncate">{item.label}</span>
+                        </div>
+
+                        <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/80 shrink-0">
+                          Upcoming
+                        </span>
                       </Link>
                     );
                   })}

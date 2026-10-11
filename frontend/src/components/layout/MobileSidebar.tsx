@@ -22,6 +22,9 @@ import {
   Activity,
   ChevronRight,
   Search,
+  FlaskConical,
+  Video,
+  Bed,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
@@ -50,6 +53,12 @@ export function MobileSidebar() {
     { label: "Setting", href: "/settings", icon: Settings },
   ];
 
+  const upcomingMenuItems = [
+    { label: "Laboratory & LIS", href: "/laboratory", icon: FlaskConical },
+    { label: "Telemedicine", href: "/telemedicine", icon: Video },
+    { label: "Wards & Bed Matrix", href: "/wards", icon: Bed },
+  ];
+
   const isNavActive = (href: string, isExact?: boolean) => {
     if (href === "/dashboard") {
       return pathname === "/" || pathname === "/dashboard";
@@ -66,10 +75,15 @@ export function MobileSidebar() {
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filteredUpcomingMenu = upcomingMenuItems.filter((item) =>
+    item.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const hasNoResults =
     searchQuery.trim().length > 0 &&
     filteredMainMenu.length === 0 &&
-    filteredOtherMenu.length === 0;
+    filteredOtherMenu.length === 0 &&
+    filteredUpcomingMenu.length === 0;
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
@@ -211,6 +225,48 @@ export function MobileSidebar() {
                           {active && (
                             <ChevronRight className="w-4 h-4 text-[#2F65F6] shrink-0" />
                           )}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </div>
+              )}
+
+              {filteredUpcomingMenu.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between px-3 mb-1.5">
+                    <span className="text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider block">
+                      Upcoming Modules
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[#EBF3FE] text-[#2F65F6] border border-[#BFDBFE]">
+                      Preview
+                    </span>
+                  </div>
+                  <nav className="space-y-1">
+                    {filteredUpcomingMenu.map((item) => {
+                      const active = isNavActive(item.href);
+                      const Icon = item.icon;
+
+                      return (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          onClick={() => setIsMobileSidebarOpen(false)}
+                          className={cn(
+                            "flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium border transition-all",
+                            active
+                              ? "glass-active-item font-semibold"
+                              : "text-[#64748B] border-transparent hover:text-[#1E293B] hover:bg-white/60"
+                          )}
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <Icon className="w-4 h-4 shrink-0" />
+                            <span className="truncate">{item.label}</span>
+                          </div>
+
+                          <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/80 shrink-0">
+                            Upcoming
+                          </span>
                         </Link>
                       );
                     })}
