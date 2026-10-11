@@ -97,12 +97,12 @@ export default function DepartmentsPage() {
     <AppShell breadcrumbTitle="Departments" parentLabel="Menu" parentPath="/dashboard">
       <div className="space-y-6">
         {/* Header Title & Top Summary */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-          <div>
-            <h1 className="text-2xl sm:text-[28px] font-bold text-[#101828] tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
+          <div className="space-y-1 min-w-0">
+            <h1 className="text-2xl sm:text-[28px] font-bold text-[#101828] tracking-tight leading-tight">
               Hospital Clinical Departments & Divisions
             </h1>
-            <p className="text-xs text-[#64748B] mt-1">
+            <p className="text-xs sm:text-sm text-[#64748B] font-normal">
               Comprehensive ward rosters, bed capacity utilization, and attending specialist teams.
             </p>
           </div>
@@ -110,81 +110,105 @@ export default function DepartmentsPage() {
           <button
             type="button"
             onClick={() => setIsBookAppointmentModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 text-xs font-semibold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs transition-all self-start sm:self-auto"
+            className="inline-flex items-center justify-center gap-2 h-10 px-5 text-xs sm:text-[13px] font-semibold text-white bg-gradient-to-r from-[#2F65F6] to-[#1E4FD8] hover:from-[#2557E5] hover:to-[#1742BC] rounded-xl shadow-[0_2px_8px_rgba(47,101,246,0.25)] hover:shadow-[0_4px_12px_rgba(47,101,246,0.35)] transition-all active:scale-[0.98] w-full sm:w-auto shrink-0 cursor-pointer"
           >
             <Calendar className="w-4 h-4" />
             <span>Book Department Slot</span>
           </button>
         </div>
 
-        {/* Aggregate KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-3xl border border-[#EBF0F7] p-5 card-shadow flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center shrink-0">
-              <Building2 className="w-6 h-6" />
+        {/* Aggregate KPI Cards - Responsive Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white/95 rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-5 card-shadow flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center shrink-0">
+              <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <span className="text-[11px] text-[#94A3B8] font-semibold uppercase">Total Divisions</span>
-              <p className="text-2xl font-bold text-[#101828]">{departments.length} Units</p>
-              <span className="text-[10px] text-[#10B981] font-semibold">100% Operational</span>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-3xl border border-[#EBF0F7] p-5 card-shadow flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#ECFDF5] text-[#10B981] flex items-center justify-center shrink-0">
-              <BedDouble className="w-6 h-6" />
-            </div>
-            <div>
-              <span className="text-[11px] text-[#94A3B8] font-semibold uppercase">Bed Capacity</span>
-              <p className="text-2xl font-bold text-[#101828]">{totalOccupied} / {totalBeds}</p>
-              <span className="text-[10px] text-[#64748B] font-semibold">{averageOccupancy}% Overall Load</span>
+            <div className="min-w-0">
+              <span className="text-[10px] sm:text-[11px] text-[#94A3B8] font-bold uppercase tracking-wider block truncate">
+                Total Divisions
+              </span>
+              <p className="text-lg sm:text-2xl font-bold text-[#101828] tracking-tight mt-0.5">
+                {departments.length} <span className="text-xs font-semibold text-[#64748B]">Units</span>
+              </p>
+              <span className="text-[10px] sm:text-[11px] text-[#10B981] font-semibold block truncate mt-0.5">
+                100% Operational
+              </span>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-[#EBF0F7] p-5 card-shadow flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#F3E8FF] text-[#9333EA] flex items-center justify-center shrink-0">
-              <Users className="w-6 h-6" />
+          <div className="bg-white/95 rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-5 card-shadow flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#ECFDF5] text-[#10B981] flex items-center justify-center shrink-0">
+              <BedDouble className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <span className="text-[11px] text-[#94A3B8] font-semibold uppercase">Specialist Doctors</span>
-              <p className="text-2xl font-bold text-[#101828]">{totalStaff} Doctors</p>
-              <span className="text-[10px] text-[#9333EA] font-semibold">12 Chief Consultants</span>
+            <div className="min-w-0">
+              <span className="text-[10px] sm:text-[11px] text-[#94A3B8] font-bold uppercase tracking-wider block truncate">
+                Bed Capacity
+              </span>
+              <p className="text-lg sm:text-2xl font-bold text-[#101828] tracking-tight mt-0.5">
+                {totalOccupied} / {totalBeds}
+              </p>
+              <span className="text-[10px] sm:text-[11px] text-[#64748B] font-semibold block truncate mt-0.5">
+                {averageOccupancy}% Overall Load
+              </span>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-[#EBF0F7] p-5 card-shadow flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center shrink-0">
-              <Activity className="w-6 h-6" />
+          <div className="bg-white/95 rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-5 card-shadow flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#F3E8FF] text-[#9333EA] flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <span className="text-[11px] text-[#94A3B8] font-semibold uppercase">Active Inpatients</span>
-              <p className="text-2xl font-bold text-[#101828]">{totalActiveCases} Patients</p>
-              <span className="text-[10px] text-[#D97706] font-semibold">Active Round-the-clock</span>
+            <div className="min-w-0">
+              <span className="text-[10px] sm:text-[11px] text-[#94A3B8] font-bold uppercase tracking-wider block truncate">
+                Specialist Doctors
+              </span>
+              <p className="text-lg sm:text-2xl font-bold text-[#101828] tracking-tight mt-0.5">
+                {totalStaff} <span className="text-xs font-semibold text-[#64748B]">Doctors</span>
+              </p>
+              <span className="text-[10px] sm:text-[11px] text-[#9333EA] font-semibold block truncate mt-0.5">
+                12 Chief Consultants
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-white/95 rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-5 card-shadow flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center shrink-0">
+              <Activity className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] sm:text-[11px] text-[#94A3B8] font-bold uppercase tracking-wider block truncate">
+                Active Inpatients
+              </span>
+              <p className="text-lg sm:text-2xl font-bold text-[#101828] tracking-tight mt-0.5">
+                {totalActiveCases} <span className="text-xs font-semibold text-[#64748B]">Patients</span>
+              </p>
+              <span className="text-[10px] sm:text-[11px] text-[#D97706] font-semibold block truncate mt-0.5">
+                Active Round-the-clock
+              </span>
             </div>
           </div>
         </div>
 
         {/* Interactive Filter Toolbar */}
-        <div className="bg-white rounded-3xl border border-[#EBF0F7] p-4 card-shadow flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-4 card-shadow flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
           {/* Search Box */}
-          <div className="relative w-full md:w-80">
+          <div className="relative w-full lg:max-w-xs">
             <input
               type="text"
               placeholder="Search department, head, services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#F8FAFC] border border-slate-200 rounded-full pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+              className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl sm:rounded-full pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
             />
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:flex items-center gap-2 w-full lg:w-auto">
             {/* Floor Select */}
             <select
               value={selectedFloor}
               onChange={(e) => setSelectedFloor(e.target.value)}
-              className="bg-[#F8FAFC] border border-slate-200 text-slate-700 text-xs rounded-full px-3 py-1.5 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+              className="w-full xl:w-auto bg-[#F8FAFC] border border-slate-200 text-slate-700 text-xs rounded-xl sm:rounded-full px-3 py-2 sm:py-1.5 focus:bg-white focus:outline-none focus:border-[#2F65F6] cursor-pointer"
             >
               <option value="All">All Floors</option>
               <option value="Ground">Ground Floor</option>
@@ -198,7 +222,7 @@ export default function DepartmentsPage() {
             <select
               value={selectedLoad}
               onChange={(e) => setSelectedLoad(e.target.value)}
-              className="bg-[#F8FAFC] border border-slate-200 text-slate-700 text-xs rounded-full px-3 py-1.5 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+              className="w-full xl:w-auto bg-[#F8FAFC] border border-slate-200 text-slate-700 text-xs rounded-xl sm:rounded-full px-3 py-2 sm:py-1.5 focus:bg-white focus:outline-none focus:border-[#2F65F6] cursor-pointer"
             >
               <option value="All">All Bed Loads</option>
               <option value="High">High Load (&gt; 80%)</option>
@@ -211,14 +235,14 @@ export default function DepartmentsPage() {
               type="button"
               onClick={() => setEmergencyOnly(!emergencyOnly)}
               className={cn(
-                "px-3 py-1.5 text-xs font-semibold rounded-full border transition-all flex items-center gap-1.5 shrink-0",
+                "h-9 sm:h-auto px-3.5 py-1.5 text-xs font-semibold rounded-xl sm:rounded-full border transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer",
                 emergencyOnly
                   ? "bg-rose-50 text-rose-600 border-rose-200"
                   : "bg-[#F8FAFC] text-slate-600 border-slate-200 hover:bg-slate-100"
               )}
             >
               <Flame className="w-3.5 h-3.5 text-rose-500" />
-              <span>24/7 Emergency Units</span>
+              <span>24/7 ER Ready</span>
             </button>
 
             {/* Permanent Non-Shifting Reset Button */}
@@ -227,7 +251,7 @@ export default function DepartmentsPage() {
               onClick={handleResetFilters}
               disabled={!isFiltered}
               className={cn(
-                "h-8 px-3 rounded-full text-xs font-semibold flex items-center gap-1.5 border transition-all shrink-0",
+                "h-9 sm:h-auto px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 border transition-all shrink-0",
                 isFiltered
                   ? "bg-white text-[#2F65F6] border-[#2F65F6]/30 hover:bg-[#2F65F6]/5 cursor-pointer shadow-2xs"
                   : "bg-[#F8FAFC] text-slate-400 border-slate-200 cursor-not-allowed opacity-60"
@@ -240,7 +264,7 @@ export default function DepartmentsPage() {
         </div>
 
         {/* Departments Grid (12+ Rich Cards) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {filteredDepartments.map((dept) => {
             const Icon = getDeptIcon(dept.name);
             const isHighLoad = dept.occupancyPercentage >= 80;
@@ -388,17 +412,17 @@ export default function DepartmentsPage() {
         {/* Department Detailed Specifications Modal */}
         {selectedDeptForDetail && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
-            <div className="bg-white/95 backdrop-blur-3xl w-full max-w-2xl rounded-3xl border border-white/90 shadow-2xl p-6 sm:p-8 overflow-hidden animate-scale-up">
+            <div className="bg-white/95 backdrop-blur-3xl w-full max-w-2xl rounded-2xl sm:rounded-3xl border border-white/90 shadow-2xl p-4 sm:p-6 sm:p-8 max-h-[90vh] overflow-y-auto animate-scale-up">
               <div className="flex items-start justify-between pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center">
-                    <Building2 className="w-6 h-6" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center shrink-0">
+                    <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-xs font-mono font-bold text-slate-400">
                       {selectedDeptForDetail.code}
                     </span>
-                    <h2 className="text-xl font-bold text-[#101828]">
+                    <h2 className="text-lg sm:text-xl font-bold text-[#101828] truncate">
                       {selectedDeptForDetail.name} Division
                     </h2>
                   </div>
@@ -406,14 +430,15 @@ export default function DepartmentsPage() {
 
                 <button
                   onClick={() => setSelectedDeptForDetail(null)}
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                  aria-label="Close modal"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="py-5 space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="py-4 sm:py-5 space-y-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div className="p-3 bg-slate-50 rounded-2xl">
                     <span className="text-[10px] text-slate-400 uppercase font-semibold">Head of Department</span>
                     <p className="text-sm font-bold text-slate-900 mt-0.5">{selectedDeptForDetail.headName}</p>
@@ -441,7 +466,7 @@ export default function DepartmentsPage() {
                     {selectedDeptForDetail.topServices.map((service, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1 rounded-full bg-[#EBF3FE] text-[#2F65F6] font-semibold border border-blue-100"
+                        className="px-3 py-1 rounded-full bg-[#EBF3FE] text-[#2F65F6] font-semibold border border-blue-100 text-xs"
                       >
                         {service}
                       </span>
@@ -450,11 +475,11 @@ export default function DepartmentsPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5 sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setSelectedDeptForDetail(null)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-full"
+                  className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl sm:rounded-full cursor-pointer text-center"
                 >
                   Close
                 </button>
@@ -464,7 +489,7 @@ export default function DepartmentsPage() {
                     setSelectedDeptForDetail(null);
                     setIsBookAppointmentModalOpen(true);
                   }}
-                  className="px-5 py-2.5 text-xs font-bold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs flex items-center gap-1.5"
+                  className="w-full sm:w-auto px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#2F65F6] to-[#1E4FD8] hover:from-[#2557E5] hover:to-[#1742BC] rounded-xl sm:rounded-full shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>Book Consultation</span>

@@ -21,13 +21,13 @@ export default function DashboardPage() {
         {/* Main Content: Left Analytics & Appointments | Right Our Specialist */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column (8 cols): Patient Arrival Stats & Appointments */}
-          <div className="lg:col-span-8 flex flex-col gap-6">
+          <div className="lg:col-span-8 flex flex-col gap-6 min-w-0">
             <PatientArrivalChart />
             <AppointmentsSection />
           </div>
 
           {/* Right Column (4 cols): Our Specialist Card */}
-          <div className="lg:col-span-4 flex flex-col">
+          <div className="lg:col-span-4 flex flex-col min-w-0">
             <OurSpecialistCard />
           </div>
         </div>

@@ -37,13 +37,13 @@ export function InvoiceDetailModal({ invoice, onClose }: InvoiceDetailModalProps
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in print:p-0 print:bg-white">
       <div className="bg-white w-full max-w-3xl rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] print:max-h-none print:shadow-none print:border-none print:rounded-none">
         {/* Top Action Bar (Hidden on Print) */}
-        <div className="h-16 px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0 print:hidden">
-          <div className="flex items-center gap-2">
-            <span className="font-mono font-bold text-sm text-[#2F65F6]">
+        <div className="h-16 px-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0 print:hidden">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            <span className="font-mono font-bold text-xs sm:text-sm text-[#2F65F6] truncate">
               {invoice.invoiceCode}
             </span>
             <span
-              className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+              className={`px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] font-semibold shrink-0 ${
                 invoice.status === "Paid"
                   ? "bg-[#ECFDF5] text-[#10B981] border border-[#D1FAE5]"
                   : invoice.status === "Pending"
@@ -55,22 +55,22 @@ export function InvoiceDetailModal({ invoice, onClose }: InvoiceDetailModalProps
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {invoice.status !== "Paid" && (
               <button
                 type="button"
                 onClick={handleMarkPaid}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#10B981] hover:bg-[#059669] rounded-full shadow-2xs transition-all"
+                className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-white bg-[#10B981] hover:bg-[#059669] rounded-full shadow-2xs transition-all cursor-pointer"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Mark Paid</span>
+                <span className="hidden xs:inline">Mark Paid</span>
               </button>
             )}
 
             <button
               type="button"
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-full transition-all"
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-full transition-all cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print</span>
@@ -79,7 +79,7 @@ export function InvoiceDetailModal({ invoice, onClose }: InvoiceDetailModalProps
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all ml-1"
+              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all ml-1 cursor-pointer shrink-0"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
@@ -88,11 +88,11 @@ export function InvoiceDetailModal({ invoice, onClose }: InvoiceDetailModalProps
         </div>
 
         {/* Printable Document Sheet */}
-        <div className="p-8 sm:p-10 overflow-y-auto space-y-6 print:p-0">
+        <div className="p-4 sm:p-8 sm:p-10 overflow-y-auto space-y-6 print:p-0">
           {/* Hospital Brand Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-[#2F65F6] text-white flex items-center justify-center font-bold text-lg shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-[#2F65F6] text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
                 DT
               </div>
               <div>
@@ -125,7 +125,7 @@ export function InvoiceDetailModal({ invoice, onClose }: InvoiceDetailModalProps
           </div>
 
           {/* Billed To / Attending Physician */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
             <div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
                 Patient Information (Billed To)
@@ -146,8 +146,8 @@ export function InvoiceDetailModal({ invoice, onClose }: InvoiceDetailModalProps
           </div>
 
           {/* Line Items Table */}
-          <div className="border border-slate-200 rounded-2xl overflow-hidden">
-            <table className="w-full text-left border-collapse">
+          <div className="border border-slate-200 rounded-2xl overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[480px]">
               <thead>
                 <tr className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase border-b border-slate-200">
                   <th className="py-3 px-4">Description of Service</th>

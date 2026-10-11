@@ -112,16 +112,16 @@ export function GenerateInvoiceModal() {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
       <div className="bg-white/95 backdrop-blur-3xl w-full max-w-3xl rounded-3xl border border-white/90 shadow-2xl overflow-hidden animate-scale-up flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="h-16 px-6 border-b border-slate-100 flex items-center justify-between bg-white/80 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center">
-              <FileText className="w-5 h-5" />
+        <div className="h-16 px-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white/80 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center shrink-0">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-bold text-[#101828]">
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-bold text-[#101828] truncate">
                 Generate Clinical Invoice & Claim
               </h2>
-              <p className="text-xs text-[#64748B]">
+              <p className="text-[11px] sm:text-xs text-[#64748B] truncate hidden xs:block">
                 Create itemized medical charges, insurance co-pay, and patient statements.
               </p>
             </div>
@@ -129,7 +129,7 @@ export function GenerateInvoiceModal() {
 
           <button
             onClick={() => setIsGenerateInvoiceModalOpen(false)}
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all shrink-0 cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -137,9 +137,9 @@ export function GenerateInvoiceModal() {
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
           {/* Patient & Doctor Select */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5 text-[#2F65F6]" /> Patient Account
@@ -233,7 +233,7 @@ export function GenerateInvoiceModal() {
               <button
                 type="button"
                 onClick={handleAddLineItem}
-                className="text-xs font-semibold text-[#2F65F6] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-[#2F65F6] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Charge Item
               </button>
@@ -243,7 +243,7 @@ export function GenerateInvoiceModal() {
               {lineItems.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-3 bg-slate-50/80 rounded-2xl border border-slate-200 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center"
+                  className="p-3 bg-slate-50/80 rounded-2xl border border-slate-200 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-12 sm:gap-2 sm:items-center"
                 >
                   <div className="sm:col-span-5">
                     <input
@@ -270,39 +270,41 @@ export function GenerateInvoiceModal() {
                     </select>
                   </div>
 
-                  <div className="sm:col-span-2">
-                    <input
-                      type="number"
-                      min="1"
-                      placeholder="Qty"
-                      value={item.quantity}
-                      onChange={(e) => handleItemChange(idx, "quantity", e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 text-center focus:outline-none focus:border-[#2F65F6]"
-                    />
-                  </div>
+                  <div className="grid grid-cols-12 gap-2 sm:col-span-4 items-center">
+                    <div className="col-span-5 sm:col-span-6">
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Qty"
+                        value={item.quantity}
+                        onChange={(e) => handleItemChange(idx, "quantity", e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 text-center focus:outline-none focus:border-[#2F65F6]"
+                      />
+                    </div>
 
-                  <div className="sm:col-span-1">
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      placeholder="Price"
-                      value={item.unitPrice}
-                      onChange={(e) => handleItemChange(idx, "unitPrice", e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 text-right focus:outline-none focus:border-[#2F65F6]"
-                    />
-                  </div>
+                    <div className="col-span-5 sm:col-span-4">
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Price"
+                        value={item.unitPrice}
+                        onChange={(e) => handleItemChange(idx, "unitPrice", e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 text-right focus:outline-none focus:border-[#2F65F6]"
+                      />
+                    </div>
 
-                  <div className="sm:col-span-1 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveLineItem(idx)}
-                      disabled={lineItems.length === 1}
-                      className="p-1.5 text-slate-400 hover:text-rose-500 disabled:opacity-30 transition-colors"
-                      title="Remove row"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="col-span-2 sm:col-span-2 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveLineItem(idx)}
+                        disabled={lineItems.length === 1}
+                        className="p-1.5 text-slate-400 hover:text-rose-500 disabled:opacity-30 transition-colors cursor-pointer"
+                        title="Remove row"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

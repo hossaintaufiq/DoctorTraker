@@ -81,7 +81,7 @@ export function PatientArrivalChart() {
       </div>
 
       {/* Main Stat Label */}
-      <div className="flex items-baseline gap-2 mb-4">
+      <div className="flex flex-wrap items-baseline gap-2 mb-4">
         <span className="text-3xl font-bold text-[#101828]">
           {patients.length > 0 ? (patients.length * 24).toLocaleString() : "148"}
         </span>

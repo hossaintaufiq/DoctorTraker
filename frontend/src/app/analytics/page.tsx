@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 self-start sm:self-auto w-full sm:w-auto">
             {/* Period Pills */}
             <div className="flex items-center gap-1 bg-white p-1 rounded-full border border-slate-200 shadow-2xs">
               {(["7D", "30D", "90D", "1Y"] as const).map((p) => (
@@ -176,7 +176,7 @@ export default function AnalyticsPage() {
                   type="button"
                   onClick={() => setPeriod(p)}
                   className={cn(
-                    "px-3 py-1 text-xs font-semibold rounded-full transition-all",
+                    "px-2.5 sm:px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer",
                     period === p
                       ? "bg-[#2F65F6] text-white shadow-xs"
                       : "text-slate-600 hover:bg-slate-100"
@@ -190,71 +190,71 @@ export default function AnalyticsPage() {
             <button
               type="button"
               onClick={handleExportReport}
-              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-full shadow-2xs transition-all"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-full shadow-2xs transition-all cursor-pointer ml-auto sm:ml-0"
             >
               <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Export Report</span>
+              <span>Export Report</span>
             </button>
           </div>
         </div>
 
         {/* Aggregated KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-3xl border border-[#EBF0F7] p-5 card-shadow">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[#94A3B8] font-semibold uppercase">Total Admissions</span>
-              <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#2F65F6] flex items-center justify-center">
-                <Users className="w-4 h-4" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-5 card-shadow flex flex-col justify-between">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] sm:text-[11px] text-[#94A3B8] font-semibold uppercase truncate">Total Admissions</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-50 text-[#2F65F6] flex items-center justify-center shrink-0">
+                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-[#101828] mt-2">
+            <p className="text-xl sm:text-2xl font-bold text-[#101828] mt-1.5 sm:mt-2 truncate">
               {totalAdmissions.toLocaleString()} Cases
             </p>
-            <span className="text-[10px] text-[#10B981] font-semibold flex items-center gap-1 mt-1">
-              <ArrowUpRight className="w-3 h-3" /> +14.2% vs previous period
+            <span className="text-[10px] text-[#10B981] font-semibold flex items-center gap-1 mt-1 truncate">
+              <ArrowUpRight className="w-3 h-3 shrink-0" /> +14.2% vs prev period
             </span>
           </div>
 
-          <div className="bg-white rounded-3xl border border-[#EBF0F7] p-5 card-shadow">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[#94A3B8] font-semibold uppercase">Period Revenue</span>
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#10B981] flex items-center justify-center">
-                <DollarSign className="w-4 h-4" />
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-5 card-shadow flex flex-col justify-between">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] sm:text-[11px] text-[#94A3B8] font-semibold uppercase truncate">Period Revenue</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-50 text-[#10B981] flex items-center justify-center shrink-0">
+                <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-[#10B981] mt-2">
+            <p className="text-xl sm:text-2xl font-bold text-[#10B981] mt-1.5 sm:mt-2 truncate">
               ${totalPeriodRevenue.toLocaleString()}
             </p>
-            <span className="text-[10px] text-[#10B981] font-semibold flex items-center gap-1 mt-1">
-              <ArrowUpRight className="w-3 h-3" /> +18.6% clinical growth
+            <span className="text-[10px] text-[#10B981] font-semibold flex items-center gap-1 mt-1 truncate">
+              <ArrowUpRight className="w-3 h-3 shrink-0" /> +18.6% clinical growth
             </span>
           </div>
 
-          <div className="bg-white rounded-3xl border border-[#EBF0F7] p-5 card-shadow">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[#94A3B8] font-semibold uppercase">Avg Triage Wait Time</span>
-              <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                <Clock className="w-4 h-4" />
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-5 card-shadow flex flex-col justify-between">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] sm:text-[11px] text-[#94A3B8] font-semibold uppercase truncate">Avg Triage Wait</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-[#101828] mt-2">{avgWaitTime} Minutes</p>
-            <span className="text-[10px] text-[#10B981] font-semibold flex items-center gap-1 mt-1">
+            <p className="text-xl sm:text-2xl font-bold text-[#101828] mt-1.5 sm:mt-2 truncate">{avgWaitTime} Minutes</p>
+            <span className="text-[10px] text-[#10B981] font-semibold flex items-center gap-1 mt-1 truncate">
               -4 mins improvement
             </span>
           </div>
 
-          <div className="bg-white rounded-3xl border border-[#EBF0F7] p-5 card-shadow">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] text-[#94A3B8] font-semibold uppercase">Discharge Ratio</span>
-              <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                <Award className="w-4 h-4" />
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-5 card-shadow flex flex-col justify-between">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] sm:text-[11px] text-[#94A3B8] font-semibold uppercase truncate">Discharge Ratio</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-[#9333EA] mt-2">
+            <p className="text-xl sm:text-2xl font-bold text-[#9333EA] mt-1.5 sm:mt-2 truncate">
               {Math.round((totalDischarges / (totalAdmissions || 1)) * 100)}%
             </p>
-            <span className="text-[10px] text-[#64748B] mt-1 block">
-              {totalDischarges.toLocaleString()} total successfully discharged
+            <span className="text-[10px] text-[#64748B] mt-1 block truncate">
+              {totalDischarges.toLocaleString()} total discharged
             </span>
           </div>
         </div>
@@ -262,10 +262,10 @@ export default function AnalyticsPage() {
         {/* Charts Row 1: Area Trend + Bar Department Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* Main Area Trend Chart (8 cols) */}
-          <div className="lg:col-span-8 bg-white rounded-3xl border border-[#EBF0F7] p-6 card-shadow space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="lg:col-span-8 min-w-0 bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-4 sm:p-6 card-shadow space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
               <div>
-                <h3 className="text-base font-bold text-[#101828]">
+                <h3 className="text-sm sm:text-base font-bold text-[#101828]">
                   Patient Admissions & Discharges Trend ({period})
                 </h3>
                 <p className="text-xs text-[#64748B] mt-0.5">
@@ -273,7 +273,7 @@ export default function AnalyticsPage() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 text-xs">
+              <div className="flex items-center gap-3 text-xs shrink-0">
                 <span className="flex items-center gap-1.5 font-semibold text-slate-600">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#2F65F6]" /> Admissions
                 </span>
@@ -283,7 +283,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            <div className="h-[280px] w-full pt-2">
+            <div className="h-[220px] sm:h-[280px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={currentDataset}
@@ -346,21 +346,21 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Diagnosis Condition Donut Chart (4 cols) */}
-          <div className="lg:col-span-4 bg-white rounded-3xl border border-[#EBF0F7] p-6 card-shadow space-y-4 flex flex-col justify-between">
+          <div className="lg:col-span-4 min-w-0 bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-4 sm:p-6 card-shadow space-y-4 flex flex-col justify-between">
             <div>
-              <h3 className="text-base font-bold text-[#101828]">Patient Status Breakdown</h3>
+              <h3 className="text-sm sm:text-base font-bold text-[#101828]">Patient Status Breakdown</h3>
               <p className="text-xs text-[#64748B] mt-0.5">Distribution across care states.</p>
             </div>
 
-            <div className="h-[200px] w-full relative flex items-center justify-center">
+            <div className="h-[180px] sm:h-[200px] w-full relative flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={CONDITION_DISTRIBUTION}
                     cx="50%"
                     cy="50%"
-                    innerRadius={55}
-                    outerRadius={80}
+                    innerRadius={50}
+                    outerRadius={75}
                     paddingAngle={4}
                     dataKey="value"
                   >
@@ -380,8 +380,8 @@ export default function AnalyticsPage() {
               </ResponsiveContainer>
 
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-xl font-bold text-slate-900">100%</span>
-                <span className="text-[10px] text-slate-400 font-semibold uppercase">Inpatients</span>
+                <span className="text-lg sm:text-xl font-bold text-slate-900">100%</span>
+                <span className="text-[9px] sm:text-[10px] text-slate-400 font-semibold uppercase">Inpatients</span>
               </div>
             </div>
 
@@ -392,8 +392,8 @@ export default function AnalyticsPage() {
                     className="w-2.5 h-2.5 rounded-full shrink-0"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-slate-600 font-medium truncate">{item.name}</span>
-                  <span className="font-bold text-slate-900 ml-auto">{item.value}%</span>
+                  <span className="text-slate-600 font-medium truncate text-[11px] sm:text-xs">{item.name}</span>
+                  <span className="font-bold text-slate-900 ml-auto text-[11px] sm:text-xs">{item.value}%</span>
                 </div>
               ))}
             </div>
@@ -403,27 +403,25 @@ export default function AnalyticsPage() {
         {/* Charts Row 2: Department Revenue Bars + Hourly Intake Line */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* Department Revenue & Cases Bar Chart (7 cols) */}
-          <div className="lg:col-span-7 bg-white rounded-3xl border border-[#EBF0F7] p-6 card-shadow space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-[#101828]">
-                  Departmental Revenue & Case Volumes
-                </h3>
-                <p className="text-xs text-[#64748B] mt-0.5">
-                  Financial contribution and patient load by clinical unit.
-                </p>
-              </div>
+          <div className="lg:col-span-7 min-w-0 bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-4 sm:p-6 card-shadow space-y-4">
+            <div>
+              <h3 className="text-sm sm:text-base font-bold text-[#101828]">
+                Departmental Revenue & Case Volumes
+              </h3>
+              <p className="text-xs text-[#64748B] mt-0.5">
+                Financial contribution and patient load by clinical unit.
+              </p>
             </div>
 
-            <div className="h-[260px] w-full pt-2">
+            <div className="h-[220px] sm:h-[260px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={DEPARTMENT_METRICS}
                   margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                  <XAxis dataKey="name" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="name" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
                   <Tooltip
                     formatter={(value: any, name: any) => [
                       name === "revenue" ? `$${Number(value).toLocaleString()}` : `${value} Patients`,
@@ -442,23 +440,23 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Hourly Inflow & Wait Times Line Chart (5 cols) */}
-          <div className="lg:col-span-5 bg-white rounded-3xl border border-[#EBF0F7] p-6 card-shadow space-y-4">
+          <div className="lg:col-span-5 min-w-0 bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-4 sm:p-6 card-shadow space-y-4">
             <div>
-              <h3 className="text-base font-bold text-[#101828]">Daily Triage Inflow & Wait Times</h3>
+              <h3 className="text-sm sm:text-base font-bold text-[#101828]">Daily Triage Inflow & Wait Times</h3>
               <p className="text-xs text-[#64748B] mt-0.5">
                 Hourly patient arrivals and clinic queue duration (mins).
               </p>
             </div>
 
-            <div className="h-[260px] w-full pt-2">
+            <div className="h-[220px] sm:h-[260px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={HOURLY_INFLOW}
                   margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                  <XAxis dataKey="hour" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="hour" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "rgba(255, 255, 255, 0.95)",
@@ -489,23 +487,21 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Top Specialists & Performance Leaderboard */}
-        <div className="bg-white rounded-3xl border border-[#EBF0F7] p-6 card-shadow space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-base font-bold text-[#101828]">
-                Top Attending Specialists & Clinical Utilization
-              </h3>
-              <p className="text-xs text-[#64748B] mt-0.5">
-                Consultant productivity, patient satisfaction index, and active rounds.
-              </p>
-            </div>
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-4 sm:p-6 card-shadow space-y-4">
+          <div>
+            <h3 className="text-sm sm:text-base font-bold text-[#101828]">
+              Top Attending Specialists & Clinical Utilization
+            </h3>
+            <p className="text-xs text-[#64748B] mt-0.5">
+              Consultant productivity, patient satisfaction index, and active rounds.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {doctors.slice(0, 4).map((doc, idx) => (
               <div
                 key={doc.id}
-                className="p-4 rounded-2xl bg-[#F8FAFC] border border-slate-100 flex flex-col justify-between"
+                className="p-3.5 sm:p-4 rounded-2xl bg-[#F8FAFC] border border-slate-100 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between">
@@ -517,13 +513,13 @@ export default function AnalyticsPage() {
                     </span>
                   </div>
 
-                  <h4 className="text-sm font-bold text-[#101828] mt-2.5">{doc.name}</h4>
-                  <p className="text-xs text-[#2F65F6] font-medium">{doc.specialty}</p>
-                  <p className="text-[11px] text-slate-400">{doc.hospital}</p>
+                  <h4 className="text-sm font-bold text-[#101828] mt-2 sm:mt-2.5 truncate">{doc.name}</h4>
+                  <p className="text-xs text-[#2F65F6] font-medium truncate">{doc.specialty}</p>
+                  <p className="text-[11px] text-slate-400 truncate">{doc.hospital}</p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs">
-                  <span className="text-slate-500">Active Patients:</span>
+                <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs">
+                  <span className="text-slate-500 text-[11px] sm:text-xs">Active Patients:</span>
                   <span className="font-bold text-slate-900">{doc.patientCount || 24}</span>
                 </div>
               </div>

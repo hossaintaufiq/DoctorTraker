@@ -204,6 +204,29 @@ export function AppointmentsSection() {
           </table>
         )}
       </div>
+
+      {/* Table Bottom Footer: Record Count & View All Schedule Link */}
+      <div className="pt-4 mt-3 border-t border-[#F1F5F9] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="text-xs text-[#64748B] flex items-center gap-1.5">
+          <span>Showing</span>
+          <span className="font-semibold text-[#101828]">
+            {Math.min(5, activeAppointments.length)}
+          </span>
+          <span>of</span>
+          <span className="font-semibold text-[#101828]">
+            {activeAppointments.length}
+          </span>
+          <span>scheduled consultation records</span>
+        </div>
+
+        <Link
+          href="/appointments"
+          className="text-xs font-semibold text-[#2F65F6] hover:text-[#1E4FD8] inline-flex items-center gap-1 transition-colors group"
+        >
+          <span>View full schedule</span>
+          <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        </Link>
+      </div>
     </div>
   );
 }
