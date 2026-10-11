@@ -8,6 +8,8 @@
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express.js-4.21-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![MongoDB Atlas](https://img.shields.io/badge/MongoDB-Atlas_Cloud_8.9-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live_Portal-black?style=for-the-badge&logo=vercel&logoColor=white)](https://doctortraker.vercel.app)
+[![Render Backend](https://img.shields.io/badge/Render-Live_API-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://doctortraker.onrender.com/api/health)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4_Modern-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Security](https://img.shields.io/badge/Security-OWASP_Hardened-blue?style=for-the-badge&logo=shield&logoColor=white)](https://owasp.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -202,6 +204,42 @@ Open [http://localhost:3000](http://localhost:3000) in your web browser.
 
 ---
 
+### 🌐 Cloud Production Deployment & CI/CD Pipeline
+
+Doctor Tracker is configured for continuous zero-downtime deployment:
+
+```mermaid
+graph LR
+    Dev["Developer (Git Push main)"] --> GitHub["GitHub Repo (DoctorTraker)"]
+    GitHub -->|Auto-Webhook| Vercel["Vercel Edge Network\n(frontend: doctortraker.vercel.app)"]
+    GitHub -->|Auto-Webhook| Render["Render Web Service\n(backend: doctortraker.onrender.com)"]
+    Render <-->|TLS Connection Pool| Atlas["MongoDB Atlas Cloud\n(Cluster: doctor_tracker)"]
+    Vercel <-->|CORS Authenticated REST| Render
+```
+
+1. **Frontend (Vercel)**:
+   - Root Directory: `frontend`
+   - Framework Preset: `Next.js`
+   - Build Command: `next build` (Next.js 16 with Turbopack)
+   - Environment Variable: `NEXT_PUBLIC_API_URL=https://doctortraker.onrender.com/api`
+   - Custom Domain: [https://doctortraker.vercel.app](https://doctortraker.vercel.app)
+2. **Backend (Render)**:
+   - Root Directory: `backend`
+   - Environment: `Node.js`
+   - Build Command: `npm install && npm run build`
+   - Start Command: `npm start` (`node dist/server.js`)
+   - Environment Variables:
+     - `MONGODB_URI`: MongoDB Atlas connection URI with DNS SRV lookup
+     - `PORT`: `5000` (Render dynamically binds `$PORT`)
+     - `NODE_ENV`: `production`
+     - `CORS_ORIGIN`: `https://doctortraker.vercel.app,https://frontend-two-beta-95.vercel.app,http://localhost:3000`
+     - `JWT_SECRET`: High-entropy production cryptographic salt
+   - Production API: [https://doctortraker.onrender.com/api](https://doctortraker.onrender.com/api)
+3. **Database (MongoDB Atlas)**:
+   - Global cluster on AWS with encrypted TLS 1.3 connections, automatic IP whitelist (`0.0.0.0/0`), and persistent compound indexing.
+
+---
+
 ### Database Seeding & Factory Reset
 
 The system provides two methods to reset and re-seed the database:
@@ -310,6 +348,9 @@ graph TD
 | **Doctor Management (CRUD)** | Name, specialization, hospital, phone, email, room number, experience, max patient capacity. Dual Grid/Table view, real-time search, specialty filters, and pagination. | ✅ **VERIFIED** |
 | **Doctor's Patient Roster** | View all patients under each specific doctor, directly add new patients to a doctor, or remove patients with confirmation dialogs. | ✅ **VERIFIED** |
 | **Patient Management (CRUD)** | Dedicated page, comprehensive search, condition & blood group filters, date-wise sorting, pagination, and edit/delete operations. | ✅ **VERIFIED** |
+| **Emergency & Trauma Admissions (`/emergency`)** | Real-time clinical triage cases (`EM-104`, etc.), priority categorization (*Immediate OR, Critical ICU, High Priority, Stable*), dynamic vitals, trauma alert broadcast modals, and rapid ER intake. | ✅ **VERIFIED** |
+| **Pharmacy Inventory (`/pharmacy`)** | Pharmaceutical catalog with stock warning badges, expiration tracking, prescription linkage, supplier details, and search/filter strips. | ✅ **VERIFIED** |
+| **Outpatient Appointment Scheduling** | Dual-view calendar scheduling (Interactive Table vs. Timeline Matrix), physician filtering, status tracking (*Confirmed, In Progress, Completed*). | ✅ **VERIFIED** |
 | **Dashboard & Data Visualization** | Multi-KPI metric cards, Patient Volume arrival curves, Departmental Revenue & Case Volume bar chart, Patient Status Breakdown donut, and Comprehensive CSV Export. | ✅ **VERIFIED** |
 | **Performance & Query Optimization** | Compound indexes in MongoDB, `$facet` aggregations, lean queries, pagination on both client and server, zero unnecessary re-renders. | ✅ **VERIFIED** |
 | **UI/UX Excellence & Responsiveness** | Modern glassmorphic theme, responsive mobile drawers, scaled mobile padding, responsive subnavs without horizontal sliding bars, zero browser `alert()` prompts. | ✅ **VERIFIED** |
@@ -445,6 +486,8 @@ DoctorTraker/
 
 ## 11. Author & License
 
-* **Lead Architect**: Care Guide BD Engineering Team
-* **Repository**: [https://github.com/hossaintaufiq/DoctorTraker](https://github.com/hossaintaufiq/DoctorTraker)
+* **Lead Architect / Developer**: **Hossain Ahmmed Taufiq** ([@hossaintaufiq](https://github.com/hossaintaufiq))
+* **Live Web Application**: [https://doctortraker.vercel.app](https://doctortraker.vercel.app)
+* **Live REST API Endpoint**: [https://doctortraker.onrender.com/api](https://doctortraker.onrender.com/api)
+* **GitHub Repository**: [https://github.com/hossaintaufiq/DoctorTraker](https://github.com/hossaintaufiq/DoctorTraker)
 * **License**: Released under the **MIT License**. Free for educational, evaluation, and commercial use.
