@@ -3,7 +3,8 @@
  * Connects frontend client to backend Node.js/Express REST endpoints
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://doctortraker.onrender.com/api";
 
 export interface ApiResponse<T = any> {
   success: boolean;
