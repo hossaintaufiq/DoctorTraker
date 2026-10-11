@@ -236,15 +236,15 @@ export default function BillingPage() {
 
         {/* Filters Toolbar */}
         <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-4 card-shadow space-y-3">
-          {/* Status Tabs with no-scrollbar */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar border-b border-slate-100 pb-3">
+          {/* Status Tabs - Responsive flex-wrap avoiding sliding bars */}
+          <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-100 pb-3">
             {(["All", "Paid", "Pending", "Overdue", "Processing"] as const).map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
                 className={cn(
-                  "px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all shrink-0 cursor-pointer",
+                  "px-3 sm:px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all shrink-0 cursor-pointer",
                   activeTab === tab
                     ? "bg-[#2F65F6] text-white shadow-xs"
                     : "bg-[#F8FAFC] text-slate-600 border border-slate-200 hover:bg-slate-100"

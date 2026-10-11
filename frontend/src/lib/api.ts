@@ -270,4 +270,12 @@ export const api = {
   analytics: {
     getDashboard: () => request("/analytics/dashboard"),
   },
+
+  // System & Database Administration
+  system: {
+    resetDatabase: () =>
+      request("/system/reset-database", {
+        method: "POST",
+      }),
+  },
 };

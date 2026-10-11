@@ -231,9 +231,9 @@ export default function AppointmentsPage() {
         {/* Interactive Filter Toolbar & View Toggle */}
         <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-3.5 sm:p-4 card-shadow space-y-3">
           {/* Status Tabs & View Switcher */}
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
-            {/* Scrollable Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 min-w-0 flex-1">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2.5">
+            {/* Status Tabs - Responsive flex-wrap avoiding sliding bars */}
+            <div className="flex flex-wrap items-center gap-1.5 py-0.5">
               {(["All", "Confirmed", "In-Consultation", "Completed", "Cancelled"] as const).map((tab) => (
                 <button
                   key={tab}
@@ -252,7 +252,7 @@ export default function AppointmentsPage() {
             </div>
 
             {/* View Switcher: Table vs Timeline */}
-            <div className="flex items-center gap-1 bg-[#F8FAFC] p-1 rounded-xl sm:rounded-full border border-slate-200 shrink-0">
+            <div className="flex items-center gap-1 bg-[#F8FAFC] p-1 rounded-xl sm:rounded-full border border-slate-200 shrink-0 self-start sm:self-auto">
               <button
                 type="button"
                 onClick={() => setViewMode("Table")}

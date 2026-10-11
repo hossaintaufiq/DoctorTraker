@@ -357,23 +357,23 @@ export default function DoctorsPage() {
                 return (
                   <div
                     key={doc.id}
-                    className="glass-card card-shadow-hover p-6 rounded-3xl flex flex-col justify-between"
+                    className="glass-card card-shadow-hover p-3.5 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl flex flex-col justify-between"
                   >
                     <div>
                       {/* Top Bar */}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-sm flex items-center justify-center border border-white/80 shrink-0 shadow-2xs">
+                      <div className="flex items-start justify-between gap-2.5 sm:gap-3">
+                        <div className="flex items-center gap-2.5 sm:gap-3">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs sm:text-sm flex items-center justify-center border border-white/80 shrink-0 shadow-2xs">
                             {getInitials(doc.name)}
                           </div>
                           <div className="min-w-0">
                             <Link
                               href={`/doctors/${doc.id}`}
-                              className="text-sm font-bold text-[#101828] hover:text-[#2F65F6] transition-colors truncate block"
+                              className="text-xs sm:text-sm font-bold text-[#101828] hover:text-[#2F65F6] transition-colors truncate block"
                             >
                               {doc.name}
                             </Link>
-                            <span className="text-xs font-semibold text-[#2F65F6] block">
+                            <span className="text-[11px] sm:text-xs font-semibold text-[#2F65F6] block">
                               {doc.specialty}
                             </span>
                           </div>
@@ -382,7 +382,7 @@ export default function DoctorsPage() {
                         {/* Status Pill */}
                         <span
                           className={cn(
-                            "px-2.5 py-0.5 rounded-full text-[10px] font-semibold shrink-0",
+                            "px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] font-semibold shrink-0",
                             isActive && "bg-[#ECFDF5] text-[#10B981]",
                             isInSurgery && "bg-[#FEF3C7] text-[#D97706]",
                             isOnLeave && "bg-[#F1F5F9] text-[#64748B]",
@@ -394,7 +394,7 @@ export default function DoctorsPage() {
                       </div>
 
                       {/* Hospital & Contact Info */}
-                      <div className="mt-4 space-y-2 text-xs text-[#64748B]">
+                      <div className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 text-xs text-[#64748B]">
                         <div className="flex items-center gap-2 truncate text-[#101828] font-medium">
                           <Building2 className="w-3.5 h-3.5 text-[#2F65F6] shrink-0" />
                           <span className="truncate">{doc.hospital || "Medcare Central Hospital"}</span>
@@ -407,14 +407,14 @@ export default function DoctorsPage() {
                           <Phone className="w-3.5 h-3.5 text-[#94A3B8] shrink-0" />
                           <span>{doc.phone}</span>
                         </div>
-                        <div className="flex items-center justify-between text-[11px] pt-1">
+                        <div className="flex items-center justify-between text-[11px] pt-0.5 sm:pt-1">
                           <span>{doc.roomNumber}</span>
                           <span className="text-[#94A3B8]">Joined {doc.joinedDate}</span>
                         </div>
                       </div>
 
                       {/* Patient Load Capacity Bar */}
-                      <div className="mt-4 pt-3.5 border-t border-slate-100">
+                      <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3.5 border-t border-slate-100">
                         <div className="flex items-center justify-between text-xs mb-1.5">
                           <span className="text-[#64748B]">Assigned Patients</span>
                           <span className="font-bold text-[#101828]">
@@ -434,7 +434,7 @@ export default function DoctorsPage() {
                     </div>
 
                     {/* Bottom Actions */}
-                    <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+                    <div className="mt-3.5 sm:mt-5 pt-2.5 sm:pt-3.5 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
                       <div className="text-xs text-[#64748B]">
                         <span className="font-semibold text-[#101828]">{doc.experienceYears} yrs</span>
                         <span className="text-[#94A3B8] ml-1">experience</span>

@@ -201,7 +201,7 @@ export default function PharmacyPage() {
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-          <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
             {/* Category Select */}
             <select
               value={selectedCategory}

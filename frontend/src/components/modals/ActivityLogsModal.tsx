@@ -186,9 +186,9 @@ export function ActivityLogsModal() {
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+          <div className="flex flex-wrap items-center gap-2">
             {/* Category Filter */}
-            <div className="flex items-center gap-1 bg-white p-1 rounded-full border border-slate-200 shrink-0">
+            <div className="flex flex-wrap items-center gap-1 bg-white p-1 rounded-2xl sm:rounded-full border border-slate-200">
               {["All", "Clinical", "Billing", "Staff", "Security"].map((cat) => (
                 <button
                   key={cat}

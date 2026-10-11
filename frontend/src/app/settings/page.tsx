@@ -59,7 +59,13 @@ type SettingsTab =
   | "Backup";
 
 export default function SettingsPage() {
-  const { showToast, addActivityLog, setIsLogsModalOpen } = useDoctorTracker();
+  const {
+    showToast,
+    addActivityLog,
+    setIsLogsModalOpen,
+    resetDatabase,
+    openConfirmDialog,
+  } = useDoctorTracker();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>("General");
   const [sessions, setSessions] = useState<ActiveSession[]>(ACTIVE_SESSIONS);
@@ -68,6 +74,20 @@ export default function SettingsPage() {
     setSessions((prev) => prev.filter((s) => s.id !== id));
     addActivityLog("Security", "User Session Terminated", `Revoked active token for ${user}.`, "Warning");
     showToast("Session Terminated", `Revoked credentials for ${user}.`, "info");
+  };
+
+  const handlePromptResetDatabase = () => {
+    openConfirmDialog({
+      title: "Reset Database & Start Fresh",
+      itemName: "All MongoDB Collections",
+      itemType: "Database Wipe",
+      message: "Are you sure you want to delete the database and start fresh? All clinical charts, patient records, and invoices will be purged, and default pristine seed data will be reloaded into MongoDB Atlas.",
+      confirmLabel: "Yes, Reset Database",
+      destructive: true,
+      onConfirm: async () => {
+        await resetDatabase();
+      },
+    });
   };
 
   // Tab 1: General & Hospital Branding
@@ -252,8 +272,8 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Tab Navigation Navigation Bar */}
-        <div className="bg-white rounded-3xl border border-[#EBF0F7] p-2 card-shadow flex items-center gap-1.5 overflow-x-auto">
+        {/* Tab Navigation Subnav Bar - Responsive Grid on Mobile & Flex on Desktop */}
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-1.5 sm:p-2 card-shadow grid grid-cols-2 sm:grid-cols-3 lg:flex lg:items-center gap-1.5 sm:gap-2">
           {[
             { id: "General", label: "Hospital Profile", icon: Building2 },
             { id: "Clinical", label: "Clinical & Wards", icon: Stethoscope },
@@ -270,14 +290,14 @@ export default function SettingsPage() {
                 type="button"
                 onClick={() => setActiveTab(tab.id as SettingsTab)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shrink-0",
+                  "flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition-all shrink-0 cursor-pointer text-center sm:text-left",
                   isActive
                     ? "bg-[#2F65F6] text-white shadow-xs"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 )}
               >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
+                <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span className="truncate">{tab.label}</span>
               </button>
             );
           })}
@@ -1005,10 +1025,39 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={handleExportBackupSnapshot}
-                  className="px-4 py-2 text-xs font-bold text-[#2F65F6] bg-white border border-[#2F65F6]/30 hover:bg-blue-50 rounded-full shadow-2xs transition-all flex items-center gap-1.5 self-start sm:self-auto"
+                  className="px-4 py-2 text-xs font-bold text-[#2F65F6] bg-white border border-[#2F65F6]/30 hover:bg-blue-50 rounded-full shadow-2xs transition-all flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download Backup (.JSON)</span>
+                </button>
+              </div>
+
+              {/* Danger Zone: Reset Database & Start Fresh */}
+              <div className="p-5 sm:p-6 rounded-3xl bg-red-50/70 border border-red-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center shrink-0 border border-red-200 shadow-2xs mt-0.5">
+                    <RotateCcw className="w-5 h-5 stroke-[2.2]" />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-bold text-red-950">Reset Database & Start Fresh</h4>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">
+                        Destructive Action
+                      </span>
+                    </div>
+                    <p className="text-xs text-red-800/80 leading-relaxed max-w-xl">
+                      Permanently wipe all current clinical records, patient charts, active consultation slots, and itemized billing invoices from MongoDB Atlas, and reinitialize pristine baseline records.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handlePromptResetDatabase}
+                  className="px-5 py-2.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 active:scale-95 rounded-full shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer self-start md:self-auto"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset Database to Fresh State</span>
                 </button>
               </div>
             </div>

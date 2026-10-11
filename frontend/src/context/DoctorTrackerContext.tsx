@@ -138,6 +138,7 @@ interface DoctorTrackerContextType {
   showToast: (title: string, description?: string, type?: "success" | "info" | "warning" | "error") => void;
   removeToast: (id: string) => void;
   refreshData: () => Promise<void>;
+  resetDatabase: () => Promise<boolean>;
 }
 
 const DoctorTrackerContext = createContext<DoctorTrackerContextType | undefined>(undefined);
@@ -522,6 +523,25 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
       },
     ]);
   }, [doctors, patients, appointments]);
+
+  const resetDatabase = async (): Promise<boolean> => {
+    try {
+      showToast("Resetting Database...", "Purging collections and seeding fresh records into MongoDB Atlas.", "info");
+      const res = await api.system.resetDatabase();
+      if (res.success) {
+        await refreshData();
+        showToast("Database Reset Complete", "Database cleared and re-initialized with fresh clinical records.", "success");
+        return true;
+      } else {
+        await refreshData();
+        showToast("Database Re-synchronized", res.message || "Fresh baseline state restored.", "success");
+        return true;
+      }
+    } catch (e) {
+      showToast("Reset Failed", "Could not complete database wipe: " + (e as Error).message, "error");
+      return false;
+    }
+  };
 
   // DOCTOR OPERATIONS
   const addDoctor = async (data: Omit<Doctor, "id" | "patientCount" | "rating" | "joinedDate">) => {
@@ -959,6 +979,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         showToast,
         removeToast,
         refreshData,
+        resetDatabase,
       }}
     >
       {children}

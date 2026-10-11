@@ -202,8 +202,10 @@ const doctorsSeed = [
 async function seedDatabase() {
     const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/doctor_tracker";
     try {
-        await mongoose_1.default.connect(uri);
-        console.log("[Seeder] Connected to MongoDB Atlas for comprehensive seeding...");
+        if (mongoose_1.default.connection.readyState !== 1) {
+            await mongoose_1.default.connect(uri);
+            console.log("[Seeder] Connected to MongoDB Atlas for comprehensive seeding...");
+        }
         // Clear existing collections
         await Promise.all([
             User_js_1.User.deleteMany({}),
@@ -430,12 +432,27 @@ async function seedDatabase() {
         const createdLogs = await ActivityLog_js_1.ActivityLog.insertMany(activityLogsSeed);
         console.log(`[Seeder] Created ${createdLogs.length} Activity Logs.`);
         console.log("[Seeder] Full Database Seeding Complete into MongoDB Atlas Cloud!");
-        await mongoose_1.default.connection.close();
-        process.exit(0);
+        const counts = {
+            users: 1,
+            doctors: createdDoctors.length,
+            patients: createdPatients.length,
+            departments: createdDepts.length,
+            appointments: createdAppointments.length,
+            invoices: createdInvoices.length,
+            activityLogs: createdLogs.length,
+        };
+        if (process.argv[1]?.includes("seeder")) {
+            await mongoose_1.default.connection.close();
+            process.exit(0);
+        }
+        return counts;
     }
     catch (error) {
         console.error("[Seeder Error]", error);
-        process.exit(1);
+        if (process.argv[1]?.includes("seeder")) {
+            process.exit(1);
+        }
+        throw error;
     }
 }
 if (process.argv[1]?.includes("seeder")) {

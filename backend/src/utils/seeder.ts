@@ -201,8 +201,10 @@ export async function seedDatabase(): Promise<void> {
   const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/doctor_tracker";
 
   try {
-    await mongoose.connect(uri);
-    console.log("[Seeder] Connected to MongoDB Atlas for comprehensive seeding...");
+    if (mongoose.connection.readyState !== 1) {
+      await mongoose.connect(uri);
+      console.log("[Seeder] Connected to MongoDB Atlas for comprehensive seeding...");
+    }
 
     // Clear existing collections
     await Promise.all([
@@ -442,11 +444,29 @@ export async function seedDatabase(): Promise<void> {
     console.log(`[Seeder] Created ${createdLogs.length} Activity Logs.`);
 
     console.log("[Seeder] Full Database Seeding Complete into MongoDB Atlas Cloud!");
-    await mongoose.connection.close();
-    process.exit(0);
+
+    const counts = {
+      users: 1,
+      doctors: createdDoctors.length,
+      patients: createdPatients.length,
+      departments: createdDepts.length,
+      appointments: createdAppointments.length,
+      invoices: createdInvoices.length,
+      activityLogs: createdLogs.length,
+    };
+
+    if (process.argv[1]?.includes("seeder")) {
+      await mongoose.connection.close();
+      process.exit(0);
+    }
+
+    return counts as any;
   } catch (error) {
     console.error("[Seeder Error]", error);
-    process.exit(1);
+    if (process.argv[1]?.includes("seeder")) {
+      process.exit(1);
+    }
+    throw error;
   }
 }
 

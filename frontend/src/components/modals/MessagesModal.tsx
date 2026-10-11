@@ -9,14 +9,11 @@ import {
   CheckCheck,
   Phone,
   Video,
-  Info,
   Paperclip,
-  Smile,
   Circle,
   MessageSquare,
   Sparkles,
   Clock,
-  User,
   ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -53,6 +50,13 @@ export function MessagesModal() {
     }
   }, [isMessagesModalOpen, currentMessages, activeConversationId]);
 
+  // Reset to list view if modal re-opens or conversation clears
+  useEffect(() => {
+    if (isMessagesModalOpen && !activeConversationId && conversations[0]) {
+      setActiveConversationId(conversations[0].id);
+    }
+  }, [isMessagesModalOpen, activeConversationId, conversations, setActiveConversationId]);
+
   if (!isMessagesModalOpen) return null;
 
   const filteredConversations = conversations.filter((c) => {
@@ -81,22 +85,36 @@ export function MessagesModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
-      <div className="bg-white/95 backdrop-blur-3xl w-full max-w-5xl h-[88vh] max-h-[750px] rounded-3xl border border-white/90 shadow-2xl flex flex-col overflow-hidden">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="messages-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in"
+      onClick={() => setIsMessagesModalOpen(false)}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white/95 backdrop-blur-3xl w-full max-w-5xl h-[94vh] sm:h-[88vh] max-h-[800px] rounded-2xl sm:rounded-3xl border border-white/90 shadow-2xl flex flex-col overflow-hidden transition-all"
+      >
         {/* Top Modal Header */}
-        <div className="h-16 px-6 border-b border-slate-100 flex items-center justify-between bg-white/70">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center">
-              <MessageSquare className="w-5 h-5" />
+        <div className="min-h-[56px] sm:min-h-[64px] py-2 px-3.5 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white/80 shrink-0 gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center shrink-0">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-bold text-[#101828] flex items-center gap-2">
-                Clinical Communications & Messages
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-50 text-amber-700 rounded-full border border-amber-200">
-                  Upcoming Feature
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h2
+                  id="messages-modal-title"
+                  className="text-xs sm:text-base font-bold text-[#101828] truncate"
+                >
+                  Clinical Messages
+                </h2>
+                <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold bg-amber-50 text-amber-700 rounded-full border border-amber-200 shrink-0">
+                  Preview
                 </span>
-              </h2>
-              <p className="text-xs text-[#64748B]">
+              </div>
+              <p className="hidden sm:block text-xs text-[#64748B] truncate">
                 Direct secure encrypted messaging between hospital staff, doctors, and patients.
               </p>
             </div>
@@ -104,7 +122,7 @@ export function MessagesModal() {
 
           <button
             onClick={() => setIsMessagesModalOpen(false)}
-            className="w-8 h-8 rounded-full bg-slate-100/80 hover:bg-slate-200 text-[#64748B] hover:text-[#101828] flex items-center justify-center transition-all"
+            className="w-8 h-8 rounded-full bg-slate-100/80 hover:bg-slate-200 text-[#64748B] hover:text-[#101828] flex items-center justify-center transition-all cursor-pointer shrink-0"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -112,34 +130,36 @@ export function MessagesModal() {
         </div>
 
         {/* Upcoming Feature Notice Banner */}
-        <div className="bg-gradient-to-r from-amber-50/90 via-amber-50/70 to-orange-50/80 border-b border-amber-200/60 px-6 py-2.5 flex items-center justify-between text-xs text-amber-900 shrink-0 shadow-2xs">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
-            <span>
-              <strong>Notice:</strong> Real-time clinical messaging is an <strong>upcoming feature</strong> currently available in interactive preview mode.
+        <div className="bg-gradient-to-r from-amber-50/90 via-amber-50/70 to-orange-50/80 border-b border-amber-200/60 px-3.5 sm:px-6 py-1.5 sm:py-2 flex items-center justify-between text-[11px] sm:text-xs text-amber-900 shrink-0 shadow-2xs gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            <span className="truncate sm:whitespace-normal">
+              <strong>Notice:</strong> Real-time clinical messaging is currently in interactive preview mode.
             </span>
           </div>
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-200/70 text-amber-800 border border-amber-300/70 shrink-0 hidden sm:inline">
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200/70 text-amber-800 border border-amber-300/70 shrink-0 hidden md:inline">
             Release v2.5 Soon
           </span>
         </div>
 
         {/* Content Body: Left sidebar (conversations) + Right chat area */}
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex overflow-hidden min-h-0">
           {/* Conversation List Sidebar */}
-          <div className={cn(
-            "w-full sm:w-80 md:w-88 border-r border-slate-100 flex flex-col bg-slate-50/50",
-            mobileView === "chat" ? "hidden sm:flex" : "flex"
-          )}>
+          <div
+            className={cn(
+              "w-full sm:w-80 md:w-88 border-r border-slate-100 flex flex-col bg-slate-50/50 shrink-0",
+              mobileView === "chat" ? "hidden sm:flex" : "flex"
+            )}
+          >
             {/* Search and Filters */}
-            <div className="p-3.5 border-b border-slate-100 space-y-2.5">
+            <div className="p-2.5 sm:p-3.5 border-b border-slate-100 space-y-2 shrink-0">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Search contacts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-full pl-8 pr-3 py-1.5 text-xs text-[#1E293B] placeholder-slate-400 focus:outline-none focus:border-[#2F65F6] focus:ring-1 focus:ring-[#2F65F6]"
+                  className="w-full bg-white border border-slate-200 rounded-full pl-8 pr-3 py-1.5 text-xs text-[#1E293B] placeholder-slate-400 focus:outline-none focus:border-[#2F65F6] focus:ring-1 focus:ring-[#2F65F6] transition-all"
                 />
                 <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -151,7 +171,7 @@ export function MessagesModal() {
                     type="button"
                     onClick={() => setFilterRole(role)}
                     className={cn(
-                      "px-2.5 py-1 text-[11px] font-semibold rounded-full transition-all flex-1",
+                      "px-2.5 py-1 text-[11px] font-semibold rounded-full transition-all flex-1 cursor-pointer",
                       filterRole === role
                         ? "bg-[#2F65F6] text-white shadow-xs"
                         : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
@@ -175,14 +195,14 @@ export function MessagesModal() {
                       setMobileView("chat");
                     }}
                     className={cn(
-                      "p-3 rounded-2xl cursor-pointer transition-all flex items-start gap-3",
+                      "p-2.5 sm:p-3 rounded-2xl cursor-pointer transition-all flex items-start gap-2.5 sm:gap-3",
                       isSelected
                         ? "bg-white shadow-sm border border-[#2F65F6]/20"
                         : "hover:bg-white/70"
                     )}
                   >
                     <div className="relative shrink-0">
-                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-white">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-white">
                         {conv.participantName
                           .split(" ")
                           .map((n) => n[0])
@@ -190,7 +210,7 @@ export function MessagesModal() {
                           .join("")}
                       </div>
                       {conv.online && (
-                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10B981] rounded-full ring-2 ring-white" />
+                        <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-[#10B981] rounded-full ring-2 ring-white" />
                       )}
                     </div>
 
@@ -230,23 +250,26 @@ export function MessagesModal() {
 
           {/* Active Chat Conversation Area */}
           {activeConversation ? (
-            <div className={cn(
-              "flex-1 flex flex-col bg-white",
-              mobileView === "list" ? "hidden sm:flex" : "flex"
-            )}>
+            <div
+              className={cn(
+                "flex-1 flex flex-col bg-white min-w-0",
+                mobileView === "list" ? "hidden sm:flex" : "flex"
+              )}
+            >
               {/* Active Header */}
-              <div className="h-16 px-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white/90">
+              <div className="min-h-[56px] sm:min-h-[64px] px-3 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white/90 shrink-0 gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <button
                     type="button"
                     onClick={() => setMobileView("list")}
-                    className="sm:hidden p-1.5 -ml-1 text-slate-600 hover:text-slate-900 rounded-full hover:bg-slate-100"
-                    aria-label="Back to contacts"
+                    className="sm:hidden p-1.5 -ml-1 text-slate-600 hover:text-slate-900 rounded-full hover:bg-slate-100 cursor-pointer shrink-0"
+                    aria-label="Back to contacts list"
+                    title="Back to contacts"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <div className="relative shrink-0">
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/10 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-slate-100">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/10 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-slate-100">
                       {activeConversation.participantName
                         .split(" ")
                         .map((n) => n[0])
@@ -260,27 +283,27 @@ export function MessagesModal() {
                   <div className="min-w-0">
                     <h3 className="text-xs sm:text-sm font-bold text-[#101828] flex items-center gap-1.5 truncate">
                       <span className="truncate">{activeConversation.participantName}</span>
-                      <span className="text-[9px] sm:text-[10px] font-normal px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">
+                      <span className="text-[9px] sm:text-[10px] font-normal px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">
                         {activeConversation.participantRole}
                       </span>
                     </h3>
-                    <p className="text-[10px] sm:text-[11px] text-slate-400 flex items-center gap-1">
+                    <p className="text-[10px] sm:text-[11px] text-slate-400 flex items-center gap-1 truncate">
                       {activeConversation.online ? (
                         <>
-                          <Circle className="w-2 h-2 fill-[#10B981] text-[#10B981]" />
-                          Active Now
+                          <Circle className="w-2 h-2 fill-[#10B981] text-[#10B981] shrink-0" />
+                          <span>Active Now</span>
                         </>
                       ) : (
                         <>
-                          <Clock className="w-3 h-3" />
-                          Last active 15 mins ago
+                          <Clock className="w-2.5 h-2.5 shrink-0" />
+                          <span>Last active 15 mins ago</span>
                         </>
                       )}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={() =>
@@ -290,10 +313,10 @@ export function MessagesModal() {
                         "info"
                       )
                     }
-                    className="w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200 transition-all"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200 transition-all cursor-pointer"
                     title="Audio Call"
                   >
-                    <Phone className="w-4 h-4" />
+                    <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                   <button
                     type="button"
@@ -304,18 +327,18 @@ export function MessagesModal() {
                         "info"
                       )
                     }
-                    className="w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200 transition-all"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200 transition-all cursor-pointer"
                     title="Video Consult"
                   >
-                    <Video className="w-4 h-4" />
+                    <Video className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               </div>
 
               {/* Chat Message Stream */}
-              <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-gradient-to-b from-slate-50/40 to-white">
-                <div className="text-center my-2">
-                  <span className="text-[10px] font-medium text-slate-400 bg-white/80 px-3 py-1 rounded-full border border-slate-100 shadow-2xs">
+              <div className="flex-1 p-3 sm:p-5 md:p-6 overflow-y-auto space-y-3 sm:space-y-4 bg-gradient-to-b from-slate-50/40 to-white min-h-0">
+                <div className="text-center my-1 sm:my-2">
+                  <span className="text-[9px] sm:text-[10px] font-medium text-slate-400 bg-white/80 px-2.5 py-1 rounded-full border border-slate-100 shadow-2xs">
                     Hospital Confidential &bull; End-to-End Encrypted
                   </span>
                 </div>
@@ -324,7 +347,7 @@ export function MessagesModal() {
                   <div
                     key={msg.id}
                     className={cn(
-                      "flex flex-col max-w-[75%]",
+                      "flex flex-col max-w-[85%] sm:max-w-[75%]",
                       msg.isSelf ? "ml-auto items-end" : "mr-auto items-start"
                     )}
                   >
@@ -337,7 +360,7 @@ export function MessagesModal() {
 
                     <div
                       className={cn(
-                        "p-3.5 rounded-3xl text-xs leading-relaxed shadow-xs",
+                        "p-3 sm:p-3.5 rounded-2xl text-xs leading-relaxed shadow-2xs break-words",
                         msg.isSelf
                           ? "bg-[#2F65F6] text-white rounded-tr-none"
                           : "bg-white text-slate-800 border border-slate-100 rounded-tl-none"
@@ -356,17 +379,17 @@ export function MessagesModal() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Suggested Quick Responses */}
-              <div className="px-6 py-2 bg-slate-50/70 border-t border-slate-100 flex items-center gap-2 overflow-x-auto">
+              {/* Suggested Quick Responses - Responsive flex-wrap */}
+              <div className="px-3 sm:px-6 py-1.5 sm:py-2 bg-slate-50/70 border-t border-slate-100 flex flex-wrap items-center gap-1.5 sm:gap-2 shrink-0">
                 <span className="text-[10px] font-semibold text-slate-400 shrink-0 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-[#2F65F6]" /> Quick reply:
+                  <Sparkles className="w-3 h-3 text-[#2F65F6]" /> Quick:
                 </span>
                 <button
                   type="button"
                   onClick={() =>
                     handleQuickReply("Appointment confirmed. Please arrive 10 minutes early.")
                   }
-                  className="px-2.5 py-1 text-[11px] rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0 transition-all"
+                  className="px-2.5 py-1 text-[10px] sm:text-[11px] rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0 transition-all cursor-pointer whitespace-nowrap"
                 >
                   Appointment confirmed
                 </button>
@@ -375,7 +398,7 @@ export function MessagesModal() {
                   onClick={() =>
                     handleQuickReply("Your updated lab diagnostic reports are ready for review.")
                   }
-                  className="px-2.5 py-1 text-[11px] rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0 transition-all"
+                  className="px-2.5 py-1 text-[10px] sm:text-[11px] rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0 transition-all cursor-pointer whitespace-nowrap"
                 >
                   Lab report ready
                 </button>
@@ -384,7 +407,7 @@ export function MessagesModal() {
                   onClick={() =>
                     handleQuickReply("Prescription has been refilled and sent to the pharmacy.")
                   }
-                  className="px-2.5 py-1 text-[11px] rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0 transition-all"
+                  className="px-2.5 py-1 text-[10px] sm:text-[11px] rounded-full bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0 transition-all cursor-pointer whitespace-nowrap"
                 >
                   Prescription sent
                 </button>
@@ -393,14 +416,14 @@ export function MessagesModal() {
               {/* Message Input Bar */}
               <form
                 onSubmit={handleSendMessage}
-                className="p-4 border-t border-slate-100 flex items-center gap-2 bg-white"
+                className="p-2.5 sm:p-3.5 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2 bg-white shrink-0"
               >
                 <button
                   type="button"
                   onClick={() =>
                     showToast("Attachment", "Hospital file & scan attachment dialog opened.", "info")
                   }
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all"
+                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all cursor-pointer shrink-0"
                   title="Attach File / Scan"
                 >
                   <Paperclip className="w-4 h-4" />
@@ -411,13 +434,13 @@ export function MessagesModal() {
                   placeholder={`Reply to ${activeConversation.participantName}...`}
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-[#2F65F6] focus:ring-1 focus:ring-[#2F65F6] transition-all"
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-[#2F65F6] focus:ring-1 focus:ring-[#2F65F6] transition-all"
                 />
 
                 <button
                   type="submit"
                   disabled={!inputMessage.trim()}
-                  className="w-10 h-10 rounded-full bg-[#2F65F6] hover:bg-[#1E4FD8] disabled:opacity-40 disabled:hover:bg-[#2F65F6] text-white flex items-center justify-center shadow-xs transition-all shrink-0"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#2F65F6] hover:bg-[#1E4FD8] disabled:opacity-40 disabled:hover:bg-[#2F65F6] text-white flex items-center justify-center shadow-xs transition-all shrink-0 cursor-pointer"
                   aria-label="Send message"
                 >
                   <Send className="w-4 h-4" />

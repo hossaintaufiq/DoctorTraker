@@ -7,6 +7,7 @@ import appointmentRoutes from "./appointmentRoutes.js";
 import invoiceRoutes from "./invoiceRoutes.js";
 import activityLogRoutes from "./activityLogRoutes.js";
 import analyticsRoutes from "./analyticsRoutes.js";
+import systemRoutes from "./systemRoutes.js";
 
 const router = Router();
 
@@ -18,6 +19,7 @@ router.use("/appointments", appointmentRoutes);
 router.use("/invoices", invoiceRoutes);
 router.use("/logs", activityLogRoutes);
 router.use("/analytics", analyticsRoutes);
+router.use("/system", systemRoutes);
 
 // Health check endpoint
 router.get("/health", (req, res) => {
