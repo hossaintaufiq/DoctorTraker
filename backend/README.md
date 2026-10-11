@@ -17,7 +17,7 @@
 
 | Resource | Direct Link / Credentials | Details |
 | :--- | :--- | :--- |
-| **Live REST API Base** | [doctortraker.onrender.com/api](https://doctortraker.onrender.com/api) | High-availability backend deployed on Render |
+| **Live REST API Base** | [doctortraker.onrender.com/api](https://doctortraker.onrender.com) | High-availability backend deployed on Render |
 | **Live Health Check** | [doctortraker.onrender.com/api/health](https://doctortraker.onrender.com/api/health) | Real-time database connectivity & uptime verification |
 | **Live Frontend Portal** | [doctortraker.vercel.app](https://doctortraker.vercel.app) | Production Next.js 16 frontend hosted on Vercel Edge |
 | **Demo Administrator Account** | `admin@medcare.com` | Pre-configured evaluation account with full admin rights |
