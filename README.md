@@ -21,7 +21,7 @@
 | Resource | Direct Link / Credentials | Details |
 | :--- | :--- | :--- |
 | **Live Production Portal** | [doctortraker.vercel.app](https://doctortraker.vercel.app) | Production deployment hosted on Vercel Edge |
-| **Live REST API Endpoint** | [doctortraker.onrender.com/api](https://doctortraker.onrender.com/api) | High-availability backend deployed on Render |
+| **Live REST API Endpoint** | [doctortraker.onrender.com/api](https://doctortraker.onrender.com) | High-availability backend deployed on Render |
 | **Demo Administrator Account** | `admin@medcare.com` | Pre-configured evaluation account with full admin rights |
 | **Demo Password** | `password123` | Salted `bcryptjs` credential verified on MongoDB Atlas |
 | **Instant 1-Click Login** | Available on `/login` | Dedicated *"⚡ 1-Click Instant Demo Login"* shortcut button |
