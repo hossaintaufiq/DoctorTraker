@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import authRoutes from "./authRoutes.js";
 import doctorRoutes from "./doctorRoutes.js";
 import patientRoutes from "./patientRoutes.js";
@@ -22,7 +22,7 @@ router.use("/analytics", analyticsRoutes);
 router.use("/system", systemRoutes);
 
 // Health check endpoint
-router.get("/health", (req, res) => {
+router.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
     status: "healthy",
     timestamp: new Date().toISOString(),

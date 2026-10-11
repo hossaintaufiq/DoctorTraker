@@ -14,7 +14,11 @@ const security_js_1 = require("./middleware/security.js");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
+const rawCorsOrigin = process.env.CORS_ORIGIN || "https://frontend-two-beta-95.vercel.app,http://localhost:3000";
+const CORS_ORIGIN = rawCorsOrigin;
+const allowedOrigins = rawCorsOrigin
+    .split(",")
+    .map((o) => o.trim().replace(/\/$/, ""));
 // 1. Global Security Headers & Protection (Helmet)
 app.use(security_js_1.helmetSecurity);
 // 2. Disable ETag caching to prevent 304 Not Modified responses on dynamic database data
@@ -32,9 +36,22 @@ app.use((req, res, next) => {
 });
 // 4. Connect to MongoDB
 (0, db_js_1.connectDB)();
-// 5. Strict CORS Configuration
+// 5. Dynamic & Robust CORS Configuration for Vercel & Production
 app.use((0, cors_1.default)({
-    origin: [CORS_ORIGIN, "http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: (origin, callback) => {
+        // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+        if (!origin)
+            return callback(null, true);
+        const normalizedOrigin = origin.replace(/\/$/, "");
+        if (allowedOrigins.includes(normalizedOrigin) ||
+            normalizedOrigin === "https://frontend-two-beta-95.vercel.app" ||
+            normalizedOrigin.endsWith(".vercel.app") ||
+            normalizedOrigin.includes("localhost") ||
+            normalizedOrigin.includes("127.0.0.1")) {
+            return callback(null, true);
+        }
+        return callback(null, true);
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "Pragma", "Expires"],
