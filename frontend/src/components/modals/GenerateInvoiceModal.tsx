@@ -109,12 +109,12 @@ export function GenerateInvoiceModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
-      <div className="bg-white/95 backdrop-blur-3xl w-full max-w-3xl rounded-3xl border border-white/90 shadow-2xl overflow-hidden animate-scale-up flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
+      <div className="bg-white/95 backdrop-blur-3xl w-full max-w-3xl rounded-2xl sm:rounded-3xl border border-white/90 shadow-2xl overflow-hidden animate-scale-up flex flex-col max-h-[92vh] sm:max-h-[90vh]">
         {/* Header */}
-        <div className="h-16 px-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white/80 shrink-0">
+        <div className="h-14 sm:h-16 px-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white/80 shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center shrink-0">
               <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0">
@@ -136,236 +136,239 @@ export function GenerateInvoiceModal() {
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
-          {/* Patient & Doctor Select */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#2F65F6]" /> Patient Account
-              </label>
-              <select
-                required
-                value={selectedPatientId}
-                onChange={(e) => setSelectedPatientId(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
-              >
-                {patients.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} ({p.patientCode}) &bull; {p.phone}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                <Stethoscope className="w-3.5 h-3.5 text-[#2F65F6]" /> Attending Specialist
-              </label>
-              <select
-                required
-                value={selectedDoctorId}
-                onChange={(e) => setSelectedDoctorId(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
-              >
-                {doctors.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name} &bull; {d.specialty}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Due Date & Payment Method */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-600 flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-slate-400" /> Payment Due Date
-              </label>
-              <input
-                type="date"
-                required
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-600 flex items-center gap-1">
-                <CreditCard className="w-3.5 h-3.5 text-slate-400" /> Payment Method
-              </label>
-              <select
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value as any)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
-              >
-                <option value="Insurance">Insurance Claim</option>
-                <option value="Credit Card">Credit Card</option>
-                <option value="Cash">Cash at Desk</option>
-                <option value="Bank Transfer">Bank Wire</option>
-                <option value="Mobile Pay">Mobile Pay</option>
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-600">Initial Status</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
-              >
-                <option value="Pending">Pending Payment</option>
-                <option value="Paid">Mark as Paid Immediately</option>
-                <option value="Processing">Processing Claim</option>
-                <option value="Overdue">Overdue</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Itemized Line Items */}
-          <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                Itemized Medical Charges & Procedures
-              </h3>
-              <button
-                type="button"
-                onClick={handleAddLineItem}
-                className="text-xs font-semibold text-[#2F65F6] hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add Charge Item
-              </button>
-            </div>
-
-            <div className="space-y-2.5">
-              {lineItems.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 bg-slate-50/80 rounded-2xl border border-slate-200 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-12 sm:gap-2 sm:items-center"
+        {/* Form enclosing scrollable body and pinned footer */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          {/* Scrollable Form Body */}
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
+            {/* Patient & Doctor Select */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-[#2F65F6]" /> Patient Account
+                </label>
+                <select
+                  required
+                  value={selectedPatientId}
+                  onChange={(e) => setSelectedPatientId(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
                 >
-                  <div className="sm:col-span-5">
-                    <input
-                      type="text"
-                      placeholder="Service / Procedure Description"
-                      required
-                      value={item.description}
-                      onChange={(e) => handleItemChange(idx, "description", e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#2F65F6]"
-                    />
-                  </div>
+                  {patients.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.patientCode}) &bull; {p.phone}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                  <div className="sm:col-span-3">
-                    <select
-                      value={item.department}
-                      onChange={(e) => handleItemChange(idx, "department", e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#2F65F6]"
-                    >
-                      {departments.map((d) => (
-                        <option key={d.id} value={d.name}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <Stethoscope className="w-3.5 h-3.5 text-[#2F65F6]" /> Attending Specialist
+                </label>
+                <select
+                  required
+                  value={selectedDoctorId}
+                  onChange={(e) => setSelectedDoctorId(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                >
+                  {doctors.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name} &bull; {d.specialty}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-                  <div className="grid grid-cols-12 gap-2 sm:col-span-4 items-center">
-                    <div className="col-span-5 sm:col-span-6">
+            {/* Due Date & Payment Method */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-600 flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-slate-400" /> Payment Due Date
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-600 flex items-center gap-1">
+                  <CreditCard className="w-3.5 h-3.5 text-slate-400" /> Payment Method
+                </label>
+                <select
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value as any)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                >
+                  <option value="Insurance">Insurance Claim</option>
+                  <option value="Credit Card">Credit Card</option>
+                  <option value="Cash">Cash at Desk</option>
+                  <option value="Bank Transfer">Bank Wire</option>
+                  <option value="Mobile Pay">Mobile Pay</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-600">Initial Status</label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as any)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                >
+                  <option value="Pending">Pending Payment</option>
+                  <option value="Paid">Mark as Paid Immediately</option>
+                  <option value="Processing">Processing Claim</option>
+                  <option value="Overdue">Overdue</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Itemized Line Items */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Itemized Medical Charges & Procedures
+                </h3>
+                <button
+                  type="button"
+                  onClick={handleAddLineItem}
+                  className="text-xs font-semibold text-[#2F65F6] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Charge Item
+                </button>
+              </div>
+
+              <div className="space-y-2.5">
+                {lineItems.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 bg-slate-50/80 rounded-2xl border border-slate-200 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-12 sm:gap-2 sm:items-center"
+                  >
+                    <div className="sm:col-span-5">
                       <input
-                        type="number"
-                        min="1"
-                        placeholder="Qty"
-                        value={item.quantity}
-                        onChange={(e) => handleItemChange(idx, "quantity", e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 text-center focus:outline-none focus:border-[#2F65F6]"
+                        type="text"
+                        placeholder="Service / Procedure Description"
+                        required
+                        value={item.description}
+                        onChange={(e) => handleItemChange(idx, "description", e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#2F65F6]"
                       />
                     </div>
 
-                    <div className="col-span-5 sm:col-span-4">
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="Price"
-                        value={item.unitPrice}
-                        onChange={(e) => handleItemChange(idx, "unitPrice", e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 text-right focus:outline-none focus:border-[#2F65F6]"
-                      />
-                    </div>
-
-                    <div className="col-span-2 sm:col-span-2 flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveLineItem(idx)}
-                        disabled={lineItems.length === 1}
-                        className="p-1.5 text-slate-400 hover:text-rose-500 disabled:opacity-30 transition-colors cursor-pointer"
-                        title="Remove row"
+                    <div className="sm:col-span-3">
+                      <select
+                        value={item.department}
+                        onChange={(e) => handleItemChange(idx, "department", e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#2F65F6]"
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                        {departments.map((d) => (
+                          <option key={d.id} value={d.name}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-12 gap-2 sm:col-span-4 items-center">
+                      <div className="col-span-5 sm:col-span-6">
+                        <input
+                          type="number"
+                          min="1"
+                          placeholder="Qty"
+                          value={item.quantity}
+                          onChange={(e) => handleItemChange(idx, "quantity", e.target.value)}
+                          className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 text-center focus:outline-none focus:border-[#2F65F6]"
+                        />
+                      </div>
+
+                      <div className="col-span-5 sm:col-span-4">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Price"
+                          value={item.unitPrice}
+                          onChange={(e) => handleItemChange(idx, "unitPrice", e.target.value)}
+                          className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 text-right focus:outline-none focus:border-[#2F65F6]"
+                        />
+                      </div>
+
+                      <div className="col-span-2 sm:col-span-2 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveLineItem(idx)}
+                          disabled={lineItems.length === 1}
+                          className="p-1.5 text-slate-400 hover:text-rose-500 disabled:opacity-30 transition-colors cursor-pointer"
+                          title="Remove row"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Pricing Calculations Summary */}
+            <div className="p-3.5 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5 text-xs">
+              <div className="flex justify-between items-center text-slate-600">
+                <span>Subtotal:</span>
+                <span className="font-semibold text-slate-900">${subtotal.toFixed(2)}</span>
+              </div>
+
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-1 text-slate-600">
+                <span className="flex items-center gap-1.5">
+                  Tax (VAT / Govt Surcharge):
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={taxRate}
+                    onChange={(e) => setTaxRate(Number(e.target.value) || 0)}
+                    className="w-12 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-center text-xs"
+                  />
+                  %
+                </span>
+                <span className="font-semibold text-slate-900">${tax.toFixed(2)}</span>
+              </div>
+
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-1 text-slate-600">
+                <span className="flex items-center gap-1.5">
+                  Hospital Discount / Subsidy ($):
+                  <input
+                    type="number"
+                    min="0"
+                    value={discountAmount}
+                    onChange={(e) => setDiscountAmount(Number(e.target.value) || 0)}
+                    className="w-16 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-center text-xs"
+                  />
+                </span>
+                <span className="font-semibold text-emerald-600">-${discountAmount.toFixed(2)}</span>
+              </div>
+
+              <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-sm font-bold text-slate-900">
+                <span>Total Invoice Payable:</span>
+                <span className="text-base text-[#2F65F6] font-mono">${total.toFixed(2)}</span>
+              </div>
             </div>
           </div>
 
-          {/* Pricing Calculations Summary */}
-          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 text-xs">
-            <div className="flex justify-between text-slate-600">
-              <span>Subtotal:</span>
-              <span className="font-semibold text-slate-900">${subtotal.toFixed(2)}</span>
-            </div>
-
-            <div className="flex items-center justify-between text-slate-600">
-              <span className="flex items-center gap-1.5">
-                Tax (VAT / Govt Surcharge):
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={taxRate}
-                  onChange={(e) => setTaxRate(Number(e.target.value) || 0)}
-                  className="w-12 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-center text-xs"
-                />
-                %
-              </span>
-              <span className="font-semibold text-slate-900">${tax.toFixed(2)}</span>
-            </div>
-
-            <div className="flex items-center justify-between text-slate-600">
-              <span className="flex items-center gap-1.5">
-                Hospital Discount / Subsidy ($):
-                <input
-                  type="number"
-                  min="0"
-                  value={discountAmount}
-                  onChange={(e) => setDiscountAmount(Number(e.target.value) || 0)}
-                  className="w-16 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-center text-xs"
-                />
-              </span>
-              <span className="font-semibold text-emerald-600">-${discountAmount.toFixed(2)}</span>
-            </div>
-
-            <div className="pt-2 border-t border-slate-200 flex justify-between text-sm font-bold text-slate-900">
-              <span>Total Invoice Payable:</span>
-              <span className="text-base text-[#2F65F6]">${total.toFixed(2)}</span>
-            </div>
-          </div>
-
-          {/* Footer Actions */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
+          {/* Pinned Responsive Footer */}
+          <div className="p-3.5 sm:p-4 px-4 sm:px-6 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 bg-white/90 backdrop-blur-xs shrink-0">
             <button
               type="button"
               onClick={() => setIsGenerateInvoiceModalOpen(false)}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-full transition-all"
+              className="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl sm:rounded-full transition-all text-center cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 text-xs font-bold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs transition-all flex items-center gap-1.5"
+              className="w-full sm:w-auto px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#2F65F6] to-[#1E4FD8] hover:from-[#2557E5] hover:to-[#1742BC] rounded-xl sm:rounded-full shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>Generate & Save Invoice</span>

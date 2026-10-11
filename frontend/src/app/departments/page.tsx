@@ -409,20 +409,21 @@ export default function DepartmentsPage() {
           )}
         </div>
 
-        {/* Department Detailed Specifications Modal */}
+        {/* Department Detailed Specifications / Slot Modal */}
         {selectedDeptForDetail && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
-            <div className="bg-white/95 backdrop-blur-3xl w-full max-w-2xl rounded-2xl sm:rounded-3xl border border-white/90 shadow-2xl p-4 sm:p-6 sm:p-8 max-h-[90vh] overflow-y-auto animate-scale-up">
-              <div className="flex items-start justify-between pb-4 border-b border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center shrink-0">
-                    <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
+            <div className="bg-white/95 backdrop-blur-3xl w-full max-w-2xl rounded-2xl sm:rounded-3xl border border-white/90 shadow-2xl overflow-hidden animate-scale-up flex flex-col max-h-[92vh] sm:max-h-[90vh]">
+              {/* Pinned Header */}
+              <div className="h-14 sm:h-16 px-4 sm:px-6 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white/80">
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center shrink-0">
+                    <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-xs font-mono font-bold text-slate-400">
+                    <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-400">
                       {selectedDeptForDetail.code}
                     </span>
-                    <h2 className="text-lg sm:text-xl font-bold text-[#101828] truncate">
+                    <h2 className="text-sm sm:text-base font-bold text-[#101828] truncate">
                       {selectedDeptForDetail.name} Division
                     </h2>
                   </div>
@@ -437,7 +438,8 @@ export default function DepartmentsPage() {
                 </button>
               </div>
 
-              <div className="py-4 sm:py-5 space-y-4 text-xs">
+              {/* Scrollable Body */}
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div className="p-3 bg-slate-50 rounded-2xl">
                     <span className="text-[10px] text-slate-400 uppercase font-semibold">Head of Department</span>
@@ -475,11 +477,12 @@ export default function DepartmentsPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5 sm:gap-3">
+              {/* Pinned Responsive Footer */}
+              <div className="p-3.5 sm:p-4 px-4 sm:px-6 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5 sm:gap-3 shrink-0 bg-white/90 backdrop-blur-xs">
                 <button
                   type="button"
                   onClick={() => setSelectedDeptForDetail(null)}
-                  className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl sm:rounded-full cursor-pointer text-center"
+                  className="w-full sm:w-auto px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl sm:rounded-full cursor-pointer text-center"
                 >
                   Close
                 </button>
@@ -492,7 +495,7 @@ export default function DepartmentsPage() {
                   className="w-full sm:w-auto px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#2F65F6] to-[#1E4FD8] hover:from-[#2557E5] hover:to-[#1742BC] rounded-xl sm:rounded-full shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Calendar className="w-4 h-4" />
-                  <span>Book Consultation</span>
+                  <span>Book Department Slot</span>
                 </button>
               </div>
             </div>

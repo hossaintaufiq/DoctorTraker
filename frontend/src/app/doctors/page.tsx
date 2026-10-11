@@ -143,8 +143,8 @@ export default function DoctorsPage() {
       <div className="space-y-6">
         {/* Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-          <div>
-            <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex items-center justify-center sm:justify-start gap-3 flex-wrap">
               <h1 className="text-2xl sm:text-[28px] font-bold text-[#101828] tracking-tight">
                 Doctor Management
               </h1>
@@ -152,19 +152,19 @@ export default function DoctorsPage() {
                 {filteredDoctors.length} {filteredDoctors.length === 1 ? "Physician" : "Physicians"}
               </span>
             </div>
-            <p className="text-xs text-[#64748B] mt-1">
+            <p className="text-xs text-[#64748B] mt-1 text-center sm:text-left">
               Administer clinical specialists, hospital affiliations, patient quotas, and departments.
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">
+          <div className="flex items-center justify-center sm:justify-end gap-2.5 flex-wrap sm:flex-nowrap w-full sm:w-auto shrink-0">
             {/* View Mode Switcher: Grid View vs List View */}
-            <div className="flex items-center bg-white/80 p-1 rounded-full border border-white/90 shadow-2xs">
+            <div className="flex items-center justify-center bg-white/80 p-1 rounded-full border border-white/90 shadow-2xs">
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
                   viewMode === "grid"
                     ? "bg-[#2F65F6] text-white shadow-xs"
                     : "text-[#64748B] hover:text-[#101828]"
@@ -178,7 +178,7 @@ export default function DoctorsPage() {
                 type="button"
                 onClick={() => setViewMode("list")}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
                   viewMode === "list"
                     ? "bg-[#2F65F6] text-white shadow-xs"
                     : "text-[#64748B] hover:text-[#101828]"
@@ -203,9 +203,9 @@ export default function DoctorsPage() {
 
         {/* Filter & Search Bar - Glass Card */}
         <div className="glass-card p-4 sm:p-5 rounded-3xl space-y-3.5">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5">
+          <div className="flex flex-col lg:flex-row items-center lg:items-center justify-between gap-3.5">
             {/* Search Input */}
-            <div className="relative w-full lg:w-88 shrink-0">
+            <div className="relative w-full max-w-md lg:max-w-none lg:w-88 shrink-0">
               <Search className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
@@ -219,10 +219,10 @@ export default function DoctorsPage() {
               />
             </div>
 
-            {/* Filter Group */}
-            <div className="flex items-center flex-wrap gap-2.5 w-full lg:w-auto">
+            {/* Filter Group - Centered on Mobile */}
+            <div className="flex items-center justify-center lg:justify-start flex-wrap gap-2.5 w-full lg:w-auto">
               {/* Specialty Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <span className="font-semibold hidden sm:inline">Specialty:</span>
                 <select
                   value={selectedSpecialty}
@@ -230,7 +230,7 @@ export default function DoctorsPage() {
                     setSelectedSpecialty(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6]"
+                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] cursor-pointer"
                 >
                   {specialties.map((s) => (
                     <option key={s} value={s}>
@@ -241,7 +241,7 @@ export default function DoctorsPage() {
               </div>
 
               {/* Hospital Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <span className="font-semibold hidden sm:inline">Hospital:</span>
                 <select
                   value={selectedHospital}
@@ -249,7 +249,7 @@ export default function DoctorsPage() {
                     setSelectedHospital(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] max-w-[170px] truncate"
+                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] max-w-[170px] truncate cursor-pointer"
                 >
                   {hospitals.map((h) => (
                     <option key={h} value={h}>
@@ -260,7 +260,7 @@ export default function DoctorsPage() {
               </div>
 
               {/* Status Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <span className="font-semibold hidden sm:inline">Status:</span>
                 <select
                   value={selectedStatus}
@@ -268,7 +268,7 @@ export default function DoctorsPage() {
                     setSelectedStatus(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6]"
+                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] cursor-pointer"
                 >
                   <option value="All">All Statuses</option>
                   <option value="Active">Active</option>
@@ -279,7 +279,7 @@ export default function DoctorsPage() {
               </div>
 
               {/* Date Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <Calendar className="w-3.5 h-3.5 text-[#94A3B8]" />
                 <select
                   value={selectedDateFilter}
@@ -287,7 +287,7 @@ export default function DoctorsPage() {
                     setSelectedDateFilter(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6]"
+                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] cursor-pointer"
                 >
                   <option value="All">All Joined Dates</option>
                   <option value="2024-2026">Recent (2024 - 2026)</option>
@@ -302,7 +302,7 @@ export default function DoctorsPage() {
                 disabled={!isFilterActive}
                 onClick={handleResetFilters}
                 className={cn(
-                  "px-3.5 py-2 text-xs font-semibold rounded-full border flex items-center gap-1.5 transition-all duration-200",
+                  "px-3.5 py-2 text-xs font-semibold rounded-full border flex items-center justify-center gap-1.5 transition-all duration-200 shrink-0",
                   isFilterActive
                     ? "border-[#2F65F6]/40 bg-[#EBF3FE] text-[#2F65F6] hover:bg-[#DCE8FC] hover:text-[#1E4FD8] cursor-pointer shadow-xs active:scale-95"
                     : "border-white/80 bg-white/50 text-[#94A3B8] opacity-50 cursor-not-allowed"
