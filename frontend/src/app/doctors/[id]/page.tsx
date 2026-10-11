@@ -39,6 +39,7 @@ function DoctorDetailContent() {
     setIsEditPatientModalOpen,
     deletePatient,
     showToast,
+    openConfirmDialog,
   } = useDoctorTracker();
 
   const doctor =
@@ -83,13 +84,16 @@ function DoctorDetailContent() {
   };
 
   const handleDeletePatient = (pt: Patient) => {
-    if (
-      window.confirm(
-        `Are you sure you want to remove ${pt.name} (${pt.patientCode}) from Dr. ${doctor.name}'s patient list?`
-      )
-    ) {
-      deletePatient(pt.id);
-    }
+    openConfirmDialog({
+      title: "Remove Patient Record",
+      itemName: `${pt.name} (${pt.patientCode})`,
+      itemType: "Patient Record",
+      message: `Are you sure you want to remove ${pt.name} from Dr. ${doctor.name}'s care roster?`,
+      confirmLabel: "Yes, Remove Patient",
+      onConfirm: () => {
+        deletePatient(pt.id);
+      },
+    });
   };
 
   const loadPercentage = Math.min(

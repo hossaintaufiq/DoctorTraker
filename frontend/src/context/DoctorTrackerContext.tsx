@@ -31,6 +31,17 @@ import {
 } from "@/lib/mock-data";
 import { api } from "@/lib/api";
 
+export interface ConfirmDialogOptions {
+  title: string;
+  message: string;
+  itemName?: string;
+  itemType?: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  destructive?: boolean;
+  onConfirm: () => void | Promise<void>;
+}
+
 interface DoctorTrackerContextType {
   doctors: Doctor[];
   patients: Patient[];
@@ -42,6 +53,11 @@ interface DoctorTrackerContextType {
   chatMessages: Record<string, ChatMessageItem[]>;
   activeConversationId: string;
   setActiveConversationId: (id: string) => void;
+
+  // Confirmation Modal
+  confirmDialog: ConfirmDialogOptions | null;
+  openConfirmDialog: (options: ConfirmDialogOptions) => void;
+  closeConfirmDialog: () => void;
 
   metrics: MetricSummary[];
   notifications: NotificationItem[];
@@ -149,6 +165,16 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
   const [growthPeriod, setGrowthPeriod] = useState<"Monthly" | "Weekly">("Monthly");
 
   // Modals
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogOptions | null>(null);
+
+  const openConfirmDialog = (options: ConfirmDialogOptions) => {
+    setConfirmDialog(options);
+  };
+
+  const closeConfirmDialog = () => {
+    setConfirmDialog(null);
+  };
+
   const [isAddDoctorModalOpen, setIsAddDoctorModalOpen] = useState(false);
   const [isEditDoctorModalOpen, setIsEditDoctorModalOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
@@ -573,7 +599,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
 
     if (docToDelete) {
       addActivityLog("Staff", `Removed physician ${docToDelete.name} from directory`, undefined, "Warning");
-      showToast("Doctor Removed", `${docToDelete.name} was removed from the roster.`, "info");
+      showToast("Doctor Removed Successfully", `${docToDelete.name} has been removed from the medical directory.`, "success");
     }
 
     try {
@@ -676,7 +702,7 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
       );
 
       addActivityLog("Patient", `Deleted patient record ${patientToDelete.name} (${patientToDelete.patientCode})`, undefined, "Warning");
-      showToast("Patient Removed", `${patientToDelete.name} was removed.`, "info");
+      showToast("Patient Removed Successfully", `${patientToDelete.name} (${patientToDelete.patientCode}) has been removed.`, "success");
     }
 
     setPatients((prev) => prev.filter((p) => p.id !== id));
@@ -879,6 +905,9 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
         growthPeriod,
         setGrowthPeriod,
         growthData,
+        confirmDialog,
+        openConfirmDialog,
+        closeConfirmDialog,
         isAddDoctorModalOpen,
         setIsAddDoctorModalOpen,
         isEditDoctorModalOpen,

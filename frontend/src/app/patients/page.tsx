@@ -63,6 +63,7 @@ export default function PatientsPage() {
     setEditingPatient,
     deletePatient,
     showToast,
+    openConfirmDialog,
   } = useDoctorTracker();
 
   // Search & Filters state
@@ -156,13 +157,16 @@ export default function PatientsPage() {
   };
 
   const handleDeletePatient = (patient: Patient) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete patient ${patient.name} (${patient.patientCode})? This action cannot be undone.`
-      )
-    ) {
-      deletePatient(patient.id);
-    }
+    openConfirmDialog({
+      title: "Delete Patient Record",
+      itemName: `${patient.name} (${patient.patientCode})`,
+      itemType: "Patient File",
+      message: `Are you sure you want to delete patient ${patient.name} (${patient.patientCode})? This action cannot be undone and will detach clinical visit logs.`,
+      confirmLabel: "Yes, Delete Patient",
+      onConfirm: () => {
+        deletePatient(patient.id);
+      },
+    });
   };
 
   const handleResetFilters = () => {
@@ -245,8 +249,8 @@ export default function PatientsPage() {
       <div className="space-y-6">
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-          <div>
-            <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex items-center justify-center sm:justify-start gap-3 flex-wrap">
               <h1 className="text-2xl sm:text-[28px] font-bold text-[#101828] tracking-tight">
                 Patient Management
               </h1>
@@ -254,15 +258,15 @@ export default function PatientsPage() {
                 {patients.length} Registered Records
               </span>
             </div>
-            <p className="text-xs text-[#64748B] mt-1">
+            <p className="text-xs text-[#64748B] mt-1 text-center sm:text-left">
               Clinical charts, vital sign records, assigned specialists, and condition categories.
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">
+          <div className="flex items-center justify-center sm:justify-end gap-2.5 flex-wrap sm:flex-nowrap w-full sm:w-auto shrink-0">
             <button
               onClick={handleExportCSV}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#1E293B] bg-white/80 border border-white/90 rounded-full hover:bg-white card-shadow transition-all"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#1E293B] bg-white/80 border border-white/90 rounded-full hover:bg-white card-shadow transition-all cursor-pointer"
             >
               <FileDown className="w-3.5 h-3.5 text-[#64748B]" />
               <span>Export CSV</span>
@@ -279,58 +283,58 @@ export default function PatientsPage() {
         </div>
 
         {/* 4 Summary Stat KPI Mini Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="glass-card p-4.5 rounded-3xl flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center font-bold text-sm shrink-0">
-              <Users className="w-5 h-5" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="glass-card p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl flex items-center justify-center sm:justify-start gap-2.5 sm:gap-3.5">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center font-bold text-sm shrink-0">
+              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase text-[#64748B] truncate">
+              <p className="text-[10px] sm:text-[11px] font-semibold uppercase text-[#64748B] truncate">
                 Total Patients
               </p>
-              <h3 className="text-xl font-bold text-[#101828]">
+              <h3 className="text-lg sm:text-xl font-bold text-[#101828]">
                 {patients.length}
               </h3>
             </div>
           </div>
 
-          <div className="glass-card p-4.5 rounded-3xl flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#ECFDF5] text-[#10B981] flex items-center justify-center font-bold text-sm shrink-0">
-              <UserCheck className="w-5 h-5" />
+          <div className="glass-card p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl flex items-center justify-center sm:justify-start gap-2.5 sm:gap-3.5">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#ECFDF5] text-[#10B981] flex items-center justify-center font-bold text-sm shrink-0">
+              <UserCheck className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase text-[#64748B] truncate">
+              <p className="text-[10px] sm:text-[11px] font-semibold uppercase text-[#64748B] truncate">
                 Outpatients
               </p>
-              <h3 className="text-xl font-bold text-[#101828]">
+              <h3 className="text-lg sm:text-xl font-bold text-[#101828]">
                 {outpatientCount}
               </h3>
             </div>
           </div>
 
-          <div className="glass-card p-4.5 rounded-3xl flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#1D4ED8] flex items-center justify-center font-bold text-sm shrink-0">
-              <Building2 className="w-5 h-5" />
+          <div className="glass-card p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl flex items-center justify-center sm:justify-start gap-2.5 sm:gap-3.5">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#EFF6FF] text-[#1D4ED8] flex items-center justify-center font-bold text-sm shrink-0">
+              <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase text-[#64748B] truncate">
+              <p className="text-[10px] sm:text-[11px] font-semibold uppercase text-[#64748B] truncate">
                 Inpatient / Admitted
               </p>
-              <h3 className="text-xl font-bold text-[#101828]">
+              <h3 className="text-lg sm:text-xl font-bold text-[#101828]">
                 {admittedCount}
               </h3>
             </div>
           </div>
 
-          <div className="glass-card p-4.5 rounded-3xl flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#FEE2E2] text-[#EF4444] flex items-center justify-center font-bold text-sm shrink-0">
-              <HeartPulse className="w-5 h-5" />
+          <div className="glass-card p-3.5 sm:p-4.5 rounded-2xl sm:rounded-3xl flex items-center justify-center sm:justify-start gap-2.5 sm:gap-3.5">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#FEE2E2] text-[#EF4444] flex items-center justify-center font-bold text-sm shrink-0">
+              <HeartPulse className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase text-[#64748B] truncate">
+              <p className="text-[10px] sm:text-[11px] font-semibold uppercase text-[#64748B] truncate">
                 Critical Care
               </p>
-              <h3 className="text-xl font-bold text-[#101828]">
+              <h3 className="text-lg sm:text-xl font-bold text-[#101828]">
                 {criticalCount}
               </h3>
             </div>
@@ -339,9 +343,9 @@ export default function PatientsPage() {
 
         {/* Filter & Live Search Toolbar */}
         <div className="glass-card p-4 sm:p-5 rounded-3xl space-y-3.5">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5">
+          <div className="flex flex-col lg:flex-row items-center lg:items-center justify-between gap-3.5">
             {/* Search Input */}
-            <div className="relative w-full lg:w-80 shrink-0">
+            <div className="relative w-full max-w-md mx-auto lg:mx-0 lg:w-80 shrink-0">
               <Search className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
@@ -355,10 +359,10 @@ export default function PatientsPage() {
               />
             </div>
 
-            {/* Multi-Filters Grid */}
-            <div className="flex items-center flex-wrap gap-2.5 w-full lg:w-auto">
+            {/* Multi-Filters Grid - Centered on Mobile */}
+            <div className="flex items-center justify-center lg:justify-start flex-wrap gap-2.5 w-full lg:w-auto">
               {/* Condition Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <span className="font-semibold hidden xl:inline">Condition:</span>
                 <select
                   value={selectedCondition}
@@ -366,7 +370,7 @@ export default function PatientsPage() {
                     setSelectedCondition(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6]"
+                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] cursor-pointer"
                 >
                   <option value="All">All Conditions</option>
                   <option value="General">General</option>
@@ -378,7 +382,7 @@ export default function PatientsPage() {
               </div>
 
               {/* Status Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <span className="font-semibold hidden xl:inline">Care Status:</span>
                 <select
                   value={selectedStatus}
@@ -386,7 +390,7 @@ export default function PatientsPage() {
                     setSelectedStatus(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6]"
+                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] cursor-pointer"
                 >
                   <option value="All">All Care Statuses</option>
                   <option value="Outpatient">Outpatient</option>
@@ -396,7 +400,7 @@ export default function PatientsPage() {
               </div>
 
               {/* Doctor Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <span className="font-semibold hidden xl:inline">Doctor:</span>
                 <select
                   value={selectedDoctor}
@@ -404,7 +408,7 @@ export default function PatientsPage() {
                     setSelectedDoctor(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] max-w-[160px] truncate"
+                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] max-w-[160px] truncate cursor-pointer"
                 >
                   <option value="All">All Doctors</option>
                   {doctors.map((d) => (
@@ -416,7 +420,7 @@ export default function PatientsPage() {
               </div>
 
               {/* Date Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <Calendar className="w-3.5 h-3.5 text-[#94A3B8]" />
                 <select
                   value={selectedDateFilter}
@@ -424,7 +428,7 @@ export default function PatientsPage() {
                     setSelectedDateFilter(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6]"
+                  className="px-3.5 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] cursor-pointer"
                 >
                   <option value="All">All Dates</option>
                   <option value="Last-7-Days">Last 7 Days</option>
@@ -435,14 +439,14 @@ export default function PatientsPage() {
               </div>
 
               {/* Blood Group Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748B]">
                 <select
                   value={selectedBloodGroup}
                   onChange={(e) => {
                     setSelectedBloodGroup(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-3 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6]"
+                  className="px-3 py-2 text-xs rounded-full border border-white/80 bg-white/70 text-[#101828] focus:outline-none focus:border-[#2F65F6] cursor-pointer"
                 >
                   <option value="All">Blood: All</option>
                   <option value="A+">A+</option>
@@ -462,7 +466,7 @@ export default function PatientsPage() {
                 disabled={!isFilterActive}
                 onClick={handleResetFilters}
                 className={cn(
-                  "px-3.5 py-2 text-xs font-semibold rounded-full border flex items-center gap-1.5 transition-all duration-200",
+                  "px-3.5 py-2 text-xs font-semibold rounded-full border flex items-center justify-center gap-1.5 transition-all duration-200 shrink-0",
                   isFilterActive
                     ? "border-[#2F65F6]/40 bg-[#EBF3FE] text-[#2F65F6] hover:bg-[#DCE8FC] hover:text-[#1E4FD8] cursor-pointer shadow-xs active:scale-95"
                     : "border-white/80 bg-white/50 text-[#94A3B8] opacity-50 cursor-not-allowed"
@@ -640,7 +644,7 @@ export default function PatientsPage() {
         {/* Pagination Bar */}
         {filteredPatients.length > 0 && (
           <div className="glass-card p-4 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center flex-wrap gap-2 text-xs text-[#64748B]">
+            <div className="flex items-center justify-center sm:justify-start flex-wrap gap-2 text-xs text-[#64748B] w-full sm:w-auto text-center sm:text-left">
               <span>Showing</span>
               <span className="font-bold text-[#101828]">
                 {Math.min(filteredPatients.length, (currentPage - 1) * pageSize + 1)}-
@@ -671,7 +675,7 @@ export default function PatientsPage() {
             </div>
 
             {/* Pagination Navigation */}
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="flex items-center justify-center gap-1.5 flex-wrap w-full sm:w-auto">
               <button
                 type="button"
                 disabled={currentPage === 1}

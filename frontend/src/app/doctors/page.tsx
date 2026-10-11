@@ -34,6 +34,7 @@ export default function DoctorsPage() {
     setSelectedDoctorForNewPatient,
     deleteDoctor,
     showToast,
+    openConfirmDialog,
   } = useDoctorTracker();
 
   const [search, setSearch] = useState("");
@@ -117,9 +118,16 @@ export default function DoctorsPage() {
   };
 
   const handleDeleteDoctor = (doc: Doctor) => {
-    if (window.confirm(`Are you sure you want to remove ${doc.name} from the medical directory?`)) {
-      deleteDoctor(doc.id);
-    }
+    openConfirmDialog({
+      title: "Remove Doctor",
+      itemName: `${doc.name} (${doc.specialty})`,
+      itemType: "Doctor",
+      message: `Are you sure you want to remove ${doc.name} from the medical directory? This action cannot be undone.`,
+      confirmLabel: "Yes, Remove Doctor",
+      onConfirm: () => {
+        deleteDoctor(doc.id);
+      },
+    });
   };
 
   const handleResetFilters = () => {

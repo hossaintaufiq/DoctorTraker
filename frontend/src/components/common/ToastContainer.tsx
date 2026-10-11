@@ -10,7 +10,7 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
+    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 z-50 flex flex-col gap-2.5 max-w-sm w-auto sm:w-full pointer-events-none mx-auto">
       {toasts.map((toast) => {
         const isSuccess = toast.type === "success";
         const isError = toast.type === "error";
@@ -19,24 +19,38 @@ export function ToastContainer() {
         return (
           <div
             key={toast.id}
-            className="pointer-events-auto flex items-start gap-3 p-4 rounded-xl bg-white border border-[#E8EDF3] popover-shadow animate-fade-in transition-all"
-            role="alert"
+            className="pointer-events-auto flex items-start gap-3 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-white/90 shadow-xl animate-fade-in transition-all"
+            role="status"
           >
             <div className="shrink-0 mt-0.5">
-              {isSuccess && <CheckCircle2 className="w-5 h-5 text-[#16A36A]" />}
-              {isError && <XCircle className="w-5 h-5 text-[#E05252]" />}
-              {isWarning && <AlertCircle className="w-5 h-5 text-[#E9A23B]" />}
+              {isSuccess && (
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+                  <CheckCircle2 className="w-4.5 h-4.5 stroke-[2.2]" />
+                </div>
+              )}
+              {isError && (
+                <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100">
+                  <XCircle className="w-4.5 h-4.5 stroke-[2.2]" />
+                </div>
+              )}
+              {isWarning && (
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
+                  <AlertCircle className="w-4.5 h-4.5 stroke-[2.2]" />
+                </div>
+              )}
               {!isSuccess && !isError && !isWarning && (
-                <Info className="w-5 h-5 text-[#0F9F9A]" />
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+                  <Info className="w-4.5 h-4.5 stroke-[2.2]" />
+                </div>
               )}
             </div>
 
-            <div className="flex-1 min-w-0">
-              <h5 className="text-sm font-semibold text-[#172B4D] leading-tight">
+            <div className="flex-1 min-w-0 pt-0.5">
+              <h5 className="text-xs sm:text-sm font-bold text-[#101828] leading-tight">
                 {toast.title}
               </h5>
               {toast.description && (
-                <p className="text-xs text-[#7A8798] mt-1 leading-normal">
+                <p className="text-[11px] sm:text-xs text-[#64748B] mt-1 leading-normal">
                   {toast.description}
                 </p>
               )}
@@ -44,10 +58,10 @@ export function ToastContainer() {
 
             <button
               onClick={() => removeToast(toast.id)}
-              className="text-[#7A8798] hover:text-[#243247] p-1 rounded-md transition-colors"
+              className="text-[#94A3B8] hover:text-[#101828] p-1.5 rounded-lg hover:bg-black/5 transition-colors cursor-pointer shrink-0"
               aria-label="Close notification"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         );

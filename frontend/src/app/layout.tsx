@@ -11,6 +11,7 @@ import { MessagesModal } from "@/components/modals/MessagesModal";
 import { ActivityLogsModal } from "@/components/modals/ActivityLogsModal";
 import { BookAppointmentModal } from "@/components/modals/BookAppointmentModal";
 import { GenerateInvoiceModal } from "@/components/modals/GenerateInvoiceModal";
+import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
           <ActivityLogsModal />
           <BookAppointmentModal />
           <GenerateInvoiceModal />
+          <ConfirmDeleteModal />
           <ToastContainer />
         </DoctorTrackerProvider>
       </body>

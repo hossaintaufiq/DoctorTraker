@@ -16,11 +16,20 @@ import { cn } from "@/lib/utils";
 const DAYS_OF_MONTH = Array.from({ length: 23 }, (_, i) => i + 1);
 
 export function AppointmentsSection() {
-  const { appointments, cancelAppointment, showToast } = useDoctorTracker();
+  const { appointments, cancelAppointment, showToast, openConfirmDialog } = useDoctorTracker();
   const [selectedDay, setSelectedDay] = useState(13);
 
   const handleDelete = (id: string, name: string) => {
-    cancelAppointment(id);
+    openConfirmDialog({
+      title: "Cancel Appointment",
+      itemName: name,
+      itemType: "Patient Appointment",
+      message: `Are you sure you want to cancel the scheduled consultation for ${name}?`,
+      confirmLabel: "Yes, Cancel Slot",
+      onConfirm: () => {
+        cancelAppointment(id);
+      },
+    });
   };
 
   const activeAppointments = useMemo(() => {

@@ -45,7 +45,7 @@ const CONDITION_STYLES: Record<
 };
 
 export function RecentPatientsTable() {
-  const { patients, deletePatient, showToast } = useDoctorTracker();
+  const { patients, deletePatient, showToast, openConfirmDialog } = useDoctorTracker();
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -205,9 +205,18 @@ export function RecentPatientsTable() {
                         <button
                           onClick={() => {
                             setActiveMenuId(null);
-                            deletePatient(patient.id);
+                            openConfirmDialog({
+                              title: "Delete Patient Record",
+                              itemName: `${patient.name} (${patient.patientCode})`,
+                              itemType: "Patient File",
+                              message: `Are you sure you want to remove ${patient.name} from the active patient registry? This action cannot be undone.`,
+                              confirmLabel: "Yes, Delete Record",
+                              onConfirm: () => {
+                                deletePatient(patient.id);
+                              },
+                            });
                           }}
-                          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[#E05252] hover:bg-[#FDEDED] text-xs font-medium"
+                          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[#E05252] hover:bg-[#FDEDED] text-xs font-medium cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                           <span>Delete</span>
