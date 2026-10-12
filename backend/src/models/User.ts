@@ -7,6 +7,7 @@ export interface IUser extends Document {
   password?: string;
   role: "admin" | "doctor" | "staff";
   avatar?: string;
+  refreshTokenHash?: string;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -41,6 +42,10 @@ const UserSchema = new Schema<IUser>(
     avatar: {
       type: String,
       default: "",
+    },
+    refreshTokenHash: {
+      type: String,
+      select: false,
     },
   },
   {

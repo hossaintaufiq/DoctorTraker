@@ -56,19 +56,11 @@ export const authLimiter = rateLimit({
   },
 });
 
-// 4. Helmet Security Headers Config
+// 4. API-appropriate Helmet Security Headers Config
+// Since this is a JSON REST API, disable HTML-specific Content-Security-Policy
+// and enforce strict transport, sniffing, frame, and referrer protections.
 export const helmetSecurity = helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:", "https:"],
-      connectSrc: ["'self'", "http://localhost:*", "https:*"],
-    },
-  },
-  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" },
   dnsPrefetchControl: { allow: false },
   frameguard: { action: "deny" },
@@ -80,6 +72,6 @@ export const helmetSecurity = helmet({
   },
   ieNoOpen: true,
   noSniff: true,
-  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  referrerPolicy: { policy: "no-referrer" },
   xssFilter: true,
 });

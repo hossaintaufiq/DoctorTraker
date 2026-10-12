@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 import { User, IUser } from "../models/User.js";
+import { verifyAccessToken } from "../utils/token.js";
 
 export interface AuthRequest extends Request {
   user?: IUser;
@@ -29,10 +29,7 @@ export async function protect(
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "super_secret_doctor_tracker_jwt_key_2026"
-    ) as { id: string };
+    const decoded = verifyAccessToken(token);
 
     const user = await User.findById(decoded.id).select("-password");
     if (!user) {
@@ -45,10 +42,10 @@ export async function protect(
 
     req.user = user;
     next();
-  } catch (error) {
+  } catch {
     res.status(401).json({
       success: false,
-      message: "Invalid authentication token. Authorization denied.",
+      message: "Invalid or expired authentication token. Authorization denied.",
     });
   }
 }
@@ -58,7 +55,7 @@ export function authorizeRoles(...roles: string[]) {
     if (!req.user || !roles.includes(req.user.role)) {
       res.status(403).json({
         success: false,
-        message: `Role (${req.user?.role || "Guest"}) is unauthorized to perform this administrative action.`,
+        message: `Forbidden. Role (${req.user?.role || "Guest"}) does not have permission to perform this action.`,
       });
       return;
     }

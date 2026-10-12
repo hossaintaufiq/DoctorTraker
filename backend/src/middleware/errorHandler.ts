@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { env } from "../config/env.js";
 
 export interface CustomError extends Error {
   statusCode?: number;
@@ -15,13 +16,17 @@ export function errorHandler(
   let error = { ...err };
   error.message = err.message;
 
-  console.error(`[Server Error] ${err.name}: ${err.message}`, err.stack);
+  if (env.NODE_ENV !== "production") {
+    console.error(`[Server Error] ${err.name}: ${err.message}`, err.stack);
+  } else {
+    console.error(`[Server Error] ${err.name}: ${err.message}`);
+  }
 
   // Mongoose bad ObjectId
   if (err.name === "CastError") {
     const message = "Resource not found with specified identifier format.";
     error = new Error(message) as CustomError;
-    error.statusCode = 404;
+    error.statusCode = 400; // Invalid ObjectId format should be 400 Bad Request
   }
 
   // Mongoose duplicate key error
@@ -40,8 +45,12 @@ export function errorHandler(
     error.statusCode = 400;
   }
 
-  res.status(error.statusCode || 500).json({
+  const statusCode = error.statusCode || 500;
+  const isProd = env.NODE_ENV === "production";
+
+  res.status(statusCode).json({
     success: false,
     message: error.message || "Internal Server Error in Healthcare API Layer",
+    ...(isProd ? {} : { stack: err.stack }),
   });
 }

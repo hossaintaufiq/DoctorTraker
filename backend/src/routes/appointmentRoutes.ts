@@ -5,17 +5,18 @@ import {
   updateAppointmentStatus,
   cancelAppointment,
 } from "../controllers/appointmentController.js";
+import { authorizeRoles } from "../middleware/auth.js";
 
 const router = Router();
 
 router.route("/")
   .get(getAppointments)
-  .post(createAppointment);
+  .post(authorizeRoles("admin", "doctor", "staff"), createAppointment);
 
 router.route("/:id/status")
-  .patch(updateAppointmentStatus);
+  .patch(authorizeRoles("admin", "doctor", "staff"), updateAppointmentStatus);
 
 router.route("/:id")
-  .delete(cancelAppointment);
+  .delete(authorizeRoles("admin"), cancelAppointment);
 
 export default router;

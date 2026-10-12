@@ -197,7 +197,16 @@ const doctorsSeed = [
   },
 ];
 
-export async function seedDatabase(): Promise<void> {
+export async function seedDatabase(actingAdmin?: {
+  name: string;
+  email: string;
+  role: string;
+  password?: string;
+}): Promise<any> {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Database seeder is strictly disabled in production environments.");
+  }
+
   const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/doctor_tracker";
 
   try {
@@ -217,14 +226,40 @@ export async function seedDatabase(): Promise<void> {
       ActivityLog.deleteMany({}),
     ]);
 
-    // 1. Create Admin User
-    const adminUser = await User.create({
-      name: "Sullivan (Master Admin)",
-      email: "admin@medcare.com",
-      password: "password123",
-      role: "admin",
-    });
-    console.log(`[Seeder] Created Admin User: ${adminUser.email}`);
+    // 1. Create Baseline Admin Users
+    const defaultAdmins = [
+      {
+        name: "Doctor Tracker Admin",
+        email: "admin@doctortracker.com",
+        password: "password123",
+        role: "admin" as const,
+      },
+      {
+        name: "Doctor Tracker Admin (Legacy)",
+        email: "admin@medcare.com",
+        password: "password123",
+        role: "admin" as const,
+      },
+    ];
+
+    for (const adm of defaultAdmins) {
+      await User.create(adm);
+    }
+
+    // If acting admin is provided and different, guarantee they exist
+    if (
+      actingAdmin &&
+      actingAdmin.email !== "admin@doctortracker.com" &&
+      actingAdmin.email !== "admin@medcare.com"
+    ) {
+      await User.create({
+        name: actingAdmin.name || "Acting Admin",
+        email: actingAdmin.email.toLowerCase(),
+        password: actingAdmin.password || "password123",
+        role: "admin",
+      });
+      console.log(`[Seeder] Re-created Acting Admin User: ${actingAdmin.email}`);
+    }
 
     // 2. Create Departments
     const createdDepts = await Department.insertMany(departmentsSeed);

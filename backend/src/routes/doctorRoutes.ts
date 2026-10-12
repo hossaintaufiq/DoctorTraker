@@ -8,23 +8,24 @@ import {
   addPatientUnderDoctor,
   removePatientFromDoctor,
 } from "../controllers/doctorController.js";
+import { authorizeRoles } from "../middleware/auth.js";
 
 const router = Router();
 
 router.route("/")
   .get(getDoctors)
-  .post(createDoctor);
+  .post(authorizeRoles("admin"), createDoctor);
 
 router.route("/:id")
   .get(getDoctorById)
-  .put(updateDoctor)
-  .patch(updateDoctor)
-  .delete(deleteDoctor);
+  .put(authorizeRoles("admin"), updateDoctor)
+  .patch(authorizeRoles("admin"), updateDoctor)
+  .delete(authorizeRoles("admin"), deleteDoctor);
 
 router.route("/:id/patients")
-  .post(addPatientUnderDoctor);
+  .post(authorizeRoles("admin", "doctor"), addPatientUnderDoctor);
 
 router.route("/:id/patients/:patientId")
-  .delete(removePatientFromDoctor);
+  .delete(authorizeRoles("admin", "doctor"), removePatientFromDoctor);
 
 export default router;

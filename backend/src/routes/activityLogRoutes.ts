@@ -4,12 +4,13 @@ import {
   createActivityLog,
   clearActivityLogs,
 } from "../controllers/activityLogController.js";
+import { authorizeRoles } from "../middleware/auth.js";
 
 const router = Router();
 
 router.route("/")
   .get(getActivityLogs)
-  .post(createActivityLog)
-  .delete(clearActivityLogs);
+  .post(authorizeRoles("admin", "doctor", "staff"), createActivityLog)
+  .delete(authorizeRoles("admin"), clearActivityLogs);
 
 export default router;
