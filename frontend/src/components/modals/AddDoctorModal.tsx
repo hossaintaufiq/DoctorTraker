@@ -84,32 +84,33 @@ export function AddDoctorModal() {
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-xl bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow overflow-hidden z-50 animate-fade-in flex flex-col max-h-[90vh] shadow-2xl">
+      <div className="relative w-full max-w-xl md:max-w-2xl lg:max-w-4xl bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow overflow-hidden z-50 animate-fade-in flex flex-col max-h-[92vh] lg:max-h-none shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white/60 backdrop-blur-md">
+        <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-white/60 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center border border-[#2F65F6]/20 shadow-2xs">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center border border-[#2F65F6]/20 shadow-2xs shrink-0">
               <Stethoscope className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#101828]">Add New Doctor</h3>
-              <p className="text-xs text-[#64748B]">Register a physician to the medical staff directory</p>
+              <h3 className="text-sm sm:text-base font-bold text-[#101828]">Add New Doctor</h3>
+              <p className="text-[11px] sm:text-xs text-[#64748B]">Register a physician to the medical staff directory</p>
             </div>
           </div>
           <button
             onClick={() => setIsAddDoctorModalOpen(false)}
-            className="p-2 text-[#64748B] hover:text-[#101828] rounded-full hover:bg-[#F8FAFC] transition-colors"
+            className="p-1.5 text-[#64748B] hover:text-[#101828] rounded-full hover:bg-[#F8FAFC] transition-colors cursor-pointer"
+            aria-label="Close dialog"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Body Form */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 lg:p-6 overflow-y-auto lg:overflow-visible space-y-3 sm:space-y-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-3.5">
             {/* Full Name */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">
                 Doctor Name <span className="text-[#EF4444]">*</span>
               </label>
               <input
@@ -117,18 +118,18 @@ export function AddDoctorModal() {
                 placeholder="e.g. Dr. Sarah Ahmed"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
-              {errors.name && <p className="text-[11px] text-[#EF4444]">{errors.name}</p>}
+              {errors.name && <p className="text-[10px] text-[#EF4444]">{errors.name}</p>}
             </div>
 
             {/* Specialty */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Specialization</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Specialization</label>
               <select
                 value={specialty}
                 onChange={(e) => setSpecialty(e.target.value as DoctorSpecialty)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all cursor-pointer"
               >
                 {SPECIALTIES.map((spec) => (
                   <option key={spec} value={spec}>
@@ -139,8 +140,8 @@ export function AddDoctorModal() {
             </div>
 
             {/* Hospital */}
-            <div className="space-y-1.5 sm:col-span-2">
-              <label className="text-xs font-semibold text-[#101828]">
+            <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">
                 Hospital Affiliation <span className="text-[#EF4444]">*</span>
               </label>
               <input
@@ -148,14 +149,14 @@ export function AddDoctorModal() {
                 placeholder="e.g. Medcare Central Hospital"
                 value={hospital}
                 onChange={(e) => setHospital(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
-              {errors.hospital && <p className="text-[11px] text-[#EF4444]">{errors.hospital}</p>}
+              {errors.hospital && <p className="text-[10px] text-[#EF4444]">{errors.hospital}</p>}
             </div>
 
             {/* Email */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">
                 Email Address <span className="text-[#EF4444]">*</span>
               </label>
               <input
@@ -163,14 +164,14 @@ export function AddDoctorModal() {
                 placeholder="physician@medcare.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
-              {errors.email && <p className="text-[11px] text-[#EF4444]">{errors.email}</p>}
+              {errors.email && <p className="text-[10px] text-[#EF4444]">{errors.email}</p>}
             </div>
 
             {/* Phone */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">
                 Phone Number <span className="text-[#EF4444]">*</span>
               </label>
               <input
@@ -178,14 +179,14 @@ export function AddDoctorModal() {
                 placeholder="+880 1711-000000"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
-              {errors.phone && <p className="text-[11px] text-[#EF4444]">{errors.phone}</p>}
+              {errors.phone && <p className="text-[10px] text-[#EF4444]">{errors.phone}</p>}
             </div>
 
             {/* Room Number */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">
                 Consultation Room / Wing <span className="text-[#EF4444]">*</span>
               </label>
               <input
@@ -193,20 +194,20 @@ export function AddDoctorModal() {
                 placeholder="Room 304 - Wing B"
                 value={roomNumber}
                 onChange={(e) => setRoomNumber(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
               {errors.roomNumber && (
-                <p className="text-[11px] text-[#EF4444]">{errors.roomNumber}</p>
+                <p className="text-[10px] text-[#EF4444]">{errors.roomNumber}</p>
               )}
             </div>
 
             {/* Status */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Initial Status</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Initial Status</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as DoctorStatus)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all cursor-pointer"
               >
                 <option value="Active">Active (Available)</option>
                 <option value="In Surgery">In Surgery</option>
@@ -216,52 +217,52 @@ export function AddDoctorModal() {
             </div>
 
             {/* Max Patients */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Max Capacity</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Max Capacity</label>
               <input
                 type="number"
                 value={maxPatients}
                 onChange={(e) => setMaxPatients(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
             </div>
 
             {/* Experience Years */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Years of Experience</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Years of Experience</label>
               <input
                 type="number"
                 value={experienceYears}
                 onChange={(e) => setExperienceYears(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
             </div>
           </div>
 
           {/* Biography */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#101828]">Professional Summary</label>
+          <div className="space-y-1">
+            <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Professional Summary</label>
             <textarea
               rows={2}
               placeholder="Clinical focus, research experience, or hospital affiliations..."
               value={biography}
               onChange={(e) => setBiography(e.target.value)}
-              className="w-full px-4 py-2.5 text-xs rounded-2xl border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+              className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-2xl border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all resize-none"
             />
           </div>
 
           {/* Actions */}
-          <div className="pt-3 border-t border-[#EBF0F7] flex items-center justify-end gap-3">
+          <div className="pt-2.5 border-t border-[#EBF0F7] flex items-center justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={() => setIsAddDoctorModalOpen(false)}
-              className="px-5 py-2.5 text-xs font-semibold text-[#64748B] hover:text-[#101828] hover:bg-[#F8FAFC] rounded-full border border-[#EBF0F7] transition-colors"
+              className="px-4 py-2 text-xs font-semibold text-[#64748B] hover:text-[#101828] hover:bg-[#F8FAFC] rounded-full border border-[#EBF0F7] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 text-xs font-semibold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs transition-colors flex items-center gap-1.5"
+              className="px-5 py-2 text-xs font-semibold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <UserPlus className="w-3.5 h-3.5" />
               <span>Register Doctor</span>

@@ -28,6 +28,7 @@ export function AddPatientModal() {
   const [bloodGroup, setBloodGroup] = useState<
     "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-"
   >("O+");
+  const [status, setStatus] = useState<"Outpatient" | "Admitted" | "Discharged">("Outpatient");
   const [notes, setNotes] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,7 +73,7 @@ export function AddPatientModal() {
         phone: phone.trim(),
         email: email.trim() || `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
         bloodGroup,
-        status: "Outpatient",
+        status,
         notes: notes.trim() || "Initial registration and baseline vitals recorded.",
       });
 
@@ -80,6 +81,7 @@ export function AddPatientModal() {
         setName("");
         setPhone("");
         setEmail("");
+        setStatus("Outpatient");
         setNotes("");
         setErrors({});
         setIsAddPatientModalOpen(false);
@@ -100,32 +102,33 @@ export function AddPatientModal() {
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-xl bg-white/90 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow overflow-hidden z-50 animate-fade-in flex flex-col max-h-[90vh] shadow-2xl">
+      <div className="relative w-full max-w-xl md:max-w-2xl lg:max-w-4xl bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/90 popover-shadow overflow-hidden z-50 animate-fade-in flex flex-col max-h-[92vh] lg:max-h-none shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white/60 backdrop-blur-md">
+        <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-white/60 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center border border-[#2F65F6]/20 shadow-2xs">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center border border-[#2F65F6]/20 shadow-2xs shrink-0">
               <Users className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#101828]">Register New Patient</h3>
-              <p className="text-xs text-[#64748B]">Create clinical patient chart & assign physician</p>
+              <h3 className="text-sm sm:text-base font-bold text-[#101828]">Register New Patient</h3>
+              <p className="text-[11px] sm:text-xs text-[#64748B]">Create clinical patient chart & assign physician</p>
             </div>
           </div>
           <button
             onClick={() => setIsAddPatientModalOpen(false)}
-            className="p-2 text-[#64748B] hover:text-[#101828] rounded-full hover:bg-[#F8FAFC] transition-colors"
+            className="p-1.5 text-[#64748B] hover:text-[#101828] rounded-full hover:bg-[#F8FAFC] transition-colors cursor-pointer"
+            aria-label="Close dialog"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Body Form */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 lg:p-6 overflow-y-auto lg:overflow-visible space-y-3 sm:space-y-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-3.5">
             {/* Patient Name */}
-            <div className="space-y-1.5 sm:col-span-2">
-              <label className="text-xs font-semibold text-[#101828]">
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">
                 Patient Full Name <span className="text-[#EF4444]">*</span>
               </label>
               <input
@@ -133,29 +136,29 @@ export function AddPatientModal() {
                 placeholder="e.g. Olivia Bennett"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
-              {errors.name && <p className="text-[11px] text-[#EF4444]">{errors.name}</p>}
+              {errors.name && <p className="text-[10px] text-[#EF4444]">{errors.name}</p>}
             </div>
 
             {/* Age */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Age</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Age</label>
               <input
                 type="number"
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
             </div>
 
             {/* Gender */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Gender</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Gender</label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value as PatientGender)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all cursor-pointer"
               >
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
@@ -164,42 +167,42 @@ export function AddPatientModal() {
             </div>
 
             {/* Assigned Doctor */}
-            <div className="space-y-1.5 sm:col-span-2">
-              <label className="text-xs font-semibold text-[#101828]">
+            <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">
                 Assigned Primary Physician
               </label>
               <select
                 value={assignedDoctorId}
                 onChange={(e) => setAssignedDoctorId(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all cursor-pointer truncate"
               >
                 {doctors.map((doc, i) => (
                   <option key={doc.id || (doc as any)._id || `add-pt-doc-${i}`} value={doc.id || (doc as any)._id}>
-                    {doc.name} — {doc.specialty} ({doc.patientCount} patients)
+                    {doc.name} — {doc.specialty}
                   </option>
                 ))}
               </select>
             </div>
 
             {/* Condition Category */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Condition Classification</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Condition Classification</label>
               <select
                 value={condition}
                 onChange={(e) => setCondition(e.target.value as PatientCondition)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all cursor-pointer"
               >
-                <option value="General">General (Routine / Wellness)</option>
-                <option value="Chronic">Chronic (Long-term Care)</option>
-                <option value="Recovering">Recovering (Post-Treatment)</option>
-                <option value="Follow-up">Follow-up (Review Visit)</option>
-                <option value="Critical">Critical (Intensive Monitoring)</option>
+                <option value="General">General (Routine)</option>
+                <option value="Chronic">Chronic (Long-term)</option>
+                <option value="Recovering">Recovering (Post-op)</option>
+                <option value="Follow-up">Follow-up (Review)</option>
+                <option value="Critical">Critical (Intensive)</option>
               </select>
             </div>
 
             {/* Blood Group */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Blood Group</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Blood Group</label>
               <select
                 value={bloodGroup}
                 onChange={(e) =>
@@ -207,7 +210,7 @@ export function AddPatientModal() {
                     e.target.value as "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-"
                   )
                 }
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all cursor-pointer"
               >
                 <option value="O+">O positive (O+)</option>
                 <option value="O-">O negative (O-)</option>
@@ -221,8 +224,8 @@ export function AddPatientModal() {
             </div>
 
             {/* Phone */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">
                 Contact Phone <span className="text-[#EF4444]">*</span>
               </label>
               <input
@@ -230,51 +233,66 @@ export function AddPatientModal() {
                 placeholder="+880 1812-000000"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
-              {errors.phone && <p className="text-[11px] text-[#EF4444]">{errors.phone}</p>}
+              {errors.phone && <p className="text-[10px] text-[#EF4444]">{errors.phone}</p>}
             </div>
 
             {/* Email */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#101828]">Email Address</label>
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Email Address</label>
               <input
                 type="email"
                 placeholder="patient@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               />
+            </div>
+
+            {/* Admission Status */}
+            <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Admission Status</label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as "Outpatient" | "Admitted" | "Discharged")}
+                className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all cursor-pointer"
+              >
+                <option value="Outpatient">Outpatient (Clinic)</option>
+                <option value="Admitted">Admitted (Inpatient Ward)</option>
+                <option value="Discharged">Discharged</option>
+              </select>
             </div>
           </div>
 
           {/* Clinical Notes */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#101828]">Initial Clinical Assessment</label>
+          <div className="space-y-1">
+            <label className="text-[11px] sm:text-xs font-semibold text-[#101828]">Initial Clinical Assessment</label>
             <textarea
               rows={2}
               placeholder="Presenting symptoms, allergies, or referral notes..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-4 py-2.5 text-xs rounded-2xl border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
+              className="w-full px-3.5 py-2 text-xs rounded-xl sm:rounded-2xl border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all resize-none"
             />
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-3 border-t border-[#EBF0F7] flex items-center justify-end gap-3">
+          <div className="pt-2.5 border-t border-[#EBF0F7] flex items-center justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={() => setIsAddPatientModalOpen(false)}
-              className="px-5 py-2.5 text-xs font-semibold text-[#64748B] hover:text-[#101828] hover:bg-[#F8FAFC] rounded-full border border-[#EBF0F7] transition-colors"
+              className="px-4 py-2 text-xs font-semibold text-[#64748B] hover:text-[#101828] hover:bg-[#F8FAFC] rounded-full border border-[#EBF0F7] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 text-xs font-semibold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs transition-colors flex items-center gap-1.5"
+              disabled={isSubmitting}
+              className="px-5 py-2 text-xs font-semibold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
             >
               <UserPlus className="w-3.5 h-3.5" />
-              <span>Register Patient</span>
+              <span>{isSubmitting ? "Registering..." : "Register Patient"}</span>
             </button>
           </div>
         </form>

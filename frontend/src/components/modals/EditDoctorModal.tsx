@@ -94,16 +94,16 @@ export function EditDoctorModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-xl bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/90 shadow-2xl overflow-hidden animate-scale-up flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-xl md:max-w-2xl lg:max-w-4xl bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/90 shadow-2xl overflow-hidden animate-scale-up flex flex-col max-h-[92vh] lg:max-h-none">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white/70">
+        <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-white/70 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center border border-[#2F65F6]/20">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#2F65F6]/10 text-[#2F65F6] flex items-center justify-center border border-[#2F65F6]/20 shrink-0">
               <Edit2 className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#101828]">Edit Doctor Profile</h3>
-              <p className="text-xs text-[#64748B]">Update physician credentials, department, and contact details</p>
+              <h3 className="text-sm sm:text-base font-bold text-[#101828]">Edit Doctor Profile</h3>
+              <p className="text-[11px] sm:text-xs text-[#64748B]">Update physician credentials, department, and contact details</p>
             </div>
           </div>
           <button
@@ -112,7 +112,7 @@ export function EditDoctorModal() {
               setIsEditDoctorModalOpen(false);
               setEditingDoctor(null);
             }}
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -120,28 +120,29 @@ export function EditDoctorModal() {
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
-          {/* Doctor Name & Specialty */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Full Name & Title</label>
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 lg:p-6 space-y-3 sm:space-y-3.5 overflow-y-auto lg:overflow-visible flex-1 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-3.5">
+            {/* Full Name */}
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Full Name & Title <span className="text-[#EF4444]">*</span></label>
               <input
                 type="text"
                 required
                 placeholder="Dr. Sarah Ahmed"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               />
               {errors.name && <span className="text-rose-500 text-[10px]">{errors.name}</span>}
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Clinical Specialty</label>
+            {/* Specialty */}
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Clinical Specialty</label>
               <select
                 value={specialty}
                 onChange={(e) => setSpecialty(e.target.value as DoctorSpecialty)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6] cursor-pointer"
               >
                 {SPECIALTIES.map((spec) => (
                   <option key={spec} value={spec}>
@@ -150,28 +151,27 @@ export function EditDoctorModal() {
                 ))}
               </select>
             </div>
-          </div>
 
-          {/* Hospital & Status */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Hospital Affiliation</label>
+            {/* Hospital */}
+            <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Hospital Affiliation <span className="text-[#EF4444]">*</span></label>
               <input
                 type="text"
                 required
                 placeholder="Doctor Tracker Medical Center"
                 value={hospital}
                 onChange={(e) => setHospital(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Current Duty Status</label>
+            {/* Status */}
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Current Duty Status</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as DoctorStatus)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6] cursor-pointer"
               >
                 <option value="Active">Active Duty</option>
                 <option value="In Surgery">In Surgery</option>
@@ -179,103 +179,102 @@ export function EditDoctorModal() {
                 <option value="Off Duty">Off Duty</option>
               </select>
             </div>
-          </div>
 
-          {/* Email & Phone */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Work Email</label>
+            {/* Email */}
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Work Email <span className="text-[#EF4444]">*</span></label>
               <input
                 type="email"
                 required
                 placeholder="sarah.ahmed@medcare.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               />
               {errors.email && <span className="text-rose-500 text-[10px]">{errors.email}</span>}
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Contact Phone</label>
+            {/* Phone */}
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Contact Phone <span className="text-[#EF4444]">*</span></label>
               <input
                 type="tel"
                 required
                 placeholder="+880 1711-234567"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               />
             </div>
-          </div>
 
-          {/* Room Number, Experience & Max Patients */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Chamber / Room</label>
+            {/* Room Number */}
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Chamber / Room <span className="text-[#EF4444]">*</span></label>
               <input
                 type="text"
                 required
                 placeholder="Room 304 - Wing B"
                 value={roomNumber}
                 onChange={(e) => setRoomNumber(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Experience (Years)</label>
+            {/* Experience Years */}
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Experience (Years)</label>
               <input
                 type="number"
                 min="0"
                 value={experienceYears}
                 onChange={(e) => setExperienceYears(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Max Patient Target</label>
+            {/* Max Patients */}
+            <div className="space-y-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Max Patient Target</label>
               <input
                 type="number"
                 min="10"
                 value={maxPatients}
                 onChange={(e) => setMaxPatients(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-full px-3.5 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               />
             </div>
           </div>
 
           {/* Biography */}
-          <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700">Clinical Biography & Scope</label>
+          <div className="space-y-1">
+            <label className="text-[11px] sm:text-xs font-semibold text-slate-700">Clinical Biography & Scope</label>
             <textarea
-              rows={3}
+              rows={2}
               placeholder="Clinical background, sub-specialty qualifications, and hospital responsibilities..."
               value={biography}
               onChange={(e) => setBiography(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl p-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6] resize-none"
             />
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={() => {
                 setIsEditDoctorModalOpen(false);
                 setEditingDoctor(null);
               }}
-              className="px-4 py-2 font-semibold text-slate-600 hover:bg-slate-100 rounded-full transition-all"
+              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-full transition-all cursor-pointer"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="px-6 py-2.5 font-bold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs transition-all flex items-center gap-1.5"
+              className="px-5 py-2 text-xs font-bold text-white bg-[#2F65F6] hover:bg-[#1E4FD8] rounded-full shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <Check className="w-4 h-4" />
+              <Check className="w-3.5 h-3.5" />
               <span>Save Changes</span>
             </button>
           </div>
