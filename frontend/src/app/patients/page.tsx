@@ -65,14 +65,15 @@ export default function PatientsPage() {
   };
 
   const handleDeletePatient = (pt: Patient) => {
+    const ptId = pt.id || (pt as any)._id;
     openConfirmDialog({
       title: "Remove Patient Chart",
       itemName: `${pt.name} (${pt.patientCode || ""})`,
       itemType: "Patient Record",
       message: `Are you sure you want to remove the medical chart for ${pt.name}? This will permanently delete clinical records.`,
       confirmLabel: "Yes, Remove Patient",
-      onConfirm: () => {
-        deletePatient(pt.id);
+      onConfirm: async () => {
+        await deletePatient(ptId);
       },
     });
   };

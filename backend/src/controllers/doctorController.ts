@@ -106,6 +106,7 @@ export async function getDoctors(
 
     const enrichedDoctors = doctors.map((doc) => ({
       ...doc,
+      id: doc._id.toString(),
       patientCount: countMap.get(doc._id.toString()) ?? doc.patientCount ?? 0,
     }));
 

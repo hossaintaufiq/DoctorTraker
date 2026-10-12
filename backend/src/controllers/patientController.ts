@@ -100,13 +100,18 @@ export async function getPatients(
       Patient.countDocuments(query),
     ]);
 
+    const enrichedPatients = patients.map((pt) => ({
+      ...pt,
+      id: pt._id.toString(),
+    }));
+
     res.status(200).json({
       success: true,
-      count: patients.length,
+      count: enrichedPatients.length,
       total,
       totalPages: Math.ceil(total / limitNum) || 1,
       currentPage: pageNum,
-      data: patients,
+      data: enrichedPatients,
     });
   } catch (error) {
     next(error);

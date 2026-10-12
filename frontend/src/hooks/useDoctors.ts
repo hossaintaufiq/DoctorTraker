@@ -25,8 +25,13 @@ export function useDoctors(params?: DoctorsQueryParams, options?: { enabled?: bo
       if (!res.success) {
         throw new Error(res.message || "Failed to fetch doctors");
       }
+      const rawList = (res.data as any[]) || [];
+      const doctors: Doctor[] = rawList.map((d) => ({
+        ...d,
+        id: (d.id || d._id || "").toString(),
+      }));
       return {
-        doctors: (res.data as Doctor[]) || [],
+        doctors,
         total: res.total || 0,
         totalPages: res.totalPages || 1,
         currentPage: res.currentPage || 1,

@@ -26,8 +26,13 @@ export function usePatients(params?: PatientsQueryParams, options?: { enabled?: 
       if (!res.success) {
         throw new Error(res.message || "Failed to fetch patients");
       }
+      const rawList = (res.data as any[]) || [];
+      const patients: Patient[] = rawList.map((p) => ({
+        ...p,
+        id: (p.id || p._id || "").toString(),
+      }));
       return {
-        patients: (res.data as Patient[]) || [],
+        patients,
         total: res.total || 0,
         totalPages: res.totalPages || 1,
         currentPage: res.currentPage || 1,

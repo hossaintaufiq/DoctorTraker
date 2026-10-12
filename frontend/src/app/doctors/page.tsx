@@ -65,14 +65,15 @@ export default function DoctorsPage() {
   };
 
   const handleDeleteDoctor = (doc: Doctor) => {
+    const docId = doc.id || (doc as any)._id;
     openConfirmDialog({
       title: "Remove Physician Record",
       itemName: doc.name,
       itemType: "Doctor Profile",
       message: `Are you sure you want to remove Dr. ${doc.name}? All assigned patients will be unassigned.`,
       confirmLabel: "Yes, Remove Doctor",
-      onConfirm: () => {
-        deleteDoctor(doc.id);
+      onConfirm: async () => {
+        await deleteDoctor(docId);
       },
     });
   };
