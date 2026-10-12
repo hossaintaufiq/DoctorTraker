@@ -23,13 +23,11 @@ const DoctorSchema = new Schema<IDoctor>(
       type: String,
       required: [true, "Doctor name is required"],
       trim: true,
-      index: true,
     },
     specialty: {
       type: String,
       required: [true, "Specialty is required"],
       trim: true,
-      index: true,
     },
     email: {
       type: String,
@@ -70,7 +68,6 @@ const DoctorSchema = new Schema<IDoctor>(
       type: String,
       enum: ["Active", "In Surgery", "On Leave", "Off Duty"],
       default: "Active",
-      index: true,
     },
     biography: {
       type: String,
@@ -95,7 +92,10 @@ DoctorSchema.virtual("patients", {
   foreignField: "assignedDoctor",
 });
 
-// Compound text index for fast search
+// Strategic compound indexes matching query filter, search, and sort patterns
+DoctorSchema.index({ status: 1, specialty: 1, createdAt: -1 });
+DoctorSchema.index({ hospital: 1, status: 1 });
+DoctorSchema.index({ createdAt: -1 });
 DoctorSchema.index({ name: "text", specialty: "text", email: "text", hospital: "text" });
 
 export const Doctor = mongoose.model<IDoctor>("Doctor", DoctorSchema);

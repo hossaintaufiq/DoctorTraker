@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IAppointment extends Document {
   appointmentCode: string;
@@ -23,18 +23,15 @@ const AppointmentSchema = new Schema<IAppointment>(
     appointmentCode: {
       type: String,
       unique: true,
-      index: true,
     },
     patientId: {
       type: String,
       required: true,
-      index: true,
     },
     patientName: {
       type: String,
       required: [true, "Patient name is required"],
       trim: true,
-      index: true,
     },
     patientPhone: {
       type: String,
@@ -43,7 +40,6 @@ const AppointmentSchema = new Schema<IAppointment>(
     doctorId: {
       type: String,
       required: true,
-      index: true,
     },
     doctorName: {
       type: String,
@@ -53,7 +49,6 @@ const AppointmentSchema = new Schema<IAppointment>(
     doctorSpecialty: {
       type: String,
       default: "General Medicine",
-      index: true,
     },
     roomNumber: {
       type: String,
@@ -62,7 +57,6 @@ const AppointmentSchema = new Schema<IAppointment>(
     date: {
       type: String,
       required: [true, "Appointment date is required"],
-      index: true,
     },
     timeSlot: {
       type: String,
@@ -72,13 +66,11 @@ const AppointmentSchema = new Schema<IAppointment>(
       type: String,
       enum: ["General Checkup", "Follow-up", "Consultation", "Emergency", "Surgery Review"],
       default: "Consultation",
-      index: true,
     },
     status: {
       type: String,
       enum: ["Confirmed", "In-Consultation", "Completed", "Cancelled", "Pending"],
       default: "Confirmed",
-      index: true,
     },
     notes: {
       type: String,
@@ -100,8 +92,9 @@ AppointmentSchema.pre("save", function (next) {
 });
 
 // Compound indexes for fast filtered scheduling queries
-AppointmentSchema.index({ date: 1, status: 1 });
-AppointmentSchema.index({ doctorId: 1, date: 1 });
+AppointmentSchema.index({ doctorId: 1, date: -1 });
+AppointmentSchema.index({ status: 1, date: -1 });
+AppointmentSchema.index({ date: -1 });
 AppointmentSchema.index({ patientName: "text", appointmentCode: "text", doctorName: "text" });
 
 export const Appointment = mongoose.model<IAppointment>("Appointment", AppointmentSchema);

@@ -30,13 +30,12 @@ const PatientSchema = new Schema<IPatient>(
     patientCode: {
       type: String,
       unique: true,
-      index: true,
+      trim: true,
     },
     name: {
       type: String,
       required: [true, "Patient name is required"],
       trim: true,
-      index: true,
     },
     age: {
       type: Number,
@@ -53,7 +52,6 @@ const PatientSchema = new Schema<IPatient>(
       type: Schema.Types.ObjectId,
       ref: "Doctor",
       required: [true, "Assigned doctor reference is required"],
-      index: true,
     },
     assignedDoctorName: {
       type: String,
@@ -63,13 +61,11 @@ const PatientSchema = new Schema<IPatient>(
       type: String,
       enum: ["General", "Chronic", "Recovering", "Follow-up", "Critical"],
       default: "General",
-      index: true,
     },
     status: {
       type: String,
       enum: ["Admitted", "Outpatient", "Discharged"],
       default: "Outpatient",
-      index: true,
     },
     bloodGroup: {
       type: String,
@@ -97,7 +93,6 @@ const PatientSchema = new Schema<IPatient>(
     registrationDate: {
       type: Date,
       default: Date.now,
-      index: true,
     },
     vitals: {
       bloodPressure: { type: String, default: "120/80" },
@@ -120,7 +115,11 @@ PatientSchema.pre("save", function (next) {
   next();
 });
 
-// Text indexing for query searches
+// Strategic compound indexes matching query filter, doctor assignments, and dates
+PatientSchema.index({ assignedDoctor: 1, createdAt: -1 });
+PatientSchema.index({ condition: 1, status: 1, registrationDate: -1 });
+PatientSchema.index({ status: 1, registrationDate: -1 });
+PatientSchema.index({ registrationDate: -1 });
 PatientSchema.index({ name: "text", patientCode: "text", phone: "text", email: "text" });
 
 export const Patient = mongoose.model<IPatient>("Patient", PatientSchema);

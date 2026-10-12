@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ActivityLog } from "../models/ActivityLog.js";
+import { escapeRegex } from "../validations/common.js";
 
 // @desc    Get audit activity logs with category, status, and search filters
 // @route   GET /api/logs
@@ -14,7 +15,8 @@ export async function getActivityLogs(
     const query: Record<string, any> = {};
 
     if (search && typeof search === "string" && search.trim() !== "") {
-      const searchRegex = new RegExp(search.trim(), "i");
+      const escaped = escapeRegex(search.trim());
+      const searchRegex = new RegExp(escaped, "i");
       query.$or = [
         { action: searchRegex },
         { user: searchRegex },

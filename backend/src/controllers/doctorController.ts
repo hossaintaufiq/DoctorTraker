@@ -1,10 +1,21 @@
 import { Request, Response, NextFunction } from "express";
 import { Doctor } from "../models/Doctor.js";
 import { Patient } from "../models/Patient.js";
+import { escapeRegex, buildDateRangeQuery } from "../validations/common.js";
+
+// Allowed sort fields for doctor listing
+const ALLOWED_DOCTOR_SORTS = new Set([
+  "createdAt",
+  "name",
+  "specialty",
+  "patientCount",
+  "experienceYears",
+  "status",
+]);
 
 // @desc    Get all doctors with search, filtering, and pagination
 // @route   GET /api/doctors
-// @access  Public or Protected
+// @access  Protected
 export async function getDoctors(
   req: Request,
   res: Response,
@@ -22,20 +33,21 @@ export async function getDoctors(
       order = "desc",
       startDate,
       endDate,
-    } = req.query;
+    } = req.query as Record<string, any>;
 
     const query: Record<string, any> = {};
 
-    // Search query
+    // Safe escaped regex search across core doctor fields
     if (search && typeof search === "string" && search.trim() !== "") {
-      const searchRegex = new RegExp(search.trim(), "i");
+      const escaped = escapeRegex(search.trim());
+      const searchRegex = new RegExp(escaped, "i");
       query.$or = [
         { name: searchRegex },
         { specialty: searchRegex },
         { email: searchRegex },
+        { hospital: searchRegex },
         { roomNumber: searchRegex },
         { phone: searchRegex },
-        { hospital: searchRegex },
       ];
     }
 
@@ -54,27 +66,34 @@ export async function getDoctors(
       query.hospital = hospital;
     }
 
-    // Date range filter
-    if (startDate || endDate) {
-      query.createdAt = {};
-      if (startDate) query.createdAt.$gte = new Date(startDate as string);
-      if (endDate) query.createdAt.$lte = new Date(endDate as string);
+    // Inclusive UTC Date range filter
+    const dateRange = buildDateRangeQuery(startDate, endDate);
+    if (dateRange) {
+      query.createdAt = dateRange;
     }
 
-    const pageNum = Math.max(1, parseInt(page as string) || 1);
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 10));
+    const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 10));
     const skip = (pageNum - 1) * limitNum;
 
+    const validatedSort = ALLOWED_DOCTOR_SORTS.has(sortBy as string)
+      ? (sortBy as string)
+      : "createdAt";
+
     const sortOption: Record<string, 1 | -1> = {
-      [sortBy as string]: order === "asc" ? 1 : -1,
+      [validatedSort]: order === "asc" ? 1 : -1,
     };
 
     const [doctors, total] = await Promise.all([
-      Doctor.find(query).sort(sortOption).skip(skip).limit(limitNum).lean(),
+      Doctor.find(query)
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
       Doctor.countDocuments(query),
     ]);
 
-    // Recalculate dynamic patient count for each doctor
+    // Recalculate dynamic patient count for each returned doctor to maintain consistency
     const doctorIds = doctors.map((d) => d._id);
     const patientCounts = await Patient.aggregate([
       { $match: { assignedDoctor: { $in: doctorIds } } },
@@ -87,14 +106,14 @@ export async function getDoctors(
 
     const enrichedDoctors = doctors.map((doc) => ({
       ...doc,
-      patientCount: countMap.get(doc._id.toString()) || doc.patientCount || 0,
+      patientCount: countMap.get(doc._id.toString()) ?? doc.patientCount ?? 0,
     }));
 
     res.status(200).json({
       success: true,
       count: enrichedDoctors.length,
       total,
-      totalPages: Math.ceil(total / limitNum),
+      totalPages: Math.ceil(total / limitNum) || 1,
       currentPage: pageNum,
       data: enrichedDoctors,
     });
@@ -105,14 +124,14 @@ export async function getDoctors(
 
 // @desc    Get single doctor by ID with corresponding patients
 // @route   GET /api/doctors/:id
-// @access  Public or Protected
+// @access  Protected
 export async function getDoctorById(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
-    const doctor = await Doctor.findById(req.params.id);
+    const doctor = await Doctor.findById(req.params.id).lean();
 
     if (!doctor) {
       res.status(404).json({
@@ -128,7 +147,7 @@ export async function getDoctorById(
       .lean();
 
     const enrichedDoctor = {
-      ...doctor.toObject(),
+      ...doctor,
       patientCount: patients.length,
       patients,
     };
@@ -165,7 +184,8 @@ export async function createDoctor(
       avatar,
     } = req.body;
 
-    const existingDoctor = await Doctor.findOne({ email });
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const existingDoctor = await Doctor.findOne({ email: normalizedEmail });
     if (existingDoctor) {
       res.status(400).json({
         success: false,
@@ -175,19 +195,19 @@ export async function createDoctor(
     }
 
     const doctor = await Doctor.create({
-      name,
-      specialty,
-      email,
-      phone,
-      roomNumber,
+      name: name.trim(),
+      specialty: specialty.trim(),
+      email: normalizedEmail,
+      phone: phone.trim(),
+      roomNumber: roomNumber.trim(),
       hospital: hospital || "Doctor Tracker Medical Center",
       maxPatients: maxPatients || 300,
-      experienceYears: experienceYears || 5,
+      experienceYears: experienceYears ?? 5,
       status: status || "Active",
       biography:
         biography ||
-        `${specialty} specialist with ${experienceYears || 5} years clinical experience.`,
-      avatar,
+        `${specialty} specialist with ${experienceYears ?? 5} years clinical experience.`,
+      avatar: avatar || "",
     });
 
     res.status(201).json({
@@ -209,6 +229,10 @@ export async function updateDoctor(
   next: NextFunction
 ): Promise<void> {
   try {
+    if (req.body.email) {
+      req.body.email = String(req.body.email).trim().toLowerCase();
+    }
+
     const doctor = await Doctor.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -251,18 +275,13 @@ export async function deleteDoctor(
       return;
     }
 
-    // Check if doctor has assigned patients
-    const patientCount = await Patient.countDocuments({ assignedDoctor: doctor._id });
-    if (patientCount > 0) {
-      // Reassign patients or handle accordingly
-      console.log(`[Doctor Deletion] Reassigning/archiving ${patientCount} patients.`);
-    }
-
+    // Delete associated patients under this doctor
+    await Patient.deleteMany({ assignedDoctor: doctor._id });
     await doctor.deleteOne();
 
     res.status(200).json({
       success: true,
-      message: "Doctor record deleted successfully from directory.",
+      message: "Doctor record and assigned patient relationships removed successfully.",
     });
   } catch (error) {
     next(error);
@@ -271,7 +290,7 @@ export async function deleteDoctor(
 
 // @desc    Add a patient under a specific doctor
 // @route   POST /api/doctors/:id/patients
-// @access  Protected
+// @access  Protected (Admin, Doctor)
 export async function addPatientUnderDoctor(
   req: Request,
   res: Response,
@@ -282,7 +301,7 @@ export async function addPatientUnderDoctor(
     if (!doctor) {
       res.status(404).json({
         success: false,
-        message: "Target doctor not found.",
+        message: "Target physician not found.",
       });
       return;
     }
@@ -300,20 +319,20 @@ export async function addPatientUnderDoctor(
     } = req.body;
 
     const patient = await Patient.create({
-      name,
+      name: name.trim(),
       age,
       gender,
       assignedDoctor: doctor._id,
       assignedDoctorName: doctor.name,
       condition: condition || "General",
       bloodGroup: bloodGroup || "O+",
-      phone,
-      email,
-      notes,
+      phone: phone.trim(),
+      email: email ? email.trim().toLowerCase() : `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
+      notes: notes || "Initial clinical evaluation completed.",
       status: status || "Outpatient",
     });
 
-    // Increment doctor patientCount
+    // Atomically increment doctor patientCount
     await Doctor.findByIdAndUpdate(doctor._id, { $inc: { patientCount: 1 } });
 
     res.status(201).json({
@@ -328,7 +347,7 @@ export async function addPatientUnderDoctor(
 
 // @desc    Delete/Remove a patient from doctor's patient list
 // @route   DELETE /api/doctors/:id/patients/:patientId
-// @access  Protected
+// @access  Protected (Admin, Doctor)
 export async function removePatientFromDoctor(
   req: Request,
   res: Response,
@@ -352,7 +371,7 @@ export async function removePatientFromDoctor(
 
     await patient.deleteOne();
 
-    // Decrement doctor patient count
+    // Atomically decrement doctor patientCount
     await Doctor.findByIdAndUpdate(doctorId, { $inc: { patientCount: -1 } });
 
     res.status(200).json({

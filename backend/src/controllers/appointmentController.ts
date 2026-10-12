@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Appointment } from "../models/Appointment.js";
+import { escapeRegex } from "../validations/common.js";
 
 // @desc    Get appointments with search, date filter, status filter, and pagination
 // @route   GET /api/appointments
@@ -14,7 +15,8 @@ export async function getAppointments(
     const query: Record<string, any> = {};
 
     if (search && typeof search === "string" && search.trim() !== "") {
-      const searchRegex = new RegExp(search.trim(), "i");
+      const escaped = escapeRegex(search.trim());
+      const searchRegex = new RegExp(escaped, "i");
       query.$or = [
         { patientName: searchRegex },
         { doctorName: searchRegex },

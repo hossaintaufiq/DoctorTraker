@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Invoice } from "../models/Invoice.js";
+import { escapeRegex } from "../validations/common.js";
 
 // @desc    Get invoices with search, status, payment method, and pagination
 // @route   GET /api/invoices
@@ -14,7 +15,8 @@ export async function getInvoices(
     const query: Record<string, any> = {};
 
     if (search && typeof search === "string" && search.trim() !== "") {
-      const searchRegex = new RegExp(search.trim(), "i");
+      const escaped = escapeRegex(search.trim());
+      const searchRegex = new RegExp(escaped, "i");
       query.$or = [
         { invoiceCode: searchRegex },
         { patientName: searchRegex },
