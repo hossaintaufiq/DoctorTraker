@@ -63,10 +63,10 @@ export function NotificationsSettingsTab({
       </div>
 
       <div className="space-y-3 pt-2">
-        <label className="flex items-center justify-between p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
-          <div>
+        <label className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors gap-3">
+          <div className="min-w-0 flex-1">
             <p className="text-xs font-bold text-[#101828]">Automated SMS Reminders to Scheduled Patients</p>
-            <p className="text-[11px] text-[#64748B]">
+            <p className="text-[11px] text-[#64748B] mt-0.5 leading-relaxed">
               Send automated appointment slot notification 2 hours prior to consultation
             </p>
           </div>
@@ -74,14 +74,14 @@ export function NotificationsSettingsTab({
             type="checkbox"
             checked={smsPatientReminders}
             onChange={(e) => setSmsPatientReminders(e.target.checked)}
-            className="w-4 h-4 accent-[#2F65F6] rounded"
+            className="w-4 h-4 accent-[#2F65F6] rounded shrink-0 self-end sm:self-auto cursor-pointer"
           />
         </label>
 
-        <label className="flex items-center justify-between p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
-          <div>
+        <label className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors gap-3">
+          <div className="min-w-0 flex-1">
             <p className="text-xs font-bold text-[#101828]">Real-time Email Alerts for Patient Discharges</p>
-            <p className="text-[11px] text-[#64748B]">
+            <p className="text-[11px] text-[#64748B] mt-0.5 leading-relaxed">
               Dispatch itemized billing summary to billing desk and primary physician
             </p>
           </div>
@@ -89,14 +89,14 @@ export function NotificationsSettingsTab({
             type="checkbox"
             checked={emailAlerts}
             onChange={(e) => setEmailAlerts(e.target.checked)}
-            className="w-4 h-4 accent-[#2F65F6] rounded"
+            className="w-4 h-4 accent-[#2F65F6] rounded shrink-0 self-end sm:self-auto cursor-pointer"
           />
         </label>
 
-        <label className="flex items-center justify-between p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
-          <div>
+        <label className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-[#F8FAFC] border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors gap-3">
+          <div className="min-w-0 flex-1">
             <p className="text-xs font-bold text-[#101828]">Daily Operations & Revenue Executive Digest</p>
-            <p className="text-[11px] text-[#64748B]">
+            <p className="text-[11px] text-[#64748B] mt-0.5 leading-relaxed">
               Send executive clinical summary and revenue KPIs to medical director at 06:00 AM
             </p>
           </div>
@@ -104,7 +104,7 @@ export function NotificationsSettingsTab({
             type="checkbox"
             checked={dailyDigestEmail}
             onChange={(e) => setDailyDigestEmail(e.target.checked)}
-            className="w-4 h-4 accent-[#2F65F6] rounded"
+            className="w-4 h-4 accent-[#2F65F6] rounded shrink-0 self-end sm:self-auto cursor-pointer"
           />
         </label>
       </div>

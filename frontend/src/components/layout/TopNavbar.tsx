@@ -12,6 +12,7 @@ import {
   User,
   LogOut,
   Sparkles,
+  X,
 } from "lucide-react";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 import { cn } from "@/lib/utils";
@@ -133,60 +134,91 @@ export function TopNavbar({
             )}
           </button>
 
+          {/* Mobile Backdrop for Notifications */}
+          {showNotifications && (
+            <div
+              className="fixed inset-0 bg-[#0B132B]/20 backdrop-blur-2xs z-40 sm:hidden animate-fade-in"
+              onClick={() => setShowNotifications(false)}
+            />
+          )}
+
           {/* Frosted Glass Notifications Popover */}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 w-[calc(100vw-2rem)] max-w-sm sm:w-96 bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/95 popover-shadow p-4 z-50 animate-fade-in shadow-2xl">
+            <div className="fixed inset-x-3 top-[4.5rem] sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto sm:mt-3 w-auto sm:w-96 max-w-md mx-auto sm:max-w-none sm:mx-0 bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/95 popover-shadow p-4 z-50 animate-fade-in shadow-2xl">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
                   <h4 className="text-sm font-bold text-[#101828]">Notifications</h4>
                   {unreadNotificationCount > 0 && (
-                    <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[#2F65F6]/10 text-[#2F65F6] border border-[#2F65F6]/20">
+                    <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[#2F65F6]/10 text-[#2F65F6] border border-[#2F65F6]/20 shrink-0">
                       {unreadNotificationCount} new
                     </span>
                   )}
                 </div>
-                {unreadNotificationCount > 0 && (
+                <div className="flex items-center gap-2 shrink-0">
+                  {unreadNotificationCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={markAllNotificationsAsRead}
+                      className="text-xs font-semibold text-[#2F65F6] hover:underline cursor-pointer"
+                    >
+                      Mark all read
+                    </button>
+                  )}
                   <button
-                    onClick={markAllNotificationsAsRead}
-                    className="text-xs font-semibold text-[#2F65F6] hover:underline"
+                    type="button"
+                    onClick={() => setShowNotifications(false)}
+                    className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors sm:hidden cursor-pointer"
+                    aria-label="Close notifications"
                   >
-                    Mark all read
+                    <X className="w-4 h-4" />
                   </button>
-                )}
+                </div>
               </div>
 
-              <div className="max-h-72 overflow-y-auto divide-y divide-slate-100/80 mt-2 -mx-1 px-1">
-                {notifications.map((item: any) => (
-                  <div
-                    key={item.id}
-                    onClick={() => markNotificationAsRead(item.id)}
-                    className={cn(
-                      "py-2.5 px-2.5 rounded-2xl cursor-pointer transition-all flex items-start gap-3 my-1",
-                      (item.isRead || item.read)
-                        ? "opacity-75 hover:bg-white/60"
-                        : "bg-white/80 hover:bg-white border border-white/90 shadow-2xs"
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "w-2 h-2 rounded-full mt-1.5 shrink-0",
-                        item.read ? "bg-transparent" : "bg-[#2F65F6] ring-2 ring-[#2F65F6]/20"
-                      )}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-[#101828] truncate">
-                        {item.title}
-                      </p>
-                      <p className="text-[11px] text-[#64748B] mt-0.5 line-clamp-2">
-                        {item.message}
-                      </p>
-                      <span className="text-[10px] font-medium text-[#94A3B8] mt-1 block">
-                        {item.timestamp}
-                      </span>
-                    </div>
+              {notifications.length === 0 ? (
+                <div className="py-8 text-center px-4">
+                  <div className="w-10 h-10 rounded-2xl bg-slate-50 text-slate-400 mx-auto flex items-center justify-center mb-2 border border-slate-100">
+                    <Bell className="w-5 h-5 stroke-[1.8]" />
                   </div>
-                ))}
-              </div>
+                  <p className="text-xs font-bold text-slate-700">No notifications</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">You&apos;re completely up to date.</p>
+                </div>
+              ) : (
+                <div className="max-h-[60vh] sm:max-h-80 overflow-y-auto divide-y divide-slate-100/80 mt-2 -mx-1 px-1">
+                  {notifications.map((item: any, idx: number) => (
+                    <div
+                      key={item.id || `notif-${idx}`}
+                      onClick={() => markNotificationAsRead(item.id)}
+                      className={cn(
+                        "py-2.5 px-2.5 rounded-2xl cursor-pointer transition-all flex items-start gap-2.5 sm:gap-3 my-1",
+                        item.isRead || item.read
+                          ? "opacity-75 hover:bg-white/60"
+                          : "bg-white/80 hover:bg-white border border-white/90 shadow-2xs"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "w-2 h-2 rounded-full mt-1.5 shrink-0",
+                          item.read || item.isRead ? "bg-transparent" : "bg-[#2F65F6] ring-2 ring-[#2F65F6]/20"
+                        )}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <p className="text-xs font-semibold text-[#101828] truncate">
+                            {item.title}
+                          </p>
+                          <span className="text-[10px] font-medium text-[#94A3B8] shrink-0">
+                            {item.timestamp}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#64748B] mt-0.5 line-clamp-2">
+                          {item.message}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
