@@ -48,7 +48,8 @@ export function validateEnv(): EnvConfig {
   const COOKIE_SECURE =
     process.env.COOKIE_SECURE === "true" || NODE_ENV === "production";
 
-  const sameSiteRaw = (process.env.COOKIE_SAME_SITE || "lax").toLowerCase();
+  const defaultSameSite = NODE_ENV === "production" ? "none" : "lax";
+  const sameSiteRaw = (process.env.COOKIE_SAME_SITE || defaultSameSite).toLowerCase();
   const COOKIE_SAME_SITE: "lax" | "strict" | "none" =
     sameSiteRaw === "none" ? "none" : sameSiteRaw === "strict" ? "strict" : "lax";
 

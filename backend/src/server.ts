@@ -11,6 +11,9 @@ import { helmetSecurity, sanitizeNoSql, apiLimiter } from "./middleware/security
 const app: Express = express();
 const PORT = env.PORT;
 
+// Trust reverse proxy (e.g. Render, AWS, Heroku) for HTTPS cookies & rate limiting
+app.set("trust proxy", 1);
+
 // 1. API-appropriate Security Headers via Helmet (no web CSP)
 app.use(helmetSecurity);
 
