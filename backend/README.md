@@ -16,10 +16,38 @@
 
 | Resource | Value / Link | Details |
 | :--- | :--- | :--- |
+<<<<<<< HEAD
 | **Local API Base** | `http://localhost:5000/api` | Standalone Express server |
 | **Health Check** | `http://localhost:5000/api/health` | Public connectivity & uptime verification |
 | **Demo Administrator** | `admin@doctortracker.com` | Pre-configured evaluation account |
 | **Demo Password** | `password123` | Salted `bcryptjs` credential verified on MongoDB |
+=======
+| **Live REST API Base** | [doctortraker.onrender.com/api](https://doctortraker.onrender.com) | High-availability backend deployed on Render |
+| **Live Health Check** | [doctortraker.onrender.com/api/health](https://doctortraker.onrender.com/api/health) | Real-time database connectivity & uptime verification |
+| **Live Frontend Portal** | [doctortraker.vercel.app](https://doctortraker.vercel.app) | Production Next.js 16 frontend hosted on Vercel Edge |
+| **Demo Administrator Account** | `admin@medcare.com` | Pre-configured evaluation account with full admin rights |
+| **Demo Password** | `password123` | Salted `bcryptjs` credential verified on MongoDB Atlas |
+| **Root GitHub Repository** | [github.com/hossaintaufiq/DoctorTraker](https://github.com/hossaintaufiq/DoctorTraker) | Monorepo containing full full-stack source code |
+
+---
+
+## 🏗️ Architecture & Engineering Deep-Dive
+
+### 1. Standalone Decoupled Microservice
+* Separated completely from the Next.js presentation tier for independent horizontal scaling, isolated Docker containerization, and the ability to serve native mobile clients (iOS / Android) in future releases.
+* Maintains persistent Mongoose connection pooling with dual DNS resolver fallbacks (`8.8.8.8`, `1.1.1.1`), eliminating the connection churn and cold-start timeouts common in serverless edge runtimes.
+
+### 2. High-Performance MongoDB Atlas Aggregations
+* **Compound Indexing**: Structured indexes on `specialty + status`, `assignedDoctorId + condition`, and `createdAt + status` yield sub-15ms lookup speeds across paginated queries.
+* **$facet Pipelines**: Multi-metric dashboard summaries (patient arrival curves, departmental revenue distribution, doctor workload ratios) are computed in parallel within MongoDB, returning consolidated telemetry in a single round-trip.
+
+### 3. Defense-in-Depth OWASP Hardening
+* **HTTP Security Headers (`helmet`)**: Enforces strict Content Security Policy (CSP), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and HTTP Strict Transport Security (HSTS).
+* **Recursive NoSQL Operator Sanitization**: Custom middleware inspects all request parameters, bodies, and query strings, recursively stripping malicious MongoDB operators (`$` and `.`) before reaching Mongoose queries.
+* **Granular Rate Limiting (`express-rate-limit`)**: Protects authentication endpoints (`/api/auth/login`) with strict caps (20 req / 15 min) and general API routes with 400 req / 15 min.
+* **Cryptographic Hashing & JWT**: Passwords salted and hashed with `bcryptjs` (10 rounds). Tokens signed via `jsonwebtoken` with 7-day expiration and tamper resistance.
+* **Dynamic CORS Whitelisting**: Validates origins with support for `doctortraker.vercel.app`, preview deployments, and local development environments.
+>>>>>>> 1a17247c3e9b896b68655f61b5038f643a0977e5
 
 ---
 
