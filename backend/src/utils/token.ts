@@ -57,7 +57,7 @@ export function setRefreshTokenCookie(res: Response, token: string): void {
     secure: env.COOKIE_SECURE,
     sameSite: env.COOKIE_SAME_SITE,
     maxAge,
-    path: "/api/auth",
+    path: "/",
   });
 }
 
@@ -66,6 +66,6 @@ export function clearRefreshTokenCookie(res: Response): void {
     httpOnly: true,
     secure: env.COOKIE_SECURE,
     sameSite: env.COOKIE_SAME_SITE,
-    path: "/api/auth",
+    path: "/",
   });
 }

@@ -135,7 +135,7 @@ export function TopNavbar({
 
           {/* Frosted Glass Notifications Popover */}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/95 popover-shadow p-4 z-50 animate-fade-in shadow-2xl">
+            <div className="absolute right-0 mt-3 w-[calc(100vw-2rem)] max-w-sm sm:w-96 bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/95 popover-shadow p-4 z-50 animate-fade-in shadow-2xl">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-[#101828]">Notifications</h4>

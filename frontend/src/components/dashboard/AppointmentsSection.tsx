@@ -39,7 +39,7 @@ export function AppointmentsSection() {
   return (
     <div className="bg-white rounded-3xl border border-[#EBF0F7] p-6 card-shadow flex flex-col justify-between">
       {/* Header with Title, Legend & Diagonal Arrow Circle */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#F1F5F9]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-[#F1F5F9]">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-[#EBF3FE] text-[#2F65F6] flex items-center justify-center shrink-0">
             <Calendar className="w-4 h-4" />
@@ -52,10 +52,10 @@ export function AppointmentsSection() {
         </div>
 
         {/* Legend & Diagonal Arrow */}
-        <div className="flex items-center gap-4 text-xs text-[#64748B] flex-wrap">
+        <div className="flex items-center gap-2.5 sm:gap-4 text-[11px] sm:text-xs text-[#64748B] flex-wrap">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#CBD5E1]" />
-            <span>Available Slots</span>
+            <span>Available</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#2F65F6]" />
@@ -63,12 +63,12 @@ export function AppointmentsSection() {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#E2E8F0]" />
-            <span>Unavailable Slots</span>
+            <span>Booked</span>
           </div>
 
           <Link
             href="/appointments"
-            className="w-8 h-8 rounded-full bg-[#101828] text-white flex items-center justify-center hover:bg-[#2F65F6] transition-colors shrink-0"
+            className="w-8 h-8 rounded-full bg-[#101828] text-white flex items-center justify-center hover:bg-[#2F65F6] transition-colors shrink-0 ml-auto sm:ml-0"
             aria-label="View all appointments"
           >
             <ArrowUpRight className="w-4 h-4" />
@@ -76,19 +76,19 @@ export function AppointmentsSection() {
         </div>
       </div>
 
-      {/* Date Carousel Strip - Responsive without sliding bars */}
+      {/* Date Carousel Strip - Responsive across all viewport sizes */}
       <div className="py-3 sm:py-4 flex items-center justify-between gap-1.5 sm:gap-2 select-none border-b border-[#F1F5F9]">
         <button
           type="button"
-          onClick={() => setSelectedDay((prev) => Math.max(10, prev - 1))}
+          onClick={() => setSelectedDay((prev) => Math.max(1, prev - 1))}
           className="w-7 h-7 rounded-full bg-[#F4F7FB] flex items-center justify-center text-[#64748B] hover:bg-[#EBF3FE] hover:text-[#2F65F6] shrink-0"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        {/* Desktop: Full 14-day range */}
-        <div className="hidden sm:flex items-center gap-1.5 md:gap-2 flex-1 justify-between">
-          {DAYS_OF_MONTH.map((day) => {
+        {/* Desktop XL: Full 18-day range */}
+        <div className="hidden xl:flex items-center gap-1.5 md:gap-2 flex-1 justify-between">
+          {DAYS_OF_MONTH.slice(0, 18).map((day) => {
             const isSelected = day === selectedDay;
             const isUnavailable = day === 17 || day === 19;
 
@@ -98,7 +98,36 @@ export function AppointmentsSection() {
                 type="button"
                 onClick={() => setSelectedDay(day)}
                 className={cn(
-                  "w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all shrink-0",
+                  "w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all shrink-0 cursor-pointer",
+                  isSelected
+                    ? "bg-[#2F65F6] text-white shadow-xs"
+                    : isUnavailable
+                    ? "bg-[#E2E8F0] text-[#94A3B8]"
+                    : "bg-[#EBF3FE]/70 text-[#64748B] hover:bg-[#EBF3FE] hover:text-[#2F65F6]"
+                )}
+              >
+                {day}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tablet / Medium Desktop: 11-day window centered on selectedDay */}
+        <div className="hidden sm:flex xl:hidden items-center gap-1.5 flex-1 justify-around">
+          {DAYS_OF_MONTH.slice(
+            Math.max(0, Math.min(DAYS_OF_MONTH.length - 11, DAYS_OF_MONTH.indexOf(selectedDay) - 5)),
+            Math.max(0, Math.min(DAYS_OF_MONTH.length - 11, DAYS_OF_MONTH.indexOf(selectedDay) - 5)) + 11
+          ).map((day) => {
+            const isSelected = day === selectedDay;
+            const isUnavailable = day === 17 || day === 19;
+
+            return (
+              <button
+                key={day}
+                type="button"
+                onClick={() => setSelectedDay(day)}
+                className={cn(
+                  "w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all shrink-0 cursor-pointer",
                   isSelected
                     ? "bg-[#2F65F6] text-white shadow-xs"
                     : isUnavailable
@@ -127,7 +156,7 @@ export function AppointmentsSection() {
                 type="button"
                 onClick={() => setSelectedDay(day)}
                 className={cn(
-                  "w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all shrink-0",
+                  "w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all shrink-0 cursor-pointer",
                   isSelected
                     ? "bg-[#2F65F6] text-white shadow-xs"
                     : isUnavailable

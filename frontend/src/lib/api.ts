@@ -16,16 +16,68 @@ export interface ApiResponse<T = any> {
   currentPage?: number;
 }
 
-// In-memory access token storage (never persisted to localStorage)
+// Persistent session storage helpers for resilient cross-domain authentication
+const SESSION_STORAGE_KEY = "doctor_tracker_auth_session";
+
+export interface StoredSession {
+  token: string | null;
+  refreshToken: string | null;
+  user?: any;
+}
+
+export function getStoredSession(): StoredSession | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredSession(session: StoredSession | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (session && (session.token || session.refreshToken)) {
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+    } else {
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+    }
+  } catch {
+    // Ignore storage quota or access errors
+  }
+}
+
+export function clearStoredSession(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch {
+    // Ignore
+  }
+}
+
+export function getStoredRefreshToken(): string | null {
+  const session = getStoredSession();
+  return session?.refreshToken || null;
+}
+
+// In-memory access token storage
 let inMemoryAccessToken: string | null = null;
 let onAuthFailureCallback: (() => void) | null = null;
 
 export function setAccessToken(token: string | null): void {
   inMemoryAccessToken = token;
+  const current = getStoredSession();
+  if (current) {
+    setStoredSession({ ...current, token });
+  }
 }
 
 export function getAccessToken(): string | null {
-  return inMemoryAccessToken;
+  if (inMemoryAccessToken) return inMemoryAccessToken;
+  const current = getStoredSession();
+  return current?.token || null;
 }
 
 export function setOnAuthFailure(callback: () => void): void {
@@ -50,10 +102,11 @@ async function request<T>(
   options: RequestInit = {},
   isRetry = false
 ): Promise<ApiResponse<T>> {
+  const activeToken = inMemoryAccessToken || getAccessToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(inMemoryAccessToken
-      ? { Authorization: `Bearer ${inMemoryAccessToken}` }
+    ...(activeToken
+      ? { Authorization: `Bearer ${activeToken}` }
       : {}),
     ...((options.headers as Record<string, string>) || {}),
   };
@@ -70,16 +123,25 @@ async function request<T>(
       if (!isRefreshing) {
         isRefreshing = true;
         try {
+          const storedRefresh = getStoredRefreshToken();
           const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(storedRefresh ? { refreshToken: storedRefresh } : {}),
           });
 
           if (refreshRes.ok) {
             const refreshData = await refreshRes.json();
             const newToken = refreshData?.data?.token || null;
+            const newRefreshToken = refreshData?.data?.refreshToken || storedRefresh;
             setAccessToken(newToken);
+            const current = getStoredSession();
+            setStoredSession({
+              token: newToken,
+              refreshToken: newRefreshToken,
+              user: refreshData?.data?.user || current?.user,
+            });
             isRefreshing = false;
             onRefreshed(newToken);
 
@@ -94,6 +156,7 @@ async function request<T>(
         isRefreshing = false;
         onRefreshed(null);
         setAccessToken(null);
+        clearStoredSession();
         if (onAuthFailureCallback) {
           onAuthFailureCallback();
         } else if (typeof window !== "undefined" && window.location.pathname !== "/login") {
@@ -134,14 +197,20 @@ export const api = {
         method: "POST",
         body: JSON.stringify(credentials),
       }),
-    refresh: () =>
-      request("/auth/refresh", {
+    refresh: (manualRefreshToken?: string) => {
+      const stored = manualRefreshToken || getStoredRefreshToken();
+      return request("/auth/refresh", {
         method: "POST",
-      }),
-    logout: () =>
-      request("/auth/logout", {
+        body: JSON.stringify(stored ? { refreshToken: stored } : {}),
+      });
+    },
+    logout: () => {
+      const stored = getStoredRefreshToken();
+      return request("/auth/logout", {
         method: "POST",
-      }),
+        body: JSON.stringify(stored ? { refreshToken: stored } : {}),
+      });
+    },
     getMe: () => request("/auth/me"),
     register: (userData: any) =>
       request("/auth/register", {

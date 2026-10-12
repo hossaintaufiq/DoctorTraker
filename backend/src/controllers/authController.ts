@@ -136,6 +136,7 @@ export async function login(
         email: user.email,
         role: user.role,
         token: accessToken,
+        refreshToken: refreshToken,
       },
     });
   } catch (error) {
@@ -143,16 +144,16 @@ export async function login(
   }
 }
 
-// @desc    Refresh access token via httpOnly cookie with token rotation
+// @desc    Refresh access token via httpOnly cookie or body token with token rotation
 // @route   POST /api/auth/refresh
-// @access  Public (via secure cookie)
+// @access  Public (via secure cookie or payload)
 export async function refresh(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
-    const refreshToken = req.cookies?.refreshToken;
+    const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
     if (!refreshToken) {
       res.status(401).json({
@@ -211,6 +212,7 @@ export async function refresh(
       message: "Token refreshed successfully.",
       data: {
         token: newAccessToken,
+        refreshToken: newRefreshToken,
         user: {
           id: user._id,
           name: user.name,
@@ -233,7 +235,7 @@ export async function logout(
   next: NextFunction
 ): Promise<void> {
   try {
-    const refreshToken = req.cookies?.refreshToken;
+    const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
     if (refreshToken) {
       try {
         const decoded = verifyRefreshToken(refreshToken);

@@ -1,7 +1,15 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { api, setAccessToken, setOnAuthFailure } from "@/lib/api";
+import {
+  api,
+  setAccessToken,
+  setOnAuthFailure,
+  getStoredSession,
+  setStoredSession,
+  clearStoredSession,
+  getStoredRefreshToken,
+} from "@/lib/api";
 
 export interface AuthUser {
   id: string;
@@ -27,32 +35,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
 
-  // Restore session via httpOnly refresh token on mount
+  // Restore session via persistent session token and refresh token on mount
   useEffect(() => {
-    // Purge any stale legacy localStorage items
-    localStorage.removeItem("medcare_theme");
-    localStorage.removeItem("medcare_token");
-    localStorage.removeItem("medcare_user");
-
     let isMounted = true;
+
+    // Immediately restore stored session from localStorage to prevent layout flicker or logout on refresh
+    const initialSession = getStoredSession();
+    if (initialSession?.token && initialSession?.user) {
+      setAccessToken(initialSession.token);
+      setUser(initialSession.user);
+      setIsAuthenticated(true);
+    }
 
     const restoreSession = async () => {
       try {
-        const res = await api.auth.refresh();
+        const storedRefresh = getStoredRefreshToken();
+        const res = await api.auth.refresh(storedRefresh || undefined);
         if (isMounted) {
           if (res.success && res.data) {
             const authData = res.data as any;
-            setAccessToken(authData.token || null);
-            setUser({
-              id: authData.user?.id || authData.id,
-              name: authData.user?.name || authData.name || "Doctor Tracker User",
-              email: authData.user?.email || authData.email,
-              role: authData.user?.role || authData.role || "admin",
-              avatar: authData.user?.avatar || "",
-              token: authData.token,
+            const newToken = authData.token || initialSession?.token || null;
+            const newRefreshToken = authData.refreshToken || storedRefresh;
+            const userData: AuthUser = {
+              id: authData.user?.id || authData.id || initialSession?.user?.id,
+              name: authData.user?.name || authData.name || initialSession?.user?.name || "Doctor Tracker User",
+              email: authData.user?.email || authData.email || initialSession?.user?.email,
+              role: authData.user?.role || authData.role || initialSession?.user?.role || "admin",
+              avatar: authData.user?.avatar || initialSession?.user?.avatar || "",
+              token: newToken,
+            };
+            setAccessToken(newToken);
+            setStoredSession({
+              token: newToken,
+              refreshToken: newRefreshToken,
+              user: userData,
             });
+            setUser(userData);
             setIsAuthenticated(true);
           } else {
+            // If refresh fails with 401, check if current access token is still valid via getMe()
+            if (initialSession?.token) {
+              try {
+                const meRes = await api.auth.getMe();
+                if (meRes.success && meRes.data) {
+                  const meData = meRes.data as any;
+                  const userData: AuthUser = {
+                    id: meData.id || meData._id || initialSession.user?.id,
+                    name: meData.name || initialSession.user?.name,
+                    email: meData.email || initialSession.user?.email,
+                    role: meData.role || initialSession.user?.role || "admin",
+                    avatar: meData.avatar || "",
+                    token: initialSession.token,
+                  };
+                  setUser(userData);
+                  setIsAuthenticated(true);
+                  return;
+                }
+              } catch {
+                // getMe failed
+              }
+            }
+            // Neither refresh nor stored token worked: clear stale session
+            clearStoredSession();
             setAccessToken(null);
             setUser(null);
             setIsAuthenticated(false);
@@ -60,9 +104,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch {
         if (isMounted) {
-          setAccessToken(null);
-          setUser(null);
-          setIsAuthenticated(false);
+          // In offline / network transient errors, keep user logged in if they have a stored token
+          if (!initialSession?.token) {
+            clearStoredSession();
+            setAccessToken(null);
+            setUser(null);
+            setIsAuthenticated(false);
+          }
         }
       } finally {
         if (isMounted) {
@@ -72,6 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     setOnAuthFailure(() => {
+      clearStoredSession();
       setAccessToken(null);
       setUser(null);
       setIsAuthenticated(false);
@@ -92,15 +141,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await api.auth.login({ email, password });
       if (res.success && res.data) {
         const authData = res.data as any;
-        setAccessToken(authData.token || null);
+        const newToken = authData.token || null;
+        const newRefreshToken = authData.refreshToken || null;
         const userData: AuthUser = {
           id: authData.id,
           name: authData.name || "Administrator",
           email: authData.email || email,
           role: authData.role || "admin",
           avatar: authData.avatar || "",
-          token: authData.token,
+          token: newToken,
         };
+        setAccessToken(newToken);
+        setStoredSession({
+          token: newToken,
+          refreshToken: newRefreshToken,
+          user: userData,
+        });
         setUser(userData);
         setIsAuthenticated(true);
         return { success: true };
@@ -123,6 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore network errors on logout
     }
+    clearStoredSession();
     setAccessToken(null);
     setUser(null);
     setIsAuthenticated(false);

@@ -82,7 +82,7 @@ export function PatientFiltersBar({
           <select
             value={condition}
             onChange={(e) => onConditionChange(e.target.value)}
-            className="px-3 py-2 text-xs bg-white/70 border border-white/80 rounded-2xl text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2F65F6]/20 cursor-pointer"
+            className="flex-1 sm:flex-initial min-w-[120px] px-3 py-2 text-xs bg-white/70 border border-white/80 rounded-2xl text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2F65F6]/20 cursor-pointer"
             aria-label="Filter by condition"
           >
             {CONDITIONS.map((cond) => (
@@ -96,7 +96,7 @@ export function PatientFiltersBar({
           <select
             value={status}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="px-3 py-2 text-xs bg-white/70 border border-white/80 rounded-2xl text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2F65F6]/20 cursor-pointer"
+            className="flex-1 sm:flex-initial min-w-[110px] px-3 py-2 text-xs bg-white/70 border border-white/80 rounded-2xl text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2F65F6]/20 cursor-pointer"
             aria-label="Filter by status"
           >
             {STATUSES.map((st) => (
@@ -110,7 +110,7 @@ export function PatientFiltersBar({
           <select
             value={bloodGroup}
             onChange={(e) => onBloodGroupChange(e.target.value)}
-            className="px-3 py-2 text-xs bg-white/70 border border-white/80 rounded-2xl text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2F65F6]/20 cursor-pointer"
+            className="flex-1 sm:flex-initial min-w-[110px] px-3 py-2 text-xs bg-white/70 border border-white/80 rounded-2xl text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2F65F6]/20 cursor-pointer"
             aria-label="Filter by blood group"
           >
             {BLOOD_GROUPS.map((bg) => (
@@ -124,7 +124,7 @@ export function PatientFiltersBar({
           <select
             value={doctorId}
             onChange={(e) => onDoctorIdChange(e.target.value)}
-            className="px-3 py-2 text-xs bg-white/70 border border-white/80 rounded-2xl text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2F65F6]/20 cursor-pointer max-w-[180px] truncate"
+            className="flex-1 sm:flex-initial min-w-[130px] max-w-[200px] px-3 py-2 text-xs bg-white/70 border border-white/80 rounded-2xl text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2F65F6]/20 cursor-pointer truncate"
             aria-label="Filter by doctor"
           >
             <option value="All">All Doctors</option>
