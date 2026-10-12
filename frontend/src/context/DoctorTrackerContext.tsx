@@ -147,9 +147,9 @@ const DoctorTrackerContext = createContext<DoctorTrackerContextType | undefined>
 function CompositeContextProvider({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const ui = useUI();
-  const doctorsQuery = useDoctors({ limit: 100 });
-  const patientsQuery = usePatients({ limit: 100 });
-  const dashboardQuery = useDashboard();
+  const doctorsQuery = useDoctors({ limit: 100 }, { enabled: auth.isAuthenticated });
+  const patientsQuery = usePatients({ limit: 100 }, { enabled: auth.isAuthenticated });
+  const dashboardQuery = useDashboard(undefined, { enabled: auth.isAuthenticated });
   const doctorMutations = useDoctorMutations();
   const patientMutations = usePatientMutations();
 

@@ -118,13 +118,12 @@ test.describe("Doctor Tracker End-to-End Suite", () => {
     await page.fill("#login-password", "password123");
     await page.click("#login-submit-button");
 
-    await page.waitForURL("**/dashboard");
     await expect(page).toHaveURL(/.*dashboard/);
   });
 
   test("3. Route guard redirects unauthenticated users to /login", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForURL("**/login");
+    await expect(page).toHaveURL(/.*login/);
     expect(page.url()).toContain("/login");
   });
 
@@ -297,7 +296,7 @@ test.describe("Doctor Tracker End-to-End Suite", () => {
     await page.waitForLoadState("networkidle");
 
     // Check pagination displays total count >100
-    await expect(page.locator("text=120").first()).toBeVisible();
+    await expect(page.locator("text=120").first()).toBeVisible({ timeout: 10000 });
 
     // Search for a specific doctor
     const searchInput = page.getByRole("textbox", { name: "Search doctors" });

@@ -128,6 +128,26 @@ export default function LoginPage() {
             </p>
           </div>
 
+          {/* Quick Credential Helper Banner */}
+          <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-center justify-between text-xs text-blue-900">
+            <div>
+              <p className="font-semibold text-blue-950">Default Administrator</p>
+              <p className="text-[11px] text-blue-700 font-mono mt-0.5">admin@doctortracker.com</p>
+            </div>
+            <button
+              id="fill-demo-credentials-button"
+              type="button"
+              onClick={() => {
+                setEmail("admin@doctortracker.com");
+                setPassword("password123");
+                setErrorMessage("");
+              }}
+              className="px-2.5 py-1 text-[11px] font-semibold bg-white text-[#2F65F6] border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors shadow-2xs cursor-pointer"
+            >
+              Fill Credentials
+            </button>
+          </div>
+
           {errorMessage && (
             <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-2 text-xs text-rose-600 animate-fade-in">
               <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />

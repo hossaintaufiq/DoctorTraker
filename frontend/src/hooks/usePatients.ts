@@ -18,7 +18,7 @@ export interface PatientsQueryParams {
   limit?: number;
 }
 
-export function usePatients(params?: PatientsQueryParams) {
+export function usePatients(params?: PatientsQueryParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["patients", params],
     queryFn: async () => {
@@ -33,6 +33,7 @@ export function usePatients(params?: PatientsQueryParams) {
         currentPage: res.currentPage || 1,
       };
     },
+    enabled: options?.enabled ?? true,
     placeholderData: keepPreviousData,
     staleTime: 30 * 1000,
   });

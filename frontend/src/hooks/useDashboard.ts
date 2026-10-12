@@ -63,7 +63,7 @@ export interface DashboardData {
   }>;
 }
 
-export function useDashboard(params?: DashboardParams) {
+export function useDashboard(params?: DashboardParams, options?: { enabled?: boolean }) {
   return useQuery<DashboardData>({
     queryKey: ["dashboard", params],
     queryFn: async () => {
@@ -73,6 +73,7 @@ export function useDashboard(params?: DashboardParams) {
       }
       return res.data as DashboardData;
     },
+    enabled: options?.enabled ?? true,
     staleTime: 30 * 1000,
   });
 }

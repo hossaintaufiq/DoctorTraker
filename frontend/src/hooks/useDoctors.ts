@@ -17,7 +17,7 @@ export interface DoctorsQueryParams {
   limit?: number;
 }
 
-export function useDoctors(params?: DoctorsQueryParams) {
+export function useDoctors(params?: DoctorsQueryParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["doctors", params],
     queryFn: async () => {
@@ -32,6 +32,7 @@ export function useDoctors(params?: DoctorsQueryParams) {
         currentPage: res.currentPage || 1,
       };
     },
+    enabled: options?.enabled ?? true,
     placeholderData: keepPreviousData,
     staleTime: 30 * 1000,
   });
