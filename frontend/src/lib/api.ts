@@ -1,10 +1,10 @@
 /**
  * Healthcare API Service Client for Doctor Tracker
- * Connects frontend client to backend Node.js/Express REST endpoints
+ * Connects Next.js frontend to backend Express REST endpoints
  */
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://doctortraker.onrender.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -16,33 +16,109 @@ export interface ApiResponse<T = any> {
   currentPage?: number;
 }
 
-// Generic fetch wrapper with auth header injection
+// In-memory access token storage (never persisted to localStorage)
+let inMemoryAccessToken: string | null = null;
+let onAuthFailureCallback: (() => void) | null = null;
+
+export function setAccessToken(token: string | null): void {
+  inMemoryAccessToken = token;
+}
+
+export function getAccessToken(): string | null {
+  return inMemoryAccessToken;
+}
+
+export function setOnAuthFailure(callback: () => void): void {
+  onAuthFailureCallback = callback;
+}
+
+let isRefreshing = false;
+let refreshSubscribers: ((token: string | null) => void)[] = [];
+
+function subscribeTokenRefresh(cb: (token: string | null) => void) {
+  refreshSubscribers.push(cb);
+}
+
+function onRefreshed(token: string | null) {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+}
+
+// Generic fetch wrapper with in-memory auth injection, credentials, and 401 refresh handling
 async function request<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  isRetry = false
 ): Promise<ApiResponse<T>> {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("medcare_token") : null;
-
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "Cache-Control": "no-cache, no-store, must-revalidate",
-    "Pragma": "no-cache",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...(options.headers || {}),
+    ...(inMemoryAccessToken
+      ? { Authorization: `Bearer ${inMemoryAccessToken}` }
+      : {}),
+    ...((options.headers as Record<string, string>) || {}),
   };
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
-      cache: "no-store",
+      credentials: "include", // Send and receive httpOnly cookies (for refresh token)
       headers,
     });
+
+    // Handle 401 Unauthorized globally
+    if (response.status === 401 && !isRetry && !endpoint.startsWith("/auth/")) {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        try {
+          const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+          });
+
+          if (refreshRes.ok) {
+            const refreshData = await refreshRes.json();
+            const newToken = refreshData?.data?.token || null;
+            setAccessToken(newToken);
+            isRefreshing = false;
+            onRefreshed(newToken);
+
+            if (newToken) {
+              return request<T>(endpoint, options, true);
+            }
+          }
+        } catch {
+          // Refresh failed
+        }
+
+        isRefreshing = false;
+        onRefreshed(null);
+        setAccessToken(null);
+        if (onAuthFailureCallback) {
+          onAuthFailureCallback();
+        } else if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
+      } else {
+        // Wait for active refresh
+        return new Promise<ApiResponse<T>>((resolve) => {
+          subscribeTokenRefresh((newToken) => {
+            if (newToken) {
+              resolve(request<T>(endpoint, options, true));
+            } else {
+              resolve({
+                success: false,
+                message: "Authentication session expired.",
+              });
+            }
+          });
+        });
+      }
+    }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.warn(`[API Client Warning] Failed request to ${endpoint}:`, (error as Error).message);
     return {
       success: false,
       message: (error as Error).message || "Network request failed",
@@ -58,12 +134,20 @@ export const api = {
         method: "POST",
         body: JSON.stringify(credentials),
       }),
+    refresh: () =>
+      request("/auth/refresh", {
+        method: "POST",
+      }),
+    logout: () =>
+      request("/auth/logout", {
+        method: "POST",
+      }),
+    getMe: () => request("/auth/me"),
     register: (userData: any) =>
       request("/auth/register", {
         method: "POST",
         body: JSON.stringify(userData),
       }),
-    getMe: () => request("/auth/me"),
   },
 
   // Doctors
@@ -72,6 +156,11 @@ export const api = {
       search?: string;
       specialty?: string;
       status?: string;
+      hospital?: string;
+      startDate?: string;
+      endDate?: string;
+      sortBy?: string;
+      order?: "asc" | "desc";
       page?: number;
       limit?: number;
     }) => {
@@ -81,6 +170,12 @@ export const api = {
         query.set("specialty", params.specialty);
       if (params?.status && params.status !== "All")
         query.set("status", params.status);
+      if (params?.hospital && params.hospital !== "All")
+        query.set("hospital", params.hospital);
+      if (params?.startDate) query.set("startDate", params.startDate);
+      if (params?.endDate) query.set("endDate", params.endDate);
+      if (params?.sortBy) query.set("sortBy", params.sortBy);
+      if (params?.order) query.set("order", params.order);
       if (params?.page) query.set("page", params.page.toString());
       if (params?.limit) query.set("limit", params.limit.toString());
       return request(`/doctors?${query.toString()}`);
@@ -119,6 +214,10 @@ export const api = {
       status?: string;
       bloodGroup?: string;
       doctorId?: string;
+      startDate?: string;
+      endDate?: string;
+      sortBy?: string;
+      order?: "asc" | "desc";
       page?: number;
       limit?: number;
     }) => {
@@ -132,6 +231,10 @@ export const api = {
         query.set("bloodGroup", params.bloodGroup);
       if (params?.doctorId && params.doctorId !== "All")
         query.set("doctorId", params.doctorId);
+      if (params?.startDate) query.set("startDate", params.startDate);
+      if (params?.endDate) query.set("endDate", params.endDate);
+      if (params?.sortBy) query.set("sortBy", params.sortBy);
+      if (params?.order) query.set("order", params.order);
       if (params?.page) query.set("page", params.page.toString());
       if (params?.limit) query.set("limit", params.limit.toString());
       return request(`/patients?${query.toString()}`);
@@ -269,14 +372,30 @@ export const api = {
 
   // Analytics & Aggregates
   analytics: {
-    getDashboard: () => request("/analytics/dashboard"),
+    getDashboard: (params?: {
+      from?: string;
+      to?: string;
+      hospital?: string;
+      specialty?: string;
+      period?: string;
+    }) => {
+      const query = new URLSearchParams();
+      if (params?.from) query.set("from", params.from);
+      if (params?.to) query.set("to", params.to);
+      if (params?.hospital && params.hospital !== "All") query.set("hospital", params.hospital);
+      if (params?.specialty && params.specialty !== "All") query.set("specialty", params.specialty);
+      if (params?.period) query.set("period", params.period);
+      const queryString = query.toString();
+      return request(`/analytics/dashboard${queryString ? `?${queryString}` : ""}`);
+    },
   },
 
   // System & Database Administration
   system: {
-    resetDatabase: () =>
+    resetDatabase: (confirm = "CONFIRM_RESET_DATABASE") =>
       request("/system/reset-database", {
         method: "POST",
+        body: JSON.stringify({ confirm }),
       }),
   },
 };

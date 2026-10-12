@@ -29,7 +29,7 @@ import {
   PATIENT_GROWTH_MONTHLY,
   PATIENT_GROWTH_WEEKLY,
 } from "@/lib/mock-data";
-import { api } from "@/lib/api";
+import { api, setAccessToken, setOnAuthFailure } from "@/lib/api";
 
 export interface ConfirmDialogOptions {
   title: string;
@@ -197,31 +197,46 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
   // Initialize Auth & Theme
   useEffect(() => {
     localStorage.removeItem("medcare_theme");
+    localStorage.removeItem("medcare_token");
+    localStorage.removeItem("medcare_user");
     document.documentElement.classList.remove("dark");
 
-    const initAuth = () => {
+    const initAuth = async () => {
       try {
-        const storedToken = localStorage.getItem("medcare_token");
-        const storedUser = localStorage.getItem("medcare_user");
-
-        if (storedToken && storedUser) {
-          const parsed = JSON.parse(storedUser);
-          setUser({ ...parsed, token: storedToken });
+        const res = await api.auth.refresh();
+        if (res.success && res.data) {
+          const authData = res.data as any;
+          setAccessToken(authData.token || null);
+          setUser({
+            id: authData.user?.id || authData.id,
+            name: authData.user?.name || authData.name,
+            email: authData.user?.email || authData.email,
+            role: authData.user?.role || authData.role,
+            token: authData.token,
+          });
           setIsAuthenticated(true);
         } else {
-          // If in development or first run with existing session, initialize default admin
+          setAccessToken(null);
           setUser(null);
           setIsAuthenticated(false);
         }
-      } catch (err) {
-        localStorage.removeItem("medcare_token");
-        localStorage.removeItem("medcare_user");
+      } catch {
+        setAccessToken(null);
         setUser(null);
         setIsAuthenticated(false);
       } finally {
         setAuthLoading(false);
       }
     };
+
+    setOnAuthFailure(() => {
+      setAccessToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    });
 
     initAuth();
   }, []);
@@ -231,51 +246,37 @@ export function DoctorTrackerProvider({ children }: { children: React.ReactNode 
       const res = await api.auth.login({ email, password });
       if (res.success && res.data) {
         const authData = res.data as any;
+        setAccessToken(authData.token || null);
         const userData = {
-          id: authData.id || "admin-01",
-          name: authData.name || "Sullivan (Master Admin)",
-          email: authData.email || email,
-          role: authData.role || "admin",
-          token: authData.token || "jwt_demo_token_authenticated",
+          id: authData.id,
+          name: authData.name,
+          email: authData.email,
+          role: authData.role,
+          token: authData.token,
         };
-        localStorage.setItem("medcare_token", userData.token);
-        localStorage.setItem("medcare_user", JSON.stringify(userData));
         setUser(userData);
         setIsAuthenticated(true);
         addActivityLog("Security", "User Login Succeeded", `Authenticated ${userData.email} to administrative portal.`, "Success");
         showToast("Signed In", `Welcome back, ${userData.name}.`, "success");
         return { success: true };
       } else {
-        // Fallback for demo admin credentials if backend not yet restarted
-        if (email.toLowerCase().includes("admin") && (!password || password.length >= 6)) {
-          const userData = {
-            id: "admin-01",
-            name: "Sullivan (Master Admin)",
-            email: email,
-            role: "admin",
-            token: "jwt_demo_token_authenticated",
-          };
-          localStorage.setItem("medcare_token", userData.token);
-          localStorage.setItem("medcare_user", JSON.stringify(userData));
-          setUser(userData);
-          setIsAuthenticated(true);
-          addActivityLog("Security", "User Login Succeeded", `Authenticated ${userData.email} to administrative portal.`, "Success");
-          showToast("Signed In", `Welcome back, ${userData.name}.`, "success");
-          return { success: true };
-        }
-        showToast("Authentication Failed", res.message || "Invalid credentials.", "error");
-        return { success: false, message: res.message || "Invalid credentials." };
+        showToast("Authentication Failed", res.message || "Invalid work email or password.", "error");
+        return { success: false, message: res.message || "Invalid work email or password." };
       }
-    } catch (err) {
+    } catch {
       showToast("Sign In Error", "Could not complete login request.", "error");
       return { success: false, message: "Network error during authentication." };
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     const userEmail = user?.email || "Administrator";
-    localStorage.removeItem("medcare_token");
-    localStorage.removeItem("medcare_user");
+    try {
+      await api.auth.logout();
+    } catch {
+      // Ignore logout errors
+    }
+    setAccessToken(null);
     setUser(null);
     setIsAuthenticated(false);
     addActivityLog("Security", "User Signed Out", `Session closed for ${userEmail}.`, "Info");
