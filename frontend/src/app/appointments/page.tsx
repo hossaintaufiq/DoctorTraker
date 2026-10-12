@@ -360,7 +360,7 @@ export default function AppointmentsPage() {
                 </thead>
                 <tbody className="divide-y divide-[#F1F5F9] text-xs">
                   {filteredAppointments.map((apt, index) => (
-                    <tr key={apt.id || (apt as any)._id || `apt-row-${index}`} className="hover:bg-[#F8FAFC] transition-colors">
+                    <tr key={`apt-row-${apt.id || (apt as any)._id || 'item'}-${index}`} className="hover:bg-[#F8FAFC] transition-colors">
                       <td className="py-3.5 px-6">
                         <div className="font-mono font-bold text-[#2F65F6]">
                           {apt.appointmentCode}
@@ -456,7 +456,7 @@ export default function AppointmentsPage() {
               ) : (
                 filteredAppointments.map((apt, index) => (
                   <div
-                    key={apt.id || (apt as any)._id || `apt-card-${index}`}
+                    key={`apt-card-${apt.id || (apt as any)._id || 'item'}-${index}`}
                     className="p-3.5 rounded-2xl bg-[#F8FAFC] border border-[#EBF0F7] space-y-2.5"
                   >
                     {/* Top Row: Code + Time Badge + Status */}
@@ -539,7 +539,7 @@ export default function AppointmentsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
             {filteredAppointments.map((apt, index) => (
               <div
-                key={apt.id || (apt as any)._id || `apt-tl-${index}`}
+                key={`apt-tl-${apt.id || (apt as any)._id || 'item'}-${index}`}
                 className="bg-white rounded-2xl sm:rounded-3xl border border-[#EBF0F7] p-4 sm:p-5 card-shadow flex flex-col justify-between space-y-4"
               >
                 <div>
