@@ -86,9 +86,10 @@ export function BookAppointmentModal() {
     e.preventDefault();
 
     const selectedDoc =
-      doctors.find((d) => d.id === selectedDoctorId) ||
+      doctors.find((d: any) => d.id === selectedDoctorId || d._id === selectedDoctorId) ||
       filteredDoctors[0] ||
       doctors[0];
+    const docId = selectedDoc?.id || (selectedDoc as any)?._id || "doc-1";
     const finalPatientName = patientName.trim() || "Walk-in Patient";
     const finalPhone = patientPhone.trim() || "+880 1711-000000";
 
@@ -96,7 +97,7 @@ export function BookAppointmentModal() {
       patientId: selectedPatientId && selectedPatientId !== "new" ? selectedPatientId : `pat-${Date.now()}`,
       patientName: finalPatientName,
       patientPhone: finalPhone,
-      doctorId: selectedDoc?.id || "doc-1",
+      doctorId: docId,
       doctorName: selectedDoc?.name || "Dr. Salman Hossain",
       doctorSpecialty: selectedDoc?.specialty || (selectedDepartment !== "All" ? selectedDepartment : "Cardiology"),
       roomNumber: selectedDoc ? `Room ${100 + Math.floor(Math.random() * 30)}` : "Room 304",
@@ -163,8 +164,8 @@ export function BookAppointmentModal() {
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               >
                 <option value="All">All Departments (Any Available Specialist)</option>
-                {departments.map((d: any) => (
-                  <option key={d.id} value={d.name}>
+                {departments.map((d: any, i: number) => (
+                  <option key={d.id || (d as any)._id || d.name || `book-dept-${i}`} value={d.name}>
                     {d.name} Division &bull; {d.floor}
                   </option>
                 ))}
@@ -183,8 +184,8 @@ export function BookAppointmentModal() {
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               >
                 <option value="">Select attending specialist doctor...</option>
-                {filteredDoctors.map((d) => (
-                  <option key={d.id} value={d.id}>
+                {filteredDoctors.map((d, i) => (
+                  <option key={d.id || (d as any)._id || `book-doc-${i}`} value={d.id || (d as any)._id}>
                     {d.name} &mdash; {d.specialty} ({d.hospital})
                   </option>
                 ))}
@@ -203,8 +204,8 @@ export function BookAppointmentModal() {
               >
                 <option value="">Select registered patient or enter manually...</option>
                 <option value="new">+ Enter New / Walk-in Patient</option>
-                {patients.map((p) => (
-                  <option key={p.id} value={p.id}>
+                {patients.map((p, i) => (
+                  <option key={p.id || (p as any)._id || `book-pt-${i}`} value={p.id || (p as any)._id}>
                     {p.name} ({p.patientCode}) &bull; {p.condition}
                   </option>
                 ))}

@@ -265,13 +265,13 @@ export default function DepartmentsPage() {
 
         {/* Departments Grid (12+ Rich Cards) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {filteredDepartments.map((dept) => {
+          {filteredDepartments.map((dept: any, index: number) => {
             const Icon = getDeptIcon(dept.name);
             const isHighLoad = dept.occupancyPercentage >= 80;
 
             return (
               <div
-                key={dept.id}
+                key={dept.id || dept._id || dept.code || dept.name || `dept-${index}`}
                 className="bg-white rounded-3xl border border-[#EBF0F7] p-6 card-shadow card-shadow-hover flex flex-col justify-between transition-all"
               >
                 <div>
@@ -345,7 +345,7 @@ export default function DepartmentsPage() {
                       Key Clinical Services
                     </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {dept.topServices.map((service, idx) => (
+                      {dept.topServices.map((service: string, idx: number) => (
                         <span
                           key={idx}
                           className="px-2 py-0.5 rounded-full bg-slate-50 text-slate-600 text-[10px] border border-slate-200"

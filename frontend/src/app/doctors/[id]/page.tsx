@@ -362,11 +362,14 @@ function DoctorDetailContent() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100/70 text-xs">
-                  {assignedPatients.map((pt) => (
-                    <tr key={pt.id} className="hover:bg-white/40 transition-colors">
+                  {assignedPatients.map((pt: any, index: number) => (
+                    <tr
+                      key={pt.id ? `doc-pt-${pt.id}-${index}` : (pt._id ? `doc-pt-${pt._id}-${index}` : `doc-pt-${index}`)}
+                      className="hover:bg-white/40 transition-colors"
+                    >
                       <td className="py-3.5 px-6 font-bold text-[#101828]">
                         <Link
-                          href={`/patients/${pt.id}`}
+                          href={`/patients/${pt.id || pt._id}`}
                           className="hover:text-[#2F65F6] transition-colors"
                         >
                           {pt.name}

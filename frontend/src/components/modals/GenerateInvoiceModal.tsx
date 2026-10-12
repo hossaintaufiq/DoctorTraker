@@ -78,8 +78,12 @@ export function GenerateInvoiceModal() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const selectedPatient = patients.find((p) => p.id === selectedPatientId) || patients[0];
-    const selectedDoctor = doctors.find((d) => d.id === selectedDoctorId) || doctors[0];
+    const selectedPatient =
+      patients.find((p: any) => p.id === selectedPatientId || p._id === selectedPatientId) ||
+      patients[0];
+    const selectedDoctor =
+      doctors.find((d: any) => d.id === selectedDoctorId || d._id === selectedDoctorId) ||
+      doctors[0];
 
     const formattedItems = lineItems.map((item) => ({
       description: item.description,
@@ -90,10 +94,10 @@ export function GenerateInvoiceModal() {
     }));
 
     addInvoice({
-      patientId: selectedPatient ? selectedPatient.id : "pat-walkin",
+      patientId: selectedPatient ? (selectedPatient.id || (selectedPatient as any)._id) : "pat-walkin",
       patientName: selectedPatient ? selectedPatient.name : "Walk-in Patient",
       patientCode: selectedPatient ? selectedPatient.patientCode : "PT-0099",
-      doctorId: selectedDoctor ? selectedDoctor.id : "doc-1",
+      doctorId: selectedDoctor ? (selectedDoctor.id || (selectedDoctor as any)._id) : "doc-1",
       doctorName: selectedDoctor ? selectedDoctor.name : "Dr. Salman Hossain",
       dueDate,
       status,
@@ -152,8 +156,8 @@ export function GenerateInvoiceModal() {
                   onChange={(e) => setSelectedPatientId(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
                 >
-                  {patients.map((p) => (
-                    <option key={p.id} value={p.id}>
+                  {patients.map((p, pIdx) => (
+                    <option key={p.id || (p as any)._id || `inv-p-${pIdx}`} value={p.id || (p as any)._id}>
                       {p.name} ({p.patientCode}) &bull; {p.phone}
                     </option>
                   ))}
@@ -170,8 +174,8 @@ export function GenerateInvoiceModal() {
                   onChange={(e) => setSelectedDoctorId(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
                 >
-                  {doctors.map((d) => (
-                    <option key={d.id} value={d.id}>
+                  {doctors.map((d, dIdx) => (
+                    <option key={d.id || (d as any)._id || `inv-d-${dIdx}`} value={d.id || (d as any)._id}>
                       {d.name} &bull; {d.specialty}
                     </option>
                   ))}
@@ -264,8 +268,8 @@ export function GenerateInvoiceModal() {
                         onChange={(e) => handleItemChange(idx, "department", e.target.value)}
                         className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#2F65F6]"
                       >
-                        {departments.map((d: any) => (
-                          <option key={d.id} value={d.name}>
+                        {departments.map((d: any, dIdx: number) => (
+                          <option key={d.id || (d as any)._id || d.name || `inv-dept-${dIdx}`} value={d.name}>
                             {d.name}
                           </option>
                         ))}

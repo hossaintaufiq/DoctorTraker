@@ -305,8 +305,8 @@ export default function AppointmentsPage() {
                 className="w-full bg-[#F8FAFC] border border-slate-200 text-slate-700 text-xs rounded-xl sm:rounded-full px-3 py-2 sm:py-1.5 focus:bg-white focus:outline-none focus:border-[#2F65F6] cursor-pointer truncate"
               >
                 <option value="All">All Doctors</option>
-                {doctors.map((d) => (
-                  <option key={d.id} value={d.id}>
+                {doctors.map((d: any, index: number) => (
+                  <option key={d.id || d._id || `apt-filter-doc-${index}`} value={d.id || d._id}>
                     {d.name} ({d.specialty})
                   </option>
                 ))}

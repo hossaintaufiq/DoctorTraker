@@ -500,7 +500,7 @@ export default function AnalyticsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {doctors.slice(0, 4).map((doc, idx) => (
               <div
-                key={doc.id}
+                key={doc.id || (doc as any)._id || `analytics-doc-${idx}`}
                 className="p-3.5 sm:p-4 rounded-2xl bg-[#F8FAFC] border border-slate-100 flex flex-col justify-between"
               >
                 <div>

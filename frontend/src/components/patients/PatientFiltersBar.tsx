@@ -128,8 +128,8 @@ export function PatientFiltersBar({
             aria-label="Filter by doctor"
           >
             <option value="All">All Doctors</option>
-            {doctors.map((doc) => (
-              <option key={doc.id} value={doc.id}>
+            {doctors.map((doc, idx) => (
+              <option key={doc.id || (doc as any)._id || `pt-filter-doc-${idx}`} value={doc.id || (doc as any)._id}>
                 {doc.name}
               </option>
             ))}

@@ -17,8 +17,10 @@ export function AddPatientModal() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("32");
   const [gender, setGender] = useState<PatientGender>("Female");
+  const getDoctorId = (doc?: any) => doc?.id || doc?._id || "";
+
   const [assignedDoctorId, setAssignedDoctorId] = useState(
-    selectedDoctorForNewPatient?.id || doctors[0]?.id || ""
+    getDoctorId(selectedDoctorForNewPatient) || getDoctorId(doctors[0]) || ""
   );
   const [condition, setCondition] = useState<PatientCondition>("General");
   const [phone, setPhone] = useState("");
@@ -28,14 +30,14 @@ export function AddPatientModal() {
   >("O+");
   const [notes, setNotes] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   React.useEffect(() => {
-    if (selectedDoctorForNewPatient?.id) {
-      setAssignedDoctorId(selectedDoctorForNewPatient.id);
-    } else if (doctors[0]?.id && !assignedDoctorId) {
-      setAssignedDoctorId(doctors[0].id);
+    const targetId = getDoctorId(selectedDoctorForNewPatient) || getDoctorId(doctors[0]);
+    if (targetId && !assignedDoctorId) {
+      setAssignedDoctorId(targetId);
     }
-  }, [selectedDoctorForNewPatient, doctors]);
+  }, [selectedDoctorForNewPatient, doctors, assignedDoctorId]);
 
   if (!isAddPatientModalOpen) return null;
 
@@ -47,33 +49,46 @@ export function AddPatientModal() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate() || isSubmitting) return;
 
-    const selectedDoc = doctors.find((d) => d.id === assignedDoctorId) || doctors[0];
+    const selectedDoc =
+      doctors.find(
+        (d: any) => d.id === assignedDoctorId || d._id === assignedDoctorId
+      ) || doctors[0];
 
-    addPatient({
-      name,
-      age: parseInt(age) || 28,
-      gender,
-      assignedDoctorId: selectedDoc?.id || "doc-1",
-      assignedDoctorName: selectedDoc?.name || "Dr. Sarah Ahmed",
-      condition,
-      phone,
-      email: email.trim() || `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
-      bloodGroup,
-      status: "Outpatient",
-      notes: notes.trim() || "Initial registration and baseline vitals recorded.",
-    });
+    const targetDocId = getDoctorId(selectedDoc);
 
-    // Reset
-    setName("");
-    setPhone("");
-    setEmail("");
-    setNotes("");
-    setErrors({});
-    setIsAddPatientModalOpen(false);
+    setIsSubmitting(true);
+    try {
+      const res = await addPatient({
+        name: name.trim(),
+        age: parseInt(age) || 28,
+        gender,
+        assignedDoctorId: targetDocId,
+        assignedDoctorName: selectedDoc?.name || "Dr. Sarah Ahmed",
+        condition,
+        phone: phone.trim(),
+        email: email.trim() || `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
+        bloodGroup,
+        status: "Outpatient",
+        notes: notes.trim() || "Initial registration and baseline vitals recorded.",
+      });
+
+      if (res) {
+        setName("");
+        setPhone("");
+        setEmail("");
+        setNotes("");
+        setErrors({});
+        setIsAddPatientModalOpen(false);
+      }
+    } catch {
+      // Handled in context toast
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -158,8 +173,8 @@ export function AddPatientModal() {
                 onChange={(e) => setAssignedDoctorId(e.target.value)}
                 className="w-full px-4 py-2.5 text-xs rounded-full border border-[#EBF0F7] bg-[#F4F7FB] text-[#1E293B] focus:bg-white focus:outline-none focus:border-[#2F65F6] transition-all"
               >
-                {doctors.map((doc) => (
-                  <option key={doc.id} value={doc.id}>
+                {doctors.map((doc, i) => (
+                  <option key={doc.id || (doc as any)._id || `add-pt-doc-${i}`} value={doc.id || (doc as any)._id}>
                     {doc.name} — {doc.specialty} ({doc.patientCount} patients)
                   </option>
                 ))}

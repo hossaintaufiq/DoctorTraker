@@ -84,9 +84,9 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
               Specialist Physician Capacity
             </h4>
             <div className="space-y-2">
-              {doctors.slice(0, 4).map((doc) => (
+              {doctors.slice(0, 4).map((doc, i) => (
                 <div
-                  key={doc.id}
+                  key={doc.id || (doc as any)._id || `rep-doc-${i}`}
                   className="p-3 rounded-2xl bg-[#F8FAFC] border border-[#EBF0F7] flex items-center justify-between"
                 >
                   <div>

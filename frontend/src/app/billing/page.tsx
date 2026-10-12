@@ -304,9 +304,9 @@ export default function BillingPage() {
 
         {/* Mobile View: Invoice Cards (Visible on mobile screens) */}
         <div className="block md:hidden space-y-3">
-          {filteredInvoices.map((inv) => (
+          {filteredInvoices.map((inv: any, index: number) => (
             <div
-              key={inv.id}
+              key={inv.id ? `inv-card-${inv.id}-${index}` : (inv._id ? `inv-card-${inv._id}-${index}` : `inv-card-${index}`)}
               className="bg-white rounded-2xl border border-[#EBF0F7] p-4 card-shadow space-y-3"
             >
               <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">

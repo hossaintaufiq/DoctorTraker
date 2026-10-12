@@ -43,17 +43,21 @@ export function EditPatientModal() {
 
   if (!isEditPatientModalOpen || !editingPatient) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
-    const matchedDoc = doctors.find((d) => d.id === assignedDoctorId);
+    const matchedDoc = doctors.find((d: any) => d.id === assignedDoctorId || d._id === assignedDoctorId);
+    const targetDocId = matchedDoc
+      ? matchedDoc.id || (matchedDoc as any)._id
+      : editingPatient.assignedDoctorId;
+    const targetPatientId = editingPatient.id || (editingPatient as any)._id;
 
-    updatePatient(editingPatient.id, {
+    await updatePatient(targetPatientId, {
       name: name.trim(),
       age: parseInt(age) || 30,
       gender,
-      assignedDoctorId: matchedDoc ? matchedDoc.id : editingPatient.assignedDoctorId,
+      assignedDoctorId: targetDocId,
       assignedDoctorName: matchedDoc ? matchedDoc.name : editingPatient.assignedDoctorName,
       condition,
       status,
@@ -177,8 +181,8 @@ export function EditPatientModal() {
               onChange={(e) => setAssignedDoctorId(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
             >
-              {doctors.map((d) => (
-                <option key={d.id} value={d.id}>
+              {doctors.map((d, i) => (
+                <option key={d.id || (d as any)._id || `edit-pt-doc-${i}`} value={d.id || (d as any)._id}>
                   {d.name} &bull; {d.specialty} ({d.hospital})
                 </option>
               ))}

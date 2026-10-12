@@ -197,46 +197,83 @@ function CompositeContextProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addDoctor = async (doctor: any) => {
-    const res = await doctorMutations.createDoctor.mutateAsync(doctor);
-    ui.showToast("Doctor Added", `${doctor.name} has been added.`, "success");
-    return res;
+    try {
+      const res = await doctorMutations.createDoctor.mutateAsync(doctor);
+      ui.showToast("Doctor Added", `${doctor.name} has been added.`, "success");
+      return res;
+    } catch (err: any) {
+      ui.showToast("Action Failed", err?.message || "Could not add doctor", "error");
+      return null;
+    }
   };
 
   const updateDoctor = async (id: string, data: any) => {
-    const res = await doctorMutations.updateDoctor.mutateAsync({ id, data });
-    ui.showToast("Doctor Updated", "Doctor information updated successfully.", "success");
-    return res;
+    try {
+      const res = await doctorMutations.updateDoctor.mutateAsync({ id, data });
+      ui.showToast("Doctor Updated", "Doctor information updated successfully.", "success");
+      return res;
+    } catch (err: any) {
+      ui.showToast("Action Failed", err?.message || "Could not update doctor", "error");
+      return null;
+    }
   };
 
   const deleteDoctor = async (id: string) => {
-    await doctorMutations.deleteDoctor.mutateAsync(id);
-    ui.showToast("Doctor Deleted", "Physician record removed from directory.", "info");
+    try {
+      await doctorMutations.deleteDoctor.mutateAsync(id);
+      ui.showToast("Doctor Deleted", "Physician record removed from directory.", "info");
+      return true;
+    } catch (err: any) {
+      ui.showToast("Action Failed", err?.message || "Could not delete doctor", "error");
+      return false;
+    }
   };
 
   const addPatient = async (patient: any) => {
-    const res = await patientMutations.createPatient.mutateAsync(patient);
-    ui.showToast("Patient Registered", `${patient.name} has been admitted.`, "success");
-    return res;
+    try {
+      const res = await patientMutations.createPatient.mutateAsync(patient);
+      ui.showToast("Patient Registered", `${patient.name} has been admitted.`, "success");
+      return res;
+    } catch (err: any) {
+      ui.showToast("Registration Failed", err?.message || "Could not register patient", "error");
+      return null;
+    }
   };
 
   const updatePatient = async (id: string, data: any) => {
-    const res = await patientMutations.updatePatient.mutateAsync({ id, data });
-    ui.showToast("Patient Updated", "Patient chart updated successfully.", "success");
-    return res;
+    try {
+      const res = await patientMutations.updatePatient.mutateAsync({ id, data });
+      ui.showToast("Patient Updated", "Patient chart updated successfully.", "success");
+      return res;
+    } catch (err: any) {
+      ui.showToast("Update Failed", err?.message || "Could not update patient chart", "error");
+      return null;
+    }
   };
 
   const deletePatient = async (id: string) => {
-    await patientMutations.deletePatient.mutateAsync(id);
-    ui.showToast("Patient Deleted", "Patient chart has been removed.", "info");
+    try {
+      await patientMutations.deletePatient.mutateAsync(id);
+      ui.showToast("Patient Deleted", "Patient chart has been removed.", "info");
+      return true;
+    } catch (err: any) {
+      ui.showToast("Deletion Failed", err?.message || "Could not delete patient chart", "error");
+      return false;
+    }
   };
 
   const addPatientUnderDoctor = async (doctorId: string, patientData: any) => {
-    const res = await doctorMutations.addPatientUnderDoctor.mutateAsync({
-      doctorId,
-      patientData,
-    });
-    ui.showToast("Patient Assigned", "Patient registered under doctor.", "success");
-    return res;
+    try {
+      const res = await doctorMutations.addPatientUnderDoctor.mutateAsync({
+        doctorId,
+        patientData,
+      });
+      ui.showToast("Patient Assigned", "Patient registered under doctor.", "success");
+      return res;
+    } catch (err: any) {
+      ui.showToast("Assignment Failed", err?.message || "Could not assign patient to doctor", "error");
+      return null;
+    }
   };
 
   const removePatientFromDoctor = async (doctorId: string, patientId: string) => {
