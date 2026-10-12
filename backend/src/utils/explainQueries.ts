@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { MongoMemoryServer } from "mongodb-memory-server";
 import { Doctor } from "../models/Doctor.js";
 import { Patient } from "../models/Patient.js";
 import { Appointment } from "../models/Appointment.js";
@@ -17,6 +16,7 @@ interface ExplainStageResult {
 }
 
 export async function runExplainAudit(): Promise<ExplainStageResult[]> {
+  const { MongoMemoryServer } = await import("mongodb-memory-server" as any);
   const mongod = await MongoMemoryServer.create();
   const uri = mongod.getUri();
 
