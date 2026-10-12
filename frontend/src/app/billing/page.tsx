@@ -401,8 +401,8 @@ export default function BillingPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F1F5F9] text-xs">
-                {filteredInvoices.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-[#F8FAFC] transition-colors">
+                {filteredInvoices.map((inv, index) => (
+                  <tr key={inv.id || (inv as any)._id || `inv-row-${index}`} className="hover:bg-[#F8FAFC] transition-colors">
                     <td className="py-3.5 px-6">
                       <button
                         type="button"
