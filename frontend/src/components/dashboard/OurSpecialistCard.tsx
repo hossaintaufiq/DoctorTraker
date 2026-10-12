@@ -104,8 +104,8 @@ export function OurSpecialistCard() {
         ) : (
           listDoctors.map((doc, i) => (
             <Link
-              href={`/doctors/${doc.id}`}
-              key={doc.id}
+              href={`/doctors/${doc.id || (doc as any)._id || ""}`}
+              key={doc.id || (doc as any)._id || `doc-${i}`}
               className={cn(
                 "flex items-center justify-between gap-3 pt-3 first:pt-0 hover:bg-[#F8FAFC] p-1.5 rounded-xl transition-colors group",
                 i !== 0 && "pt-3.5"

@@ -104,14 +104,14 @@ export function RecentPatientsTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#F0F4F8] text-xs">
-            {displayPatients.map((patient) => {
+            {displayPatients.map((patient, i) => {
               const conditionStyle =
                 CONDITION_STYLES[patient.condition] || CONDITION_STYLES.General;
               const isMenuOpen = activeMenuId === patient.id;
 
               return (
                 <tr
-                  key={patient.id}
+                  key={patient.id || (patient as any)._id || `pt-rec-${i}`}
                   className="hover:bg-[#F7F9FC]/70 transition-colors group"
                 >
                   {/* Patient Name + Avatar */}

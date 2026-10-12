@@ -47,8 +47,8 @@ export function DoctorDataTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100/70 text-xs">
-            {doctors.map((doc) => (
-              <tr key={doc.id} className="hover:bg-white/40 transition-colors">
+            {doctors.map((doc, i) => (
+              <tr key={doc.id || (doc as any)._id || `doc-${i}`} className="hover:bg-white/40 transition-colors">
                 <td className="py-3.5 px-6">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center shrink-0">

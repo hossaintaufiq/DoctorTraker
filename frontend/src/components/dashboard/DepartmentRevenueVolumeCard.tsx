@@ -63,7 +63,7 @@ export function DepartmentRevenueVolumeCard() {
       { id: "dept-6", name: "Oncology", code: "ONCO", activeCasesCount: 176, totalBeds: 20, occupiedBeds: 15, occupancyPercentage: 75 },
     ];
 
-    return baseUnits.slice(0, 6).map((dept) => {
+    return baseUnits.slice(0, 6).map((dept, index) => {
       // Find extra revenue from invoices billed to this department
       const extraInvoiceRev = invoices
         .filter((inv: any) =>
@@ -91,8 +91,10 @@ export function DepartmentRevenueVolumeCard() {
         .replace(" & Trauma Unit", "")
         .replace(" & Infusion Care", "");
 
+      const uniqueId = dept.id || (dept as any)._id?.toString?.() || dept.name || `dept-${index}`;
+
       return {
-        id: dept.id,
+        id: uniqueId,
         name: dept.name,
         shortName,
         revenue: totalRevenue,
@@ -347,9 +349,9 @@ export function DepartmentRevenueVolumeCard() {
 
         {/* Mini Departmental Progress Breakdown */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-3">
-          {departmentalData.slice(0, 3).map((dept: any) => (
+          {departmentalData.slice(0, 3).map((dept: any, index: number) => (
             <div
-              key={dept.id}
+              key={dept.id || dept.name || `dept-card-${index}`}
               className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#F1F5F9] flex flex-col justify-between"
             >
               <div className="flex items-center justify-between text-xs">

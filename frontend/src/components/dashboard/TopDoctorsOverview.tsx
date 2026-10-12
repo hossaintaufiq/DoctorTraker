@@ -44,7 +44,7 @@ export function TopDoctorsOverview() {
 
           return (
             <Link
-              key={doc.id}
+              key={doc.id || (doc as any)._id || `top-doc-${idx}`}
               href={`/doctors/${doc.id}`}
               className="py-3 flex items-center justify-between gap-3 hover:bg-[#F7F9FC] -mx-2 px-2 rounded-xl transition-all group"
             >

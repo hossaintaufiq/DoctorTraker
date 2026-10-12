@@ -42,14 +42,14 @@ export function DoctorCardGrid({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-      {doctors.map((doc) => {
+      {doctors.map((doc, i) => {
         const patientCount = doc.patientCount ?? 0;
         const maxPatients = doc.maxPatients || 300;
         const loadRatio = Math.min(100, Math.round((patientCount / maxPatients) * 100));
 
         return (
           <div
-            key={doc.id}
+            key={doc.id || (doc as any)._id || `doc-grid-${i}`}
             className="glass-card p-5 rounded-3xl flex flex-col justify-between space-y-4 hover:shadow-md transition-all duration-200 group"
           >
             <div>

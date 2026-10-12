@@ -77,11 +77,11 @@ export function PatientDataTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100/70 text-xs">
-            {patients.map((pt) => {
+            {patients.map((pt, i) => {
               const condStyle = CONDITION_STYLES[pt.condition] || CONDITION_STYLES.General;
 
               return (
-                <tr key={pt.id} className="hover:bg-white/40 transition-colors">
+                <tr key={pt.id || (pt as any)._id || `pt-${i}`} className="hover:bg-white/40 transition-colors">
                   <td className="py-3.5 px-6">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center shrink-0">

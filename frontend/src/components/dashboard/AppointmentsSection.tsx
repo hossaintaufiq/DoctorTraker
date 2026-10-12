@@ -197,8 +197,8 @@ export function AppointmentsSection() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F1F5F9] text-xs">
-              {activeAppointments.slice(0, 5).map((apt) => (
-                <tr key={apt.id} className="hover:bg-[#F8FAFC] transition-colors group">
+              {activeAppointments.slice(0, 5).map((apt, index) => (
+                <tr key={apt.id || (apt as any)._id || `apt-dash-${index}`} className="hover:bg-[#F8FAFC] transition-colors group">
                   {/* Patient */}
                   <td className="py-3 px-6">
                     <div className="flex items-center gap-3">
