@@ -1,53 +1,125 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AppShell } from "@/components/layout/AppShell";
 import { useDoctorTracker } from "@/context/DoctorTrackerContext";
+import { api } from "@/lib/api";
+import { Doctor, Patient } from "@/lib/types";
 import {
   ChevronLeft,
-  Mail,
-  Phone,
-  Building2,
+  ChevronRight,
   Star,
   Clock,
-  ArrowRight,
   Plus,
   Trash2,
   Edit2,
   Eye,
   UserPlus,
-  Users,
-  ShieldCheck,
   AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import { getInitials, formatDate, cn } from "@/lib/utils";
-import { Doctor, Patient } from "@/lib/types";
 
 function DoctorDetailContent() {
   const params = useParams();
-  const id = typeof params?.id === "string" ? params.id : "doc-1";
+  const rawId = typeof params?.id === "string" ? params.id : "";
+  const queryClient = useQueryClient();
+
   const {
-    doctors,
-    patients,
     setIsAddPatientModalOpen,
     setSelectedDoctorForNewPatient,
     setEditingDoctor,
     setIsEditDoctorModalOpen,
     setEditingPatient,
     setIsEditPatientModalOpen,
-    deletePatient,
     showToast,
     openConfirmDialog,
   } = useDoctorTracker();
 
-  const doctor =
-    doctors.find((d) => d.id === id) ||
-    doctors.find((d) => d.id === "doc-1") ||
-    doctors[0];
+  const [patientPage, setPatientPage] = useState(1);
+  const patientLimit = 5;
 
-  if (!doctor) {
+  // 1. Fetch Doctor details
+  const {
+    data: doctorData,
+    isLoading: isDoctorLoading,
+    isError: isDoctorError,
+  } = useQuery({
+    queryKey: ["doctor", rawId],
+    queryFn: async () => {
+      if (!rawId) return null;
+      const res = await api.doctors.getById(rawId);
+      if (!res.success) {
+        throw new Error(res.message || "Failed to load doctor profile");
+      }
+      return res.data as Doctor;
+    },
+    enabled: Boolean(rawId),
+  });
+
+  const doctor = doctorData;
+
+  // 2. Fetch paginated patients under doctor
+  const {
+    data: patientsData,
+    isLoading: isPatientsLoading,
+  } = useQuery({
+    queryKey: ["doctor-patients", doctor?.id || rawId, patientPage],
+    queryFn: async () => {
+      const targetId = doctor?.id || rawId;
+      if (!targetId) return { data: [], total: 0, totalPages: 1 };
+      const res = await api.doctors.getPatients(targetId, {
+        page: patientPage,
+        limit: patientLimit,
+      });
+      if (!res.success) {
+        throw new Error(res.message || "Failed to load doctor patients");
+      }
+      return {
+        patients: (res.data as Patient[]) || [],
+        total: res.total || 0,
+        totalPages: res.totalPages || 1,
+      };
+    },
+    enabled: Boolean(doctor?.id || rawId),
+  });
+
+  // 3. Remove patient from doctor mutation
+  const removePatientMutation = useMutation({
+    mutationFn: async (patientId: string) => {
+      const targetId = doctor?.id || rawId;
+      const res = await api.doctors.removePatient(targetId, patientId);
+      if (!res.success) {
+        throw new Error(res.message || "Failed to remove patient");
+      }
+      return res;
+    },
+    onSuccess: () => {
+      showToast("Patient Removed", "Patient removed from doctor roster successfully.", "success");
+      queryClient.invalidateQueries({ queryKey: ["doctor-patients"] });
+      queryClient.invalidateQueries({ queryKey: ["doctor", rawId] });
+      queryClient.invalidateQueries({ queryKey: ["doctors"] });
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    },
+    onError: (err: any) => {
+      showToast("Action Failed", err?.message || "Could not remove patient.", "error");
+    },
+  });
+
+  if (isDoctorLoading) {
+    return (
+      <div className="glass-card p-12 text-center rounded-3xl space-y-3">
+        <Loader2 className="w-8 h-8 text-[#2F65F6] animate-spin mx-auto" />
+        <p className="text-xs font-semibold text-[#64748B]">Loading physician chart...</p>
+      </div>
+    );
+  }
+
+  if (isDoctorError || !doctor) {
     return (
       <div className="glass-card p-12 text-center rounded-3xl space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-[#FEE2E2] text-[#EF4444] flex items-center justify-center mx-auto">
@@ -64,9 +136,9 @@ function DoctorDetailContent() {
     );
   }
 
-  const assignedPatients = patients.filter(
-    (p) => p.assignedDoctorId === doctor.id || p.assignedDoctorName === doctor.name
-  );
+  const assignedPatients = patientsData?.patients || [];
+  const totalPatients = patientsData?.total ?? (doctor.patientCount || 0);
+  const totalPages = patientsData?.totalPages || 1;
 
   const handleAddPatientToDoctor = () => {
     setSelectedDoctorForNewPatient(doctor);
@@ -86,19 +158,19 @@ function DoctorDetailContent() {
   const handleDeletePatient = (pt: Patient) => {
     openConfirmDialog({
       title: "Remove Patient Record",
-      itemName: `${pt.name} (${pt.patientCode})`,
+      itemName: `${pt.name} (${pt.patientCode || ""})`,
       itemType: "Patient Record",
       message: `Are you sure you want to remove ${pt.name} from Dr. ${doctor.name}'s care roster?`,
       confirmLabel: "Yes, Remove Patient",
       onConfirm: () => {
-        deletePatient(pt.id);
+        removePatientMutation.mutate(pt.id);
       },
     });
   };
 
   const loadPercentage = Math.min(
     100,
-    Math.round((assignedPatients.length / doctor.maxPatients) * 100)
+    Math.round(((doctor.patientCount || totalPatients) / (doctor.maxPatients || 300)) * 100)
   );
 
   return (
@@ -129,7 +201,7 @@ function DoctorDetailContent() {
               </span>
             </div>
             <p className="text-xs text-[#64748B] mt-0.5">
-              {doctor.specialty} Department &bull; {doctor.hospital || "Medcare Central Hospital"} &bull; Staff ID: #{doctor.id.toUpperCase()}
+              {doctor.specialty} Department &bull; {doctor.hospital || "Doctor Tracker Medical Center"} &bull; Staff ID: #{doctor.id ? doctor.id.slice(-6).toUpperCase() : "N/A"}
             </p>
           </div>
         </div>
@@ -138,7 +210,7 @@ function DoctorDetailContent() {
           <button
             type="button"
             onClick={handleEditDoctor}
-            className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#1E293B] bg-white/70 border border-white/80 rounded-full hover:bg-white card-shadow transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#1E293B] bg-white/70 border border-white/80 rounded-full hover:bg-white card-shadow transition-all cursor-pointer"
           >
             <Edit2 className="w-3.5 h-3.5 text-[#2F65F6]" />
             <span>Edit Profile</span>
@@ -165,16 +237,16 @@ function DoctorDetailContent() {
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-bold text-[#101828]">{doctor.name}</h3>
               <p className="text-xs font-semibold text-[#2F65F6] mt-0.5">
-                Senior Specialist in {doctor.specialty}
+                Specialist in {doctor.specialty}
               </p>
               <div className="flex items-center gap-3 text-xs text-[#64748B] mt-2 flex-wrap">
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 text-[#F59E0B] fill-[#F59E0B]" />
-                  <span className="font-semibold text-[#101828]">{doctor.rating.toFixed(1)}</span>
+                  <span className="font-semibold text-[#101828]">{(doctor.rating || 4.8).toFixed(1)}</span>
                   <span>Patient satisfaction</span>
                 </div>
                 <span>&bull;</span>
-                <span>{doctor.experienceYears} Years Clinical Experience</span>
+                <span>{doctor.experienceYears ?? 5} Years Clinical Experience</span>
               </div>
             </div>
           </div>
@@ -185,7 +257,7 @@ function DoctorDetailContent() {
             </h4>
             <p className="text-xs text-[#334155] leading-relaxed">
               {doctor.biography ||
-                `Dr. ${doctor.name} is a certified specialist at ${doctor.hospital || "Medcare Central Hospital"} managing outpatient diagnostics and specialized surgical therapies.`}
+                `Dr. ${doctor.name} is a specialist at ${doctor.hospital || "Doctor Tracker Medical Center"} managing outpatient diagnostics and treatment.`}
             </p>
           </div>
 
@@ -193,7 +265,7 @@ function DoctorDetailContent() {
             <div className="p-3.5 rounded-2xl bg-white/60 border border-white/80">
               <span className="text-[10px] font-semibold text-[#94A3B8] uppercase block">Hospital Affiliation</span>
               <span className="text-xs font-bold text-[#101828] truncate block mt-0.5">
-                {doctor.hospital || "Medcare Central Hospital"}
+                {doctor.hospital || "Doctor Tracker Medical Center"}
               </span>
             </div>
             <div className="p-3.5 rounded-2xl bg-white/60 border border-white/80">
@@ -218,11 +290,11 @@ function DoctorDetailContent() {
             <div className="space-y-3.5 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-[#64748B]">Active Patient Roster</span>
-                <span className="font-bold text-[#101828]">{assignedPatients.length} Patients</span>
+                <span className="font-bold text-[#101828]">{totalPatients} Patients</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[#64748B]">Max Patient Target</span>
-                <span className="font-semibold text-[#101828]">{doctor.maxPatients} Patients</span>
+                <span className="font-semibold text-[#101828]">{doctor.maxPatients || 300} Patients</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[#64748B]">Capacity Ratio</span>
@@ -255,100 +327,138 @@ function DoctorDetailContent() {
           <div className="flex items-center gap-2.5">
             <h3 className="text-base font-bold text-[#101828]">Assigned Patient Roster</h3>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#2F65F6]/10 text-[#2F65F6]">
-              {assignedPatients.length} Active Patients
+              {totalPatients} Active Patients
             </span>
           </div>
 
           <button
             type="button"
             onClick={handleAddPatientToDoctor}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#2F65F6] bg-[#EBF3FE] hover:bg-[#DCE8FC] rounded-full transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#2F65F6] bg-[#EBF3FE] hover:bg-[#DCE8FC] rounded-full transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Patient Under Dr. {doctor.name.split(" ")[1] || doctor.name}</span>
           </button>
         </div>
 
-        <div className="overflow-x-auto -mx-6">
-          <table className="w-full text-left border-collapse min-w-[680px]">
-            <thead>
-              <tr className="border-b border-slate-100 text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
-                <th className="py-3 px-6">Patient</th>
-                <th className="py-3 px-4">Patient Code</th>
-                <th className="py-3 px-4">Condition</th>
-                <th className="py-3 px-4">Care Status</th>
-                <th className="py-3 px-4">Blood</th>
-                <th className="py-3 px-4">Registered</th>
-                <th className="py-3 px-6 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100/70 text-xs">
-              {assignedPatients.map((pt) => (
-                <tr key={pt.id} className="hover:bg-white/40 transition-colors">
-                  <td className="py-3.5 px-6 font-bold text-[#101828]">
-                    <Link
-                      href={`/patients/${pt.id}`}
-                      className="hover:text-[#2F65F6] transition-colors"
-                    >
-                      {pt.name}
-                    </Link>
-                  </td>
-                  <td className="py-3.5 px-4 font-mono text-[11px] font-semibold text-[#64748B]">
-                    {pt.patientCode}
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#EBF3FE] text-[#2F65F6]">
-                      {pt.condition}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-[#1E293B] font-medium">
-                    {pt.status}
-                  </td>
-                  <td className="py-3.5 px-4 font-bold text-[#101828]">
-                    {pt.bloodGroup}
-                  </td>
-                  <td className="py-3.5 px-4 text-[#64748B] text-[11px]">
-                    {formatDate(pt.registrationDate)}
-                  </td>
-                  <td className="py-3.5 px-6 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => handleEditPatient(pt)}
-                        className="p-1.5 text-[#64748B] hover:text-[#2F65F6] hover:bg-white rounded-lg transition-colors"
-                        title="Edit Patient"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleDeletePatient(pt)}
-                        className="p-1.5 text-[#94A3B8] hover:text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors"
-                        title="Delete Patient from Doctor"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-
-                      <Link
-                        href={`/patients/${pt.id}`}
-                        className="p-1.5 text-[#2F65F6] hover:bg-white rounded-lg border border-white/80 transition-colors"
-                        title="View Patient Chart"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {assignedPatients.length === 0 && (
+        {isPatientsLoading ? (
           <div className="p-8 text-center text-xs text-[#64748B]">
-            No patients currently assigned to Dr. {doctor.name}. Click &quot;Add Patient to Doctor&quot; above to register a patient under this specialist.
+            <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#2F65F6] mb-2" />
+            Loading patients under this physician...
           </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto -mx-6">
+              <table className="w-full text-left border-collapse min-w-[680px]">
+                <thead>
+                  <tr className="border-b border-slate-100 text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
+                    <th className="py-3 px-6">Patient</th>
+                    <th className="py-3 px-4">Patient Code</th>
+                    <th className="py-3 px-4">Condition</th>
+                    <th className="py-3 px-4">Care Status</th>
+                    <th className="py-3 px-4">Blood</th>
+                    <th className="py-3 px-4">Registered</th>
+                    <th className="py-3 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100/70 text-xs">
+                  {assignedPatients.map((pt) => (
+                    <tr key={pt.id} className="hover:bg-white/40 transition-colors">
+                      <td className="py-3.5 px-6 font-bold text-[#101828]">
+                        <Link
+                          href={`/patients/${pt.id}`}
+                          className="hover:text-[#2F65F6] transition-colors"
+                        >
+                          {pt.name}
+                        </Link>
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-[11px] font-semibold text-[#64748B]">
+                        {pt.patientCode}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#EBF3FE] text-[#2F65F6]">
+                          {pt.condition}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-[#1E293B] font-medium">
+                        {pt.status}
+                      </td>
+                      <td className="py-3.5 px-4 font-bold text-[#101828]">
+                        {pt.bloodGroup}
+                      </td>
+                      <td className="py-3.5 px-4 text-[#64748B] text-[11px]">
+                        {formatDate(pt.registrationDate)}
+                      </td>
+                      <td className="py-3.5 px-6 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleEditPatient(pt)}
+                            className="p-1.5 text-[#64748B] hover:text-[#2F65F6] hover:bg-white rounded-lg transition-colors cursor-pointer"
+                            title="Edit Patient"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeletePatient(pt)}
+                            className="p-1.5 text-[#94A3B8] hover:text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors cursor-pointer"
+                            title="Delete Patient from Doctor"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <Link
+                            href={`/patients/${pt.id}`}
+                            className="p-1.5 text-[#2F65F6] hover:bg-white rounded-lg border border-white/80 transition-colors"
+                            title="View Patient Chart"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {assignedPatients.length === 0 && (
+              <div className="p-8 text-center text-xs text-[#64748B]">
+                No patients currently assigned to Dr. {doctor.name}. Click &quot;Add Patient to Doctor&quot; above to register a patient under this specialist.
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-4 border-t border-slate-100 text-xs">
+                <span className="text-[#64748B]">
+                  Page {patientPage} of {totalPages} ({totalPatients} total patients)
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={patientPage <= 1}
+                    onClick={() => setPatientPage((p) => Math.max(1, p - 1))}
+                    className="p-2 rounded-xl border border-slate-200 bg-white/70 text-[#1E293B] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-colors cursor-pointer"
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={patientPage >= totalPages}
+                    onClick={() => setPatientPage((p) => Math.min(totalPages, p + 1))}
+                    className="p-2 rounded-xl border border-slate-200 bg-white/70 text-[#1E293B] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-colors cursor-pointer"
+                    aria-label="Next page"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -362,15 +472,7 @@ export default function DoctorDetailPage() {
       parentLabel="Doctors"
       parentPath="/doctors"
     >
-      <Suspense
-        fallback={
-          <div className="p-8 text-center text-xs text-[#94A3B8]">
-            Loading physician chart...
-          </div>
-        }
-      >
-        <DoctorDetailContent />
-      </Suspense>
+      <DoctorDetailContent />
     </AppShell>
   );
 }

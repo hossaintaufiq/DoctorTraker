@@ -195,6 +195,24 @@ export const api = {
       request(`/doctors/${id}`, {
         method: "DELETE",
       }),
+    getPatients: (
+      doctorId: string,
+      params?: {
+        page?: number;
+        limit?: number;
+        search?: string;
+        condition?: string;
+        status?: string;
+      }
+    ) => {
+      const query = new URLSearchParams();
+      if (params?.page) query.set("page", params.page.toString());
+      if (params?.limit) query.set("limit", params.limit.toString());
+      if (params?.search) query.set("search", params.search);
+      if (params?.condition && params.condition !== "All") query.set("condition", params.condition);
+      if (params?.status && params.status !== "All") query.set("status", params.status);
+      return request(`/doctors/${doctorId}/patients?${query.toString()}`);
+    },
     addPatient: (doctorId: string, patientData: any) =>
       request(`/doctors/${doctorId}/patients`, {
         method: "POST",

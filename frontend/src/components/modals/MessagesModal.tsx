@@ -37,11 +37,11 @@ export function MessagesModal() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeConversation = conversations.find(
-    (c) => c.id === activeConversationId
+    (c: any) => c.id === activeConversationId
   ) || conversations[0];
 
   const currentMessages = activeConversation
-    ? chatMessages[activeConversation.id] || []
+    ? (chatMessages as any)[activeConversation.id] || []
     : [];
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export function MessagesModal() {
 
   if (!isMessagesModalOpen) return null;
 
-  const filteredConversations = conversations.filter((c) => {
+  const filteredConversations = conversations.filter((c: any) => {
     const matchesSearch =
       c.participantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.participantRole.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -185,7 +185,7 @@ export function MessagesModal() {
 
             {/* Conversation Threads */}
             <div className="flex-1 overflow-y-auto divide-y divide-slate-100 p-2 space-y-1">
-              {filteredConversations.map((conv) => {
+              {filteredConversations.map((conv: any) => {
                 const isSelected = activeConversation?.id === conv.id;
                 return (
                   <div
@@ -205,7 +205,7 @@ export function MessagesModal() {
                       <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/20 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-white">
                         {conv.participantName
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .slice(0, 2)
                           .join("")}
                       </div>
@@ -272,7 +272,7 @@ export function MessagesModal() {
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-[#2F65F6]/10 to-[#60A5FA]/20 text-[#2F65F6] font-bold text-xs flex items-center justify-center border border-slate-100">
                       {activeConversation.participantName
                         .split(" ")
-                        .map((n) => n[0])
+                        .map((n: string) => n[0])
                         .slice(0, 2)
                         .join("")}
                     </div>
@@ -343,7 +343,7 @@ export function MessagesModal() {
                   </span>
                 </div>
 
-                {currentMessages.map((msg) => (
+                {currentMessages.map((msg: any) => (
                   <div
                     key={msg.id}
                     className={cn(

@@ -156,13 +156,13 @@ export function TopNavbar({
               </div>
 
               <div className="max-h-72 overflow-y-auto divide-y divide-slate-100/80 mt-2 -mx-1 px-1">
-                {notifications.map((item) => (
+                {notifications.map((item: any) => (
                   <div
                     key={item.id}
                     onClick={() => markNotificationAsRead(item.id)}
                     className={cn(
                       "py-2.5 px-2.5 rounded-2xl cursor-pointer transition-all flex items-start gap-3 my-1",
-                      item.read
+                      (item.isRead || item.read)
                         ? "opacity-75 hover:bg-white/60"
                         : "bg-white/80 hover:bg-white border border-white/90 shadow-2xs"
                     )}
@@ -191,7 +191,7 @@ export function TopNavbar({
           )}
         </div>
 
-        {/* User Profile Pill: Sullivan Owner */}
+        {/* User Profile Pill: Authenticated User */}
         <div className="relative" ref={profileRef}>
           <button
             type="button"
@@ -203,10 +203,10 @@ export function TopNavbar({
           >
             <div className="flex flex-col text-right hidden sm:flex">
               <span className="text-xs font-bold text-[#101828] leading-tight">
-                {user?.name?.split(" ")[0] || "Sullivan"}
+                {user?.name?.split(" ")[0] || "User"}
               </span>
               <span className="text-[10px] font-medium text-[#94A3B8] leading-tight capitalize">
-                {user?.role || "Admin"}
+                {user?.role || "Staff"}
               </span>
             </div>
             {/* Avatar */}
@@ -230,8 +230,8 @@ export function TopNavbar({
           {showProfileMenu && (
             <div className="absolute right-0 mt-3 w-56 bg-white/95 backdrop-blur-3xl rounded-3xl border border-white/95 popover-shadow p-2.5 z-50 animate-fade-in text-xs shadow-2xl">
               <div className="px-3 py-2 border-b border-slate-100 mb-1">
-                <p className="font-bold text-[#101828]">{user?.name || "Sullivan (Master Admin)"}</p>
-                <p className="text-[11px] text-[#64748B] truncate">{user?.email || "admin@medcare.com"}</p>
+                <p className="font-bold text-[#101828]">{user?.name || "Administrator"}</p>
+                <p className="text-[11px] text-[#64748B] truncate">{user?.email || "admin@doctortracker.com"}</p>
               </div>
               <Link
                 href="/settings"

@@ -163,7 +163,7 @@ export function BookAppointmentModal() {
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-[#2F65F6]"
               >
                 <option value="All">All Departments (Any Available Specialist)</option>
-                {departments.map((d) => (
+                {departments.map((d: any) => (
                   <option key={d.id} value={d.name}>
                     {d.name} Division &bull; {d.floor}
                   </option>

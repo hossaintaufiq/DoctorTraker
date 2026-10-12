@@ -264,7 +264,7 @@ export function GenerateInvoiceModal() {
                         onChange={(e) => handleItemChange(idx, "department", e.target.value)}
                         className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#2F65F6]"
                       >
-                        {departments.map((d) => (
+                        {departments.map((d: any) => (
                           <option key={d.id} value={d.name}>
                             {d.name}
                           </option>

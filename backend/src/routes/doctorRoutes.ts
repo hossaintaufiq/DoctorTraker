@@ -7,6 +7,7 @@ import {
   deleteDoctor,
   addPatientUnderDoctor,
   removePatientFromDoctor,
+  getDoctorPatients,
 } from "../controllers/doctorController.js";
 import { authorizeRoles } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
@@ -51,6 +52,7 @@ router
 
 router
   .route("/:id/patients")
+  .get(validate({ params: idParamSchema }), getDoctorPatients)
   .post(
     authorizeRoles("admin", "doctor"),
     validate({ params: idParamSchema, body: addDoctorPatientSchema }),

@@ -382,3 +382,64 @@ export async function removePatientFromDoctor(
     next(error);
   }
 }
+
+// @desc    Get paginated patients under a specific doctor
+// @route   GET /api/doctors/:id/patients
+// @access  Protected
+export async function getDoctorPatients(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    if (!doctor) {
+      res.status(404).json({
+        success: false,
+        message: "Doctor not found.",
+      });
+      return;
+    }
+
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 10));
+    const skip = (page - 1) * limit;
+
+    const query: any = { assignedDoctor: doctor._id };
+    if (req.query.search && typeof req.query.search === "string" && req.query.search.trim()) {
+      const q = req.query.search.trim();
+      const escaped = escapeRegex(q);
+      query.$or = [
+        { name: { $regex: escaped, $options: "i" } },
+        { patientCode: { $regex: escaped, $options: "i" } },
+        { condition: { $regex: escaped, $options: "i" } },
+      ];
+    }
+    if (req.query.condition && req.query.condition !== "All") {
+      query.condition = req.query.condition;
+    }
+    if (req.query.status && req.query.status !== "All") {
+      query.status = req.query.status;
+    }
+
+    const [patients, total] = await Promise.all([
+      Patient.find(query)
+        .sort({ registrationDate: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Patient.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: patients,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 1,
+    });
+  } catch (error) {
+    next(error);
+  }
+}

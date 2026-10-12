@@ -66,15 +66,15 @@ export function DepartmentRevenueVolumeCard() {
     return baseUnits.slice(0, 6).map((dept) => {
       // Find extra revenue from invoices billed to this department
       const extraInvoiceRev = invoices
-        .filter((inv) =>
-          inv.items?.some((item) =>
+        .filter((inv: any) =>
+          inv.items?.some((item: any) =>
             item.department?.toLowerCase().includes(dept.name.toLowerCase().split(" ")[0])
           )
         )
-        .reduce((sum, inv) => sum + inv.total, 0);
+        .reduce((sum: number, inv: any) => sum + (inv.total || 0), 0);
 
       // Extra cases from appointments for this department
-      const aptCount = appointments.filter((apt) =>
+      const aptCount = appointments.filter((apt: any) =>
         apt.doctorSpecialty?.toLowerCase().includes(dept.name.toLowerCase().split(" ")[0])
       ).length;
 
@@ -106,12 +106,12 @@ export function DepartmentRevenueVolumeCard() {
 
   // Aggregate totals
   const totalRevenue = useMemo(
-    () => departmentalData.reduce((sum, d) => sum + d.revenue, 0),
+    () => departmentalData.reduce((sum: number, d: any) => sum + d.revenue, 0),
     [departmentalData]
   );
 
   const totalCases = useMemo(
-    () => departmentalData.reduce((sum, d) => sum + d.cases, 0),
+    () => departmentalData.reduce((sum: number, d: any) => sum + d.cases, 0),
     [departmentalData]
   );
 
@@ -347,7 +347,7 @@ export function DepartmentRevenueVolumeCard() {
 
         {/* Mini Departmental Progress Breakdown */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-3">
-          {departmentalData.slice(0, 3).map((dept) => (
+          {departmentalData.slice(0, 3).map((dept: any) => (
             <div
               key={dept.id}
               className="p-2.5 rounded-xl bg-[#F8FAFC] border border-[#F1F5F9] flex flex-col justify-between"

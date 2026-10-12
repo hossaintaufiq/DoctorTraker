@@ -31,7 +31,7 @@ import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 
 export function MobileSidebar() {
   const pathname = usePathname();
-  const { isMobileSidebarOpen, setIsMobileSidebarOpen, showToast } = useDoctorTracker();
+  const { isMobileSidebarOpen, setIsMobileSidebarOpen, showToast, user, logout } = useDoctorTracker();
   const [searchQuery, setSearchQuery] = useState("");
 
   if (!isMobileSidebarOpen) return null;
@@ -39,24 +39,15 @@ export function MobileSidebar() {
   const mainMenuItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutGrid, isExact: true },
     { label: "Doctors", href: "/doctors", icon: Stethoscope },
-    { label: "Patient", href: "/patients", icon: Users },
-    { label: "Appointment", href: "/appointments", icon: Calendar },
+    { label: "Patients", href: "/patients", icon: Users },
+    { label: "Appointments", href: "/appointments", icon: Calendar },
     { label: "Departments", href: "/departments", icon: Building2 },
     { label: "Analytics & Reports", href: "/analytics", icon: TrendingUp },
-    { label: "Billing & Insurance", href: "/billing", icon: CreditCard },
+    { label: "Billing & Invoices", href: "/billing", icon: CreditCard },
   ];
 
   const otherMenuItems = [
-    { label: "Staff", href: "/staff", icon: UserCheck },
-    { label: "Pharmacy Management", href: "/pharmacy", icon: ShoppingBag },
-    { label: "Emergency & Admission", href: "/emergency", icon: AlertCircle },
-    { label: "Setting", href: "/settings", icon: Settings },
-  ];
-
-  const upcomingMenuItems = [
-    { label: "Laboratory & LIS", href: "/laboratory", icon: FlaskConical },
-    { label: "Telemedicine", href: "/telemedicine", icon: Video },
-    { label: "Wards & Bed Matrix", href: "/wards", icon: Bed },
+    { label: "Settings", href: "/settings", icon: Settings },
   ];
 
   const isNavActive = (href: string, isExact?: boolean) => {
@@ -75,15 +66,10 @@ export function MobileSidebar() {
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredUpcomingMenu = upcomingMenuItems.filter((item) =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const hasNoResults =
     searchQuery.trim().length > 0 &&
     filteredMainMenu.length === 0 &&
-    filteredOtherMenu.length === 0 &&
-    filteredUpcomingMenu.length === 0;
+    filteredOtherMenu.length === 0;
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
@@ -107,10 +93,10 @@ export function MobileSidebar() {
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold text-[#101828] tracking-tight leading-none">
-                Medcare
+                Doctor Tracker
               </span>
               <span className="text-[10px] font-medium text-[#94A3B8] tracking-wider uppercase mt-1">
-                Care Guide BD
+                Clinical Operations
               </span>
             </div>
           </Link>
@@ -232,64 +218,24 @@ export function MobileSidebar() {
                 </div>
               )}
 
-              {filteredUpcomingMenu.length > 0 && (
-                <div>
-                  <div className="flex items-center justify-between px-3 mb-1.5">
-                    <span className="text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider block">
-                      Upcoming Modules
-                    </span>
-                    <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[#EBF3FE] text-[#2F65F6] border border-[#BFDBFE]">
-                      Preview
-                    </span>
-                  </div>
-                  <nav className="space-y-1">
-                    {filteredUpcomingMenu.map((item) => {
-                      const active = isNavActive(item.href);
-                      const Icon = item.icon;
-
-                      return (
-                        <Link
-                          key={item.label}
-                          href={item.href}
-                          onClick={() => setIsMobileSidebarOpen(false)}
-                          className={cn(
-                            "flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium border transition-all",
-                            active
-                              ? "glass-active-item font-semibold"
-                              : "text-[#64748B] border-transparent hover:text-[#1E293B] hover:bg-white/60"
-                          )}
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <Icon className="w-4 h-4 shrink-0" />
-                            <span className="truncate">{item.label}</span>
-                          </div>
-
-                          <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200/80 shrink-0">
-                            Upcoming
-                          </span>
-                        </Link>
-                      );
-                    })}
-                  </nav>
-                </div>
-              )}
             </>
           )}
         </div>
 
         {/* Footer */}
         <div className="p-4 border-t border-white/50 shrink-0 bg-white/40">
-          <Link
-            href="/login"
+          <button
+            type="button"
             onClick={() => {
               setIsMobileSidebarOpen(false);
               showToast("Signed Out", "You have signed out.", "info");
+              logout();
             }}
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-2xl text-xs font-semibold text-[#EF4444] bg-[#FEF2F2]/80 hover:bg-[#FEF2F2] transition-colors border border-[#FEE2E2]"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-2xl text-xs font-semibold text-[#EF4444] bg-[#FEF2F2]/80 hover:bg-[#FEF2F2] transition-colors border border-[#FEE2E2] cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
-          </Link>
+            <span>Sign Out ({user?.name || "User"})</span>
+          </button>
         </div>
       </div>
     </div>

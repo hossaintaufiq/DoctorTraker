@@ -6,14 +6,19 @@ import { useDoctorTracker } from "@/context/DoctorTrackerContext";
 import { PatientCondition, PatientGender } from "@/lib/types";
 
 export function AddPatientModal() {
-  const { isAddPatientModalOpen, setIsAddPatientModalOpen, doctors, addPatient } =
-    useDoctorTracker();
+  const {
+    isAddPatientModalOpen,
+    setIsAddPatientModalOpen,
+    doctors,
+    addPatient,
+    selectedDoctorForNewPatient,
+  } = useDoctorTracker();
 
   const [name, setName] = useState("");
   const [age, setAge] = useState("32");
   const [gender, setGender] = useState<PatientGender>("Female");
   const [assignedDoctorId, setAssignedDoctorId] = useState(
-    doctors[0]?.id || "doc-1"
+    selectedDoctorForNewPatient?.id || doctors[0]?.id || ""
   );
   const [condition, setCondition] = useState<PatientCondition>("General");
   const [phone, setPhone] = useState("");
@@ -23,6 +28,14 @@ export function AddPatientModal() {
   >("O+");
   const [notes, setNotes] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    if (selectedDoctorForNewPatient?.id) {
+      setAssignedDoctorId(selectedDoctorForNewPatient.id);
+    } else if (doctors[0]?.id && !assignedDoctorId) {
+      setAssignedDoctorId(doctors[0].id);
+    }
+  }, [selectedDoctorForNewPatient, doctors]);
 
   if (!isAddPatientModalOpen) return null;
 

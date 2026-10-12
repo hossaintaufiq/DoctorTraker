@@ -34,12 +34,12 @@ export function ActivityLogsModal() {
 
   if (!isLogsModalOpen) return null;
 
-  const filteredLogs = activityLogs.filter((log) => {
+  const filteredLogs = activityLogs.filter((log: any) => {
     const matchesSearch =
       log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (log.details && log.details.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      log.ipAddress.includes(searchQuery);
+      (log.ipAddress && log.ipAddress.includes(searchQuery));
 
     const matchesCategory =
       selectedCategory === "All" || log.category === selectedCategory;
@@ -52,20 +52,20 @@ export function ActivityLogsModal() {
 
   const exportLogsCSV = () => {
     const headers = ["ID", "Timestamp", "Category", "User", "Action", "Status", "IP Address", "Details"];
-    const rows = filteredLogs.map((log) => [
+    const rows = filteredLogs.map((log: any) => [
       log.id,
       log.timestamp,
       log.category,
       log.user,
       `"${log.action.replace(/"/g, '""')}"`,
       log.status,
-      log.ipAddress,
+      log.ipAddress || "",
       `"${(log.details || "").replace(/"/g, '""')}"`,
     ]);
 
     const csvContent =
       "data:text/csv;charset=utf-8," +
-      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+      [headers.join(","), ...rows.map((e: any) => e.join(","))].join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -236,7 +236,7 @@ export function ActivityLogsModal() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
-                {filteredLogs.map((log) => (
+                {filteredLogs.map((log: any) => (
                   <tr key={log.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3 px-4 max-w-[240px]">
                       <div className="font-semibold text-[#101828] break-words">{log.action}</div>
