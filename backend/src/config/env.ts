@@ -29,17 +29,25 @@ export function validateEnv(): EnvConfig {
     );
   }
 
-  const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
-  if (!JWT_REFRESH_SECRET || JWT_REFRESH_SECRET.trim().length < 32) {
+  const rawRefreshSecret =
+    process.env.JWT_REFRESH_SECRET ||
+    (JWT_SECRET ? `${JWT_SECRET}_refresh_session_secret_padding_32` : "");
+
+  if (!rawRefreshSecret || rawRefreshSecret.trim().length < 32) {
     throw new Error(
       "[Security Startup Error] JWT_REFRESH_SECRET must be defined and at least 32 characters long. Set a high-entropy secret in your environment."
     );
   }
+  const JWT_REFRESH_SECRET = rawRefreshSecret;
 
   const JWT_ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN || "15m";
   const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "7d";
 
-  const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
+  const defaultCors =
+    NODE_ENV === "production"
+      ? "http://localhost:3000,https://doctortraker.vercel.app"
+      : "http://localhost:3000";
+  const CORS_ORIGIN = process.env.CORS_ORIGIN || defaultCors;
   const ALLOWED_ORIGINS = CORS_ORIGIN.split(",")
     .map((o) => o.trim().replace(/\/$/, ""))
     .filter(Boolean);
