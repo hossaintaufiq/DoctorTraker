@@ -173,6 +173,7 @@ export async function createDoctor(
     const {
       name,
       specialty,
+      specialization,
       email,
       phone,
       roomNumber,
@@ -194,19 +195,21 @@ export async function createDoctor(
       return;
     }
 
+    const doctorSpecialty = (specialty || specialization || "").trim();
+
     const doctor = await Doctor.create({
       name: name.trim(),
-      specialty: specialty.trim(),
+      specialty: doctorSpecialty,
       email: normalizedEmail,
       phone: phone.trim(),
-      roomNumber: roomNumber.trim(),
+      roomNumber: (roomNumber || "Room 101").trim(),
       hospital: hospital || "Doctor Tracker Medical Center",
       maxPatients: maxPatients || 300,
       experienceYears: experienceYears ?? 5,
       status: status || "Active",
       biography:
         biography ||
-        `${specialty} specialist with ${experienceYears ?? 5} years clinical experience.`,
+        `${doctorSpecialty} specialist with ${experienceYears ?? 5} years clinical experience.`,
       avatar: avatar || "",
     });
 

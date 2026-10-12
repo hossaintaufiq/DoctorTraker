@@ -27,6 +27,7 @@ const authenticatedCacheControl = (
 // 1. Health check endpoint (Public)
 router.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
+    success: true,
     status: "healthy",
     timestamp: new Date().toISOString(),
     service: "Doctor Tracker Medical API Server",

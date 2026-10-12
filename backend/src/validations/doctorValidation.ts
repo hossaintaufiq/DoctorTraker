@@ -17,12 +17,13 @@ export const doctorQuerySchema = paginationQuerySchema.extend({
   sortBy: z.enum(doctorSortFields).optional().default("createdAt"),
 });
 
-export const createDoctorSchema = z.object({
+const baseDoctorSchema = z.object({
   name: z.string().min(2, "Doctor name must be at least 2 characters").trim(),
-  specialty: z.string().min(2, "Specialty is required").trim(),
+  specialty: z.string().min(2, "Specialty is required").trim().optional(),
+  specialization: z.string().min(2).trim().optional(),
   email: z.string().email("Invalid email address format").trim().toLowerCase(),
   phone: z.string().min(5, "Phone number is required").trim(),
-  roomNumber: z.string().min(1, "Room number is required").trim(),
+  roomNumber: z.string().trim().optional().default("Room 101"),
   hospital: z.string().optional().default("Doctor Tracker Medical Center"),
   maxPatients: z.number().int().positive().optional().default(300),
   experienceYears: z.number().int().nonnegative().optional().default(5),
@@ -31,7 +32,15 @@ export const createDoctorSchema = z.object({
   avatar: z.string().optional(),
 });
 
-export const updateDoctorSchema = createDoctorSchema.partial();
+export const createDoctorSchema = baseDoctorSchema.refine(
+  (data) => Boolean(data.specialty || data.specialization),
+  {
+    message: "Specialty is required",
+    path: ["specialty"],
+  }
+);
+
+export const updateDoctorSchema = baseDoctorSchema.partial();
 
 export const addDoctorPatientSchema = z.object({
   name: z.string().min(2, "Patient name must be at least 2 characters").trim(),

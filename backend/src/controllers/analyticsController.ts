@@ -309,6 +309,7 @@ export async function getDashboardAnalytics(
       specialtyBreakdown: specialtyBreakdownRaw.map((s) => ({
         name: s._id,
         count: s.count,
+        value: s.count,
       })),
       arrivalTrends,
     };

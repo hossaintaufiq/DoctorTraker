@@ -59,8 +59,10 @@ if (env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-// 8. Connect to MongoDB
-connectDB();
+// 8. Connect to MongoDB (skip auto-connection in test environment)
+if (process.env.NODE_ENV !== "test") {
+  connectDB();
+}
 
 // 9. Root Index Route
 app.get("/", (req: Request, res: Response) => {
