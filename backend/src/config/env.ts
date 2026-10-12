@@ -43,14 +43,19 @@ export function validateEnv(): EnvConfig {
   const JWT_ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN || "15m";
   const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "7d";
 
-  const defaultCors =
-    NODE_ENV === "production"
-      ? "http://localhost:3000,https://doctortraker.vercel.app"
-      : "http://localhost:3000";
-  const CORS_ORIGIN = process.env.CORS_ORIGIN || defaultCors;
-  const ALLOWED_ORIGINS = CORS_ORIGIN.split(",")
-    .map((o) => o.trim().replace(/\/$/, ""))
-    .filter(Boolean);
+  const userCors = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : [];
+  const baseOrigins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5000",
+    "https://doctortraker.vercel.app",
+    "https://doctortracker.vercel.app",
+    ...userCors,
+  ];
+  const ALLOWED_ORIGINS = Array.from(
+    new Set(baseOrigins.map((o) => o.trim().replace(/\/$/, "")).filter(Boolean))
+  );
+  const CORS_ORIGIN = ALLOWED_ORIGINS.join(",");
 
   const ALLOW_DB_RESET = process.env.ALLOW_DB_RESET === "true";
   const COOKIE_SECURE =
